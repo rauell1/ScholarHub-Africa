@@ -119,4 +119,19 @@ Set env vars on Railway from `.env.example`.
 
 ---
 
+## 🛡️ Consent Manager
+
+The repo also contains a complete **GDPR & CCPA-compliant Cookie & Consent Management System** at [`consent-manager/`](consent-manager/README.md) — a Next.js 14 app with:
+
+- Edge geolocation middleware (GDPR opt-in vs CCPA opt-out)
+- `useConsent` hook with Google Consent Mode v2 + IAB TCF 2.3 TC-string encoding
+- Auto-blocking script injection manager
+- RBAC-protected admin command center: customization engine (colors/fonts/35-language texts), cookie scanner, policy generators, consent logs, Recharts analytics, CSV/PDF export
+
+```bash
+cd consent-manager && npm install && npm run dev   # http://localhost:3000
+```
+
+---
+
 *Built for Roy Okola Otieno — and every African student after him. 🇰🇪 → 🌍*
