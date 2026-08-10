@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static pages_tags %}
+
+{% block title %}About us — ScholarHub Africa{% endblock %}
+
+{% block meta_description %}Meet the team behind ScholarHub Africa — human-verified, fully-funded master's scholarship discovery and tracking for African students.{% endblock %}
+
+{% block body_class %}has-sticky-cta{% endblock %}
+
+{% block content %}
+<section class="bg-navy py-10 text-white">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    {% breadcrumbs items=breadcrumbs_items current=breadcrumbs_current %}
+    <h1 class="mt-4 text-2xl font-extrabold sm:text-3xl">About ScholarHub Africa</h1>
+    <p class="mt-2 max-w-2xl text-sm text-white/70">
+      We exist for one reason: every African student deserves the same shot at a
+      fully-funded international master's — without drowning in spreadsheets.
+    </p>
+  </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+  <!-- Story -->
+  <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+    <div>
+      <h2 class="section-title">Our story</h2>
+      <p class="mt-4 text-sm leading-relaxed text-navy/70">
+        ScholarHub Africa started as one student's frustration: Roy kept a dozen
+        spreadsheets of scholarships, missed two deadlines in a single cycle, and
+        had no way to know which programmes he actually qualified for.
+      </p>
+      <p class="mt-3 text-sm leading-relaxed text-navy/70">
+        So he built the tool he needed — a directory where every record is
+        human-verified against official sources, scored for profile fit, and
+        trackable from research to award. Today it's growing into a platform for
+        the whole continent.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="{% url 'scholarships:directory' %}" class="btn-primary">Explore scholarships</a>
+        <a href="{% url 'pages:contact' %}" class="btn-outline">Talk to us</a>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="card text-center"><p class="text-3xl font-extrabold text-navy">45+</p><p class="text-xs font-semibold uppercase tracking-wide text-navy/50">Verified scholarships</p></div>
+      <div class="card text-center"><p class="text-3xl font-extrabold text-teal">23</p><p class="text-xs font-semibold uppercase tracking-wide text-navy/50">Countries</p></div>
+      <div class="card text-center"><p class="text-3xl font-extrabold text-amber">24</p><p class="text-xs font-semibold uppercase tracking-wide text-navy/50">Document checklist items</p></div>
+      <div class="card text-center"><p class="text-3xl font-extrabold text-forest">100%</p><p class="text-xs font-semibold uppercase tracking-wide text-navy/50">Free for students</p></div>
+    </div>
+  </div>
+
+  <!-- Team grid (UX checklist #7) -->
+  <div class="mt-16">
+    <h2 class="section-title text-center">The team</h2>
+    <p class="mt-2 text-center text-sm text-navy/60">Small team, big verification queue. (Photos are placeholders — real headshots coming soon.)</p>
+
+    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {% for member in team %}
+      <article class="card flex flex-col items-center text-center">
+        <img
+          src="{% static member.photo %}"
+          alt="{{ member.alt }}"
+          width="240" height="240"
+          loading="lazy"
+          class="h-36 w-36 rounded-full object-cover ring-4 ring-teal-light"
+        >
+        <h3 class="mt-4 font-bold text-navy">{{ member.name }}</h3>
+        <p class="text-xs font-semibold uppercase tracking-wide text-teal">{{ member.role }}</p>
+        <p class="mt-2 text-sm leading-relaxed text-navy/60">{{ member.bio }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

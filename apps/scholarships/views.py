@@ -7,6 +7,7 @@ All server-rendered HTML for speed and SEO.
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views.decorators.http import require_GET
 
 from .filters import ScholarshipFilter
@@ -96,6 +97,9 @@ def directory(request):
         ],
     }
 
+    label = query or 'Directory'
+    if query:
+        label = f'Search: {query}'
     return render(request, 'scholarships/directory.html', {
         'page_obj': page_obj,
         'filter': filterset,
@@ -104,6 +108,8 @@ def directory(request):
         'ordering': request.GET.get('ordering', 'score'),
         'total_count': paginator.count,
         'page_urls': page_urls,
+        'breadcrumbs_items': [('Home', reverse('scholarships:home'))],
+        'breadcrumbs_current': label,
     })
 
 
@@ -114,9 +120,27 @@ def detail(request, slug):
     if not (request.user.is_authenticated and request.user.is_staff):
         qs = qs.filter(is_active=True)
     scholarship = get_object_or_404(qs, slug=slug)
+
+    # Internal linking (UX checklist #3): related scholarships sharing a
+    # field of study or destination country with this one.
+    related = (
+        Scholarship.objects
+        .filter(is_active=True)
+        .filter(Q(fields__in=scholarship.fields.all()) | Q(country=scholarship.country))
+        .exclude(pk=scholarship.pk)
+        .select_related('country')
+        .distinct()
+        .order_by('-score')[:3]
+    )
     return render(request, 'scholarships/detail.html', {
         'scholarship': scholarship,
         'change_logs': scholarship.change_logs.all()[:12],
+        'related': related,
+        'breadcrumbs_items': [
+            ('Home', reverse('scholarships:home')),
+            ('Scholarships', reverse('scholarships:directory')),
+        ],
+        'breadcrumbs_current': scholarship.short_name or scholarship.name,
     })
 
 

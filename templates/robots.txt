@@ -1,0 +1,12 @@
+# robots.txt — ScholarHub Africa
+# Allow all major search engines to crawl the public site;
+# keep private/admin and API endpoints out of the index.
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /accounts/
+Disallow: /tracker/
+
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml

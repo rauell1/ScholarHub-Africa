@@ -3,11 +3,15 @@
 
 {% block title %}ScholarHub Africa — Fully-Funded Master's Scholarships for African Students{% endblock %}
 
+{% block meta_description %}Discover fully-funded master's scholarships for African students — 45+ human-verified opportunities across 23 countries, scored for your profile fit and ready to track. Free.{% endblock %}
+
+{% block body_class %}has-sticky-cta{% endblock %}
+
 {% block content %}
 
-<!-- Hero -->
+<!-- Hero — CTA above the fold on desktop AND mobile (UX checklist #2) -->
 <section class="bg-navy text-white">
-  <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+  <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-20">
     <div class="mx-auto max-w-3xl text-center">
       <p class="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-teal-light">
         <span class="h-2 w-2 animate-pulse rounded-full bg-teal"></span>
@@ -20,10 +24,26 @@
         Every opportunity on ScholarHub is human-verified against official sources,
         scored for your profile fit, and tracked from research to award.
       </p>
-      <div class="mx-auto mt-8 max-w-xl">
+
+      {# Prominent CTA — visible without scrolling on mobile and desktop #}
+      <div class="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <a href="{% url 'scholarships:directory' %}" class="w-full rounded-xl bg-teal px-8 py-3.5 text-base font-bold text-navy shadow-lg transition hover:bg-teal-light sm:w-auto">
+          🎓 Browse 45+ scholarships
+        </a>
+        <a href="{% url 'scholarships:by_country' %}" class="w-full rounded-xl border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition hover:bg-white/10 sm:w-auto">
+          Explore by country
+        </a>
+      </div>
+      <p class="mt-3 text-xs text-white/50">
+        or search — <a href="{% url 'scholarships:directory' %}?q=DAAD" class="text-teal-light underline">DAAD</a>,
+        <a href="{% url 'scholarships:directory' %}?country=DE" class="text-teal-light underline">Germany</a>,
+        <a href="{% url 'scholarships:by_field' %}#water" class="text-teal-light underline">Water</a>,
+        <a href="{% url 'scholarships:by_field' %}" class="text-teal-light underline">Public Health</a>
+      </p>
+
+      <div class="mx-auto mt-6 max-w-xl">
         {% include 'components/search_bar.html' with id='hero' large=True %}
       </div>
-      <p class="mt-3 text-xs text-white/50">Try “DAAD”, “Germany”, “Water”, “Public Health”…</p>
     </div>
   </div>
 </section>
@@ -115,7 +135,7 @@
 </section>
 
 <!-- How it works -->
-<section class="bg-navy py-12 text-white">
+<section id="how-it-works" class="bg-navy py-12 text-white">
   <div class="mx-auto max-w-7xl px-4 sm:px-6">
     <h2 class="section-title text-center text-white">How it works</h2>
     <p class="mt-2 text-center text-sm text-white/60">Three steps from dream to application.</p>
@@ -123,7 +143,7 @@
       <div class="rounded-2xl bg-white/5 p-6 text-center">
         <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-teal text-xl font-extrabold text-navy">1</span>
         <h3 class="mt-4 font-bold">Search</h3>
-        <p class="mt-2 text-sm text-white/70">Search 35+ verified fully-funded opportunities across 20+ countries, filtered by field, funding and eligibility.</p>
+        <p class="mt-2 text-sm text-white/70">Search 45+ verified fully-funded opportunities across 23 countries, filtered by field, funding and eligibility.</p>
       </div>
       <div class="rounded-2xl bg-white/5 p-6 text-center">
         <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber text-xl font-extrabold text-navy">2</span>
@@ -136,7 +156,37 @@
         <p class="mt-2 text-sm text-white/70">Move each application through your tracker — planning, drafting, submitted, decision — with a 24-item document checklist.</p>
       </div>
     </div>
+    <div class="mt-8 text-center">
+      <a href="{% url 'pages:case_studies' %}" class="text-sm font-semibold text-teal-light underline hover:text-white">See how one student used it to land the DAAD EPOS scholarship →</a>
+    </div>
   </div>
 </section>
+
+<!-- Testimonials (UX checklist #10) -->
+{% include 'components/testimonials.html' %}
+
+<!-- Sticky mobile CTA (UX checklist #6) -->
+{% include 'components/sticky_cta.html' %}
+
+{# LocalBusiness / Organization schema (SEO checklist #15) — placeholders for production data #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{ site.name }}",
+  "url": "{{ request.scheme }}://{{ request.get_host }}/",
+  "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.png' %}",
+  "email": "{{ site.email }}",
+  "telephone": "{{ site.phone }}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{ site.address }}",
+    "addressLocality": "Nairobi",
+    "addressCountry": "KE"
+  },
+  "openingHours": "Mo-Fr 09:00-18:00",
+  "sameAs": []
+}
+</script>
 
 {% endblock %}

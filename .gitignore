@@ -26,3 +26,6 @@ media/
 .DS_Store
 .idea/
 .vscode/
+
+# CI workflow — commit manually (this GitHub App token lacks workflows permission)
+.github/workflows/

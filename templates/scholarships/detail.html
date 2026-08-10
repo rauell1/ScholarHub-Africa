@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load scholarship_tags %}
+{% load scholarship_tags pages_tags %}
 
 {% block title %}{{ scholarship.name }} — ScholarHub Africa{% endblock %}
 
@@ -44,11 +44,7 @@
 <!-- Hero -->
 <section class="bg-navy text-white">
   <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-    <nav class="mb-4 text-xs text-white/50" aria-label="Breadcrumb">
-      <a href="{% url 'scholarships:directory' %}" class="hover:text-teal-light">Scholarships</a>
-      <span class="mx-1">/</span>
-      <span class="text-white/70">{{ scholarship.country.name }}</span>
-    </nav>
+    {% breadcrumbs items=breadcrumbs_items current=breadcrumbs_current %}
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div class="max-w-3xl">
         <div class="mb-2 flex flex-wrap items-center gap-2">
@@ -177,6 +173,22 @@
             </li>
           {% endfor %}
         </ul>
+      </div>
+      {% endif %}
+
+      {# Related scholarships — natural internal links (UX checklist #3) #}
+      {% if related %}
+      <div class="card">
+        <h2 class="text-lg font-bold text-navy">🔗 You might also consider</h2>
+        <p class="mt-1 text-xs text-navy/50">Similar programmes — same field or destination country.</p>
+        <div class="mt-3 space-y-2">
+          {% for item in related %}
+            <a href="{{ item.get_absolute_url }}" class="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-4 py-3 transition hover:bg-teal-light">
+              <span class="text-sm font-semibold text-navy">{{ item.short_name|default:item.name }}</span>
+              <span class="shrink-0 text-xs text-navy/50">{{ item.country.flag_emoji }} {{ item.country.name }} · {{ item.score }}/100</span>
+            </a>
+          {% endfor %}
+        </div>
       </div>
       {% endif %}
 

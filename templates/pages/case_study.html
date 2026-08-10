@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load pages_tags %}
+
+{% block title %}{{ study.title }} — ScholarHub Africa{% endblock %}
+
+{% block meta_description %}{{ study.summary|truncatechars:155 }}{% endblock %}
+
+{% block content %}
+<article>
+  <!-- Header -->
+  <header class="bg-navy py-10 text-white">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      {% breadcrumbs items=breadcrumbs_items current=breadcrumbs_current %}
+      <p class="mt-4 text-xs font-bold uppercase tracking-widest text-teal">{{ study.eyebrow }}</p>
+      <h1 class="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">{{ study.title }}</h1>
+      <p class="mt-3 max-w-2xl text-sm leading-relaxed text-white/70">{{ study.summary }}</p>
+    </div>
+  </header>
+
+  <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <!-- 1 · Client background -->
+    <section class="mb-8">
+      <h2 class="section-title"><span class="text-teal">1.</span> Client background</h2>
+      <ul class="mt-3 space-y-2 text-sm leading-relaxed text-navy/70">
+        {% for item in study.client_background %}
+          <li class="flex gap-2"><span class="mt-1 text-teal" aria-hidden="true">▸</span><span>{{ item }}</span></li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <!-- 2 · Challenge -->
+    <section class="mb-8">
+      <h2 class="section-title"><span class="text-amber">2.</span> The challenge</h2>
+      <ul class="mt-3 space-y-2 text-sm leading-relaxed text-navy/70">
+        {% for item in study.challenge %}
+          <li class="flex gap-2"><span class="mt-1 text-amber" aria-hidden="true">▸</span><span>{{ item }}</span></li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <!-- 3 · Solution -->
+    <section class="mb-8">
+      <h2 class="section-title"><span class="text-sky">3.</span> The solution</h2>
+      <ul class="mt-3 space-y-2 text-sm leading-relaxed text-navy/70">
+        {% for item in study.solution %}
+          <li class="flex gap-2"><span class="mt-1 text-sky" aria-hidden="true">▸</span><span>{{ item }}</span></li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <!-- 4 · Quantifiable results -->
+    <section class="mb-8">
+      <h2 class="section-title"><span class="text-forest">4.</span> The results</h2>
+      <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {% for result in study.results %}
+          <div class="card text-center">
+            <p class="text-3xl font-extrabold text-teal">{{ result.value }}</p>
+            <p class="mt-1 text-xs font-semibold uppercase tracking-wide text-navy/50">{{ result.label }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Quote -->
+    <blockquote class="my-8 rounded-2xl bg-teal-light p-6">
+      <p class="text-base font-medium leading-relaxed text-navy">“{{ study.quote.text }}”</p>
+      <footer class="mt-3 text-sm font-bold text-navy">— {{ study.quote.author }}, <span class="font-normal text-navy/60">{{ study.quote.role }}</span></footer>
+    </blockquote>
+
+    <!-- Next steps CTA -->
+    <section class="card flex flex-col items-center gap-4 py-8 text-center sm:flex-row sm:justify-between sm:text-left">
+      <div>
+        <h2 class="text-lg font-bold text-navy">{{ study.next.title }}</h2>
+        <p class="text-sm text-navy/60">{{ study.next.text }}</p>
+      </div>
+      <a href="{{ study.next.url }}" class="btn-primary shrink-0">{{ study.next.cta }} →</a>
+    </section>
+  </div>
+</article>
+{% endblock %}

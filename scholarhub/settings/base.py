@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.scholarships',
     'apps.tracker',
     'apps.accounts',
+    'apps.pages',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apps.pages.middleware.Branded404Middleware',
 ]
 
 ROOT_URLCONF = 'scholarhub.urls'
@@ -74,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.pages.context_processors.site_settings',
             ],
         },
     },
@@ -190,3 +193,16 @@ DEFAULT_FROM_EMAIL = config(
 # Resend API key — used directly by the weekly digest task (never commit it)
 RESEND_API_KEY = config('RESEND_API_KEY', default='')
 DIGEST_EMAILS = config('DIGEST_EMAILS', default='royokola3@gmail.com', cast=Csv())
+
+# ---------------------------------------------------------------------------
+# Marketing / SEO (System Design v1.0 §19)
+# ---------------------------------------------------------------------------
+# Google Analytics 4 measurement ID — empty locally, set in production.
+# The snippet renders in <head> only when this is configured.
+GA4_MEASUREMENT_ID = config('GA4_MEASUREMENT_ID', default='')
+
+# Site identity used by the SEO/marketing context processor.
+SITE_DOMAIN = config('SITE_DOMAIN', default='scholarhub.africa')
+COMPANY_PHONE = config('COMPANY_PHONE', default='+254 700 123 456')
+COMPANY_ADDRESS = config('COMPANY_ADDRESS', default='Westlands, Nairobi, Kenya')
+COMPANY_EMAIL = config('COMPANY_EMAIL', default='hello@scholarhub.africa')

@@ -17,6 +17,7 @@ sitemaps = {
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.scholarships.urls')),
+    path('', include('apps.pages.urls')),
     path('tracker/', include('apps.tracker.urls')),
     path('accounts/', include('apps.accounts.urls')),
     path('api/v1/', include('apps.scholarships.api_urls')),
@@ -28,3 +29,6 @@ urlpatterns = [
         name='django.contrib.sitemaps.views.sitemap',
     ),
 ]
+
+handler404 = 'apps.pages.views.handler404'
+handler500 = 'apps.pages.views.handler500'

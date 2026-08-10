@@ -1,0 +1,41 @@
+{% comment %}
+Reusable breadcrumb navigation (System Design §6 + UX checklist #5).
+Dynamically renders the user's path with BreadcrumbList JSON-LD for SEO.
+
+Context: items = [(label, url), ...], current = "Current page label"
+{% endcomment %}
+{% if crumbs %}
+<nav aria-label="Breadcrumb">
+  <ol class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-navy/60">
+    {% for crumb in crumbs %}
+      <li class="flex items-center gap-x-1.5">
+        {% if crumb.url %}
+          <a href="{{ crumb.url }}" class="transition-colors hover:text-teal">{{ crumb.name }}</a>
+        {% elif forloop.last and current %}
+          <span class="font-semibold text-navy" aria-current="page">{{ crumb.name }}</span>
+        {% else %}
+          <span>{{ crumb.name }}</span>
+        {% endif %}
+        {% if not forloop.last %}<span class="text-navy/30" aria-hidden="true">/</span>{% endif %}
+      </li>
+    {% endfor %}
+  </ol>
+</nav>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {% for crumb in crumbs %}
+    {
+      "@type": "ListItem",
+      "position": {{ crumb.position }},
+      "name": {{ crumb.name|escapejs }}{% if crumb.url %},
+      "item": "{{ request.scheme }}://{{ request.get_host }}{{ crumb.url }}"{% endif %}
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}

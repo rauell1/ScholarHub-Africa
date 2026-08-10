@@ -24,11 +24,28 @@ Every scholarship record is human-verified against official sources, scored 0–
 | Weekly Monday email digest (Celery beat + manual command) | ✅ |
 | DRF API — `/api/v1/scholarships/`, `open_now/`, `top/`, `countries/`, `fields/`, `search/`, tracker CRUD | ✅ |
 | Sitemap, structured data, SEO meta (server-rendered HTML) | ✅ |
+| UX/SEO checklist: custom 404, hero CTA, breadcrumbs, sticky mobile CTA, About/team grid, FAQ accordion, contact + map + 24h promise, thank-you page, case study template, testimonials, robots.txt, OG/Twitter tags, GA4, JSON-LD, privacy policy | ✅ |
 | Excel import command (`import_scholarships`) | ✅ |
 | CI (GitHub Actions → pytest) | ✅ |
 | Phase 2 — registration, OAuth, bookmarks, AI match scores, alerts | 🔜 Roadmap |
 
 ---
+
+## 🧭 Pages
+
+| URL | Page |
+|---|---|
+| `/` | Homepage — hero with above-the-fold CTA, testimonials, sticky mobile CTA |
+| `/about/` | About us — story, stats, team photo grid |
+| `/faq/` | 5-question Alpine.js accordion |
+| `/contact/` | Contact form + 24h response promise + Google Maps embed & directions |
+| `/thank-you/` | Post-submission confirmation with next steps |
+| `/case-studies/` | Reusable case-study template (Background → Challenge → Solution → Results) |
+| `/privacy/` | Privacy Policy |
+| `/robots.txt` | robots.txt (disallows `/admin/`, `/api/`, `/accounts/`, `/tracker/`) |
+| *any missing URL* | Custom branded 404 (JSON for `/api/` paths) |
+
+SEO details (3 meta-description variations, alt-text guidance, GA4 placement, internal-linking review, dynamic title structure): see [`docs/seo-guide.md`](docs/seo-guide.md).
 
 ## 🚀 Quickstart (local)
 
