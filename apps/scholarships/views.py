@@ -39,7 +39,7 @@ def home(request):
         .order_by('name')
     )
     fields = FieldOfStudy.objects.annotate(count=Count('scholarships')).filter(count__gt=0)
-    # Batch related lookups — no per-card queries (Performance 4.4)
+    # Batch related lookups - no per-card queries (Performance 4.4)
     open_now = (
         _visible_scholarships()
         .filter(status='open_now')

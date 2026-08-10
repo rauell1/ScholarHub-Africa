@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Analytics dashboard — opt-in rates over time (Recharts) + category and
+ * Analytics dashboard - opt-in rates over time (Recharts) + category and
  * region breakdowns, driven by /api/admin/analytics.
  */
 import { useEffect, useState } from 'react';
@@ -56,7 +56,7 @@ export function AnalyticsCharts() {
     <div className="admin-panel">
       <div className="admin-panel__header">
         <h1>Consent Analytics</h1>
-        <p>Opt-in rates over time and category acceptance — from the consent audit log.</p>
+        <p>Opt-in rates over time and category acceptance - from the consent audit log.</p>
       </div>
 
       <div className="admin-kpis">
@@ -75,7 +75,7 @@ export function AnalyticsCharts() {
       </div>
 
       <div className="admin-card">
-        <h2>Opt-in rate — last 30 days</h2>
+        <h2>Opt-in rate - last 30 days</h2>
         <div className="admin-chart">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data.daily} margin={{ top: 8, right: 16, bottom: 0, left: -16 }}>

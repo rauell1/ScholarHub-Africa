@@ -33,7 +33,7 @@ DATABASES = {
 }
 
 # ---------------------------------------------------------------------------
-# Security (Cloudflare in front terminates TLS — proxy sees https)
+# Security (Cloudflare in front terminates TLS - proxy sees https)
 # ---------------------------------------------------------------------------
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
@@ -46,7 +46,7 @@ SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 X_FRAME_OPTIONS = 'DENY'
 
 # ---------------------------------------------------------------------------
-# Cloudflare R2 — static/media assets served from the edge (System Design §3)
+# Cloudflare R2 - static/media assets served from the edge (System Design §3)
 # ---------------------------------------------------------------------------
 if config('CLOUDFLARE_R2_BUCKET', default=''):
     import django_storages  # noqa: F401

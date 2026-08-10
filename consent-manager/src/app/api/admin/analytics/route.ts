@@ -5,7 +5,7 @@ import { isAdminRequest } from '@/lib/server/rbac';
 import { readConsentLogs } from '@/lib/server/store';
 
 /**
- * GET /api/admin/analytics — opt-in rates over time for the dashboard charts.
+ * GET /api/admin/analytics - opt-in rates over time for the dashboard charts.
  * RBAC: role === 'ADMIN' required.
  */
 export async function GET(request: NextRequest) {

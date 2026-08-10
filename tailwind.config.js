@@ -1,44 +1,58 @@
-// Tailwind design tokens (System Design v1.0 §11)
 module.exports = {
-  content: ['./templates/**/*.html', './static/**/*.js'],
+  darkMode: 'class', // Enable class-based dark mode
+  content: [
+    './templates/**/*.html',
+    './frontend/**/*.{js,ts,jsx,tsx}',
+    './static/**/*.js'
+  ],
   theme: {
     extend: {
       colors: {
+        background: 'rgb(var(--background) / <alpha-value>)',
+        foreground: 'rgb(var(--foreground) / <alpha-value>)',
+        card: 'rgb(var(--card) / <alpha-value>)',
+        'card-foreground': 'rgb(var(--card-foreground) / <alpha-value>)',
+        border: 'rgb(var(--border) / <alpha-value>)',
         navy: {
-          DEFAULT: '#1F3864',
-          light: '#2E4A7A',
-          dark: '#16294A',
+          DEFAULT: '#0f172a',
+          light: '#1e293b',
+          dark: '#020617',
         },
         teal: {
-          DEFAULT: '#1ABC9C',
-          light: '#A3E8DA',
+          DEFAULT: '#14b8a6',
+          light: '#5eead4',
         },
         forest: {
-          DEFAULT: '#27AE60',
-          light: '#D5F5E3',
-          deep: '#1A7A4A',
-          dark: '#1A4F2A',
+          DEFAULT: '#10b981',
+          light: '#6ee7b7',
+          deep: '#047857',
+          dark: '#064e3b',
         },
         amber: {
-          DEFAULT: '#F39C12',
-          light: '#FEF9E7',
+          DEFAULT: '#f59e0b',
+          light: '#fde68a',
         },
         crimson: {
-          DEFAULT: '#C0392B',
-          light: '#FADBD8',
+          DEFAULT: '#ef4444',
+          light: '#fca5a5',
         },
         sky: {
-          DEFAULT: '#2980B9',
-          light: '#D6EAF8',
+          DEFAULT: '#0ea5e9',
+          light: '#7dd3fc',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
       borderRadius: {
         xl: '1rem',
         '2xl': '1.5rem',
+        '3xl': '2rem',
+      },
+      boxShadow: {
+        'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
+        'glass-dark': '0 4px 30px rgba(0, 0, 0, 0.5)',
       },
     },
   },

@@ -1,4 +1,4 @@
-# robots.txt — ScholarHub Africa
+# robots.txt - ScholarHub Africa
 # Allow all major search engines AND AI search crawlers (AEO Track 2.3).
 # Private/admin/API endpoints stay out of the index.
 
@@ -9,7 +9,7 @@ Disallow: /api/
 Disallow: /accounts/
 Disallow: /tracker/
 
-# AI search / answer-engine crawlers (AEO) — explicitly allowed.
+# AI search / answer-engine crawlers (AEO) - explicitly allowed.
 User-agent: GPTBot
 Allow: /
 Disallow: /admin/

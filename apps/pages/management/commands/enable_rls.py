@@ -4,12 +4,12 @@ Enable PostgreSQL Row-Level Security (Track 3.5).
     python manage.py enable_rls
 
 Applies deploy/rls.sql on PostgreSQL (Neon etc.). On SQLite (local dev) it
-is a safe no-op with a clear message — RLS is a Postgres-only feature.
+is a safe no-op with a clear message - RLS is a Postgres-only feature.
 
 Before enabling in production, wire the `app.user_id` session GUC (see
 deploy/rls.sql header) so the ownership policies can resolve the current
 user. The command fails loudly if anything goes wrong; it does not commit
-partially — each statement runs inside the caller's transaction handling.
+partially - each statement runs inside the caller's transaction handling.
 """
 from pathlib import Path
 
@@ -25,7 +25,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if connection.vendor != 'postgresql':
             self.stdout.write(self.style.WARNING(
-                'Database is not PostgreSQL — RLS is a Postgres feature. '
+                'Database is not PostgreSQL - RLS is a Postgres feature. '
                 'Run this on the Neon production database (Phase 2). Skipping.'
             ))
             return

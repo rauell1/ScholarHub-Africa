@@ -1,4 +1,4 @@
-# Local / environment secrets — never commit
+# Local / environment secrets - never commit
 .env
 .env.local
 
@@ -27,5 +27,5 @@ media/
 .idea/
 .vscode/
 
-# CI workflow — commit manually (this GitHub App token lacks workflows permission)
+# CI workflow - commit manually (this GitHub App token lacks workflows permission)
 .github/workflows/

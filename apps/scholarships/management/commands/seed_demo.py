@@ -5,7 +5,7 @@ Seed the database with demo data (Phase 0).
 
 Creates countries, fields of study, ~35 verified scholarships, a demo
 admin user ("roy") with an applicant profile, tracked applications and
-the 24-item document checklist. Idempotent — safe to re-run.
+the 24-item document checklist. Idempotent - safe to re-run.
 """
 from datetime import date
 
@@ -158,13 +158,13 @@ class Command(BaseCommand):
         DocumentItem.objects.filter(profile=profile, name__icontains='Passport (bio').update(
             status='ready')
         DocumentItem.objects.filter(profile=profile, name__icontains="Bachelor's degree transcript").update(
-            status='in_progress', notes='Ordered from university — 2 weeks')
+            status='in_progress', notes='Ordered from university - 2 weeks')
         DocumentItem.objects.filter(profile=profile, name__icontains='CV / Résumé').update(
             status='in_progress')
         DocumentItem.objects.filter(profile=profile, name__icontains='IELTS score').update(
             status='ready')
 
         self.stdout.write(self.style.SUCCESS(
-            f'Demo user "roy" ready — tracker has {profile.applications.count()} '
+            f'Demo user "roy" ready - tracker has {profile.applications.count()} '
             f'applications and {profile.documents.count()} checklist items.'
         ))

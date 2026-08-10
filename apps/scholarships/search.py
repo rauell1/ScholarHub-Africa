@@ -1,7 +1,7 @@
 """
 Full-text search (System Design v1.0 §8).
 
-Phase 1 — PostgreSQL full-text search via SearchVector/SearchRank with a
+Phase 1 - PostgreSQL full-text search via SearchVector/SearchRank with a
 transparent fallback to `icontains` for local SQLite development, so the
 same code runs everywhere. Swap the backend for Meilisearch in Phase 2
 without touching the API.

@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
-{% block title %}Scholarships by Field — ScholarHub Africa{% endblock %}
+{% block title %}Scholarships by Field - ScholarHub Africa{% endblock %}
 
-{% block meta_description %}Browse fully-funded master's scholarships by field of study — renewable energy, water and sanitation, public health, data and AI, engineering and more.{% endblock %}
+{% block meta_description %}Browse fully-funded master's scholarships by field of study - renewable energy, water and sanitation, public health, data and AI, engineering and more.{% endblock %}
 
 {% block content %}
 <section class="bg-navy py-10 text-white">
@@ -23,7 +23,7 @@
         <span class="badge bg-teal-light text-teal">{{ field.count }} scholarship{{ field.count|pluralize }}</span>
       </a>
     {% empty %}
-      <p class="text-sm text-navy/50">No fields yet — check back soon.</p>
+      <p class="text-sm text-navy/50">No fields yet - check back soon.</p>
     {% endfor %}
   </div>
 </section>

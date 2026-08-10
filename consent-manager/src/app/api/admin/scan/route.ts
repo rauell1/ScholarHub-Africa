@@ -4,7 +4,7 @@ import { isAdminRequest } from '@/lib/server/rbac';
 import { scanUrl, scanWithHeadless } from '@/lib/scanner/scanner';
 
 /**
- * POST /api/admin/scan — trigger the Automatic Cookie & Tracker Scan.
+ * POST /api/admin/scan - trigger the Automatic Cookie & Tracker Scan.
  * RBAC: role === 'ADMIN' required.
  */
 export async function POST(request: NextRequest) {
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Validate the target strictly (SSRF defence) — http(s) only, real host.
+  // Validate the target strictly (SSRF defence) - http(s) only, real host.
   let parsed: URL;
   try {
     parsed = new URL(target);
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         error:
           error instanceof Error
             ? `Scan failed: ${error.message}`
-            : 'Scan failed — is the URL reachable?',
+            : 'Scan failed - is the URL reachable?',
       },
       { status: 502 },
     );

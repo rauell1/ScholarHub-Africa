@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { resolveRegion } from '@/lib/consent/regions';
 
 /**
- * GET /api/consent/region — authoritative region resolution for the client
+ * GET /api/consent/region - authoritative region resolution for the client
  * hook when the middleware cookie hasn't been read yet.
  */
 export async function GET(request: NextRequest) {

@@ -5,7 +5,7 @@ import { isAdminRequest } from '@/lib/server/rbac';
 import { readConsentLogs } from '@/lib/server/store';
 
 /**
- * GET /api/admin/export/report — printable compliance report (PDF via browser
+ * GET /api/admin/export/report - printable compliance report (PDF via browser
  * print). RBAC: role === 'ADMIN' required.
  */
 export async function GET(request: NextRequest) {

@@ -5,8 +5,8 @@ import { getConfig, saveConfig } from '@/lib/server/store';
 import type { ConsentConfig } from '@/lib/consent/types';
 
 /**
- * GET  /api/admin/config — current banner configuration.
- * PUT  /api/admin/config — persist admin customisations (colors, fonts, texts).
+ * GET  /api/admin/config - current banner configuration.
+ * PUT  /api/admin/config - persist admin customisations (colors, fonts, texts).
  * RBAC: role === 'ADMIN' required.
  */
 export async function GET(request: NextRequest) {

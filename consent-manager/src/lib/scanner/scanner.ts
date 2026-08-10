@@ -2,11 +2,11 @@
  * Automatic Cookie & Tracker Scan.
  *
  * Two modes:
- *   1. `scanUrl(url)`        — fetches a page and statically inspects its
+ *   1. `scanUrl(url)`        - fetches a page and statically inspects its
  *      <script>, <img>, <iframe> and <link> tags, classifying each against
  *      the known-tracker database (categories.ts).
- *   2. `scanDom()`           — runs in the browser on the current page.
- *   3. `scanWithHeadless(url)`— hook for a real headless browser (Puppeteer/
+ *   2. `scanDom()`           - runs in the browser on the current page.
+ *   3. `scanWithHeadless(url)`- hook for a real headless browser (Puppeteer/
  *      Playwright) that executes JS and enumerates actually-set cookies.
  *
  * The admin "Scan" button calls the API route, which runs mode 1 (+ mode 3
@@ -54,7 +54,7 @@ export async function scanUrl(url: string): Promise<ScanResult> {
     const src = match[1];
     trackers.push({ url: src, type: 'script', category: classifyScriptSource(src), source: src });
   }
-  // <script> inline (no src) — sample for tracker keywords
+  // <script> inline (no src) - sample for tracker keywords
   for (const match of html.matchAll(/<script(?![^>]*src)[^>]*>([^<]{0,200})/gi)) {
     const body = match[1];
     if (/fbq|gtag|dataLayer|analytics|tracking/i.test(body)) {
@@ -95,7 +95,7 @@ export async function scanUrl(url: string): Promise<ScanResult> {
         trackers.push({ url: href, type: 'stylesheet', category: classifyScriptSource(href), source: href });
       }
     } catch {
-      /* relative URL — skip */
+      /* relative URL - skip */
     }
   }
 
@@ -130,7 +130,7 @@ export function scanDom(): DetectedTracker[] {
 }
 
 /**
- * Headless hook — when a Puppeteer/Playwright service is available
+ * Headless hook - when a Puppeteer/Playwright service is available
  * (e.g. a Railway worker), call it to enumerate cookies actually set
  * after JS execution. Returns an empty list when not configured.
  */

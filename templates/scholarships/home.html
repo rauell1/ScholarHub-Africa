@@ -1,49 +1,53 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ScholarHub Africa — Scholarships for African Students{% endblock %}
+{% block title %}ScholarHub Africa - Scholarships for African Students{% endblock %}
 
-{% block meta_description %}Discover fully-funded master's scholarships for African students — 45+ human-verified opportunities across 23 countries, scored for fit, with live deadlines.{% endblock %}
+{% block meta_description %}Discover fully-funded master's scholarships for African students - 45+ human-verified opportunities across 23 countries, scored for fit, with live deadlines.{% endblock %}
 
 {% block body_class %}has-sticky-cta{% endblock %}
 
 {% block content %}
 
-<!-- Hero — CTA above the fold on desktop AND mobile (UX checklist #2) -->
-<section class="bg-navy text-white">
-  <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-20">
-    <div class="mx-auto max-w-3xl text-center">
-      <p class="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-teal-light">
+<!-- Hero - CTA above the fold on desktop AND mobile (UX checklist #2) -->
+<section class="relative overflow-hidden bg-gradient-to-br from-navy via-navy-light to-navy text-white">
+  <!-- Decorative blurred circles for premium glass feel -->
+  <div class="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-teal/20 blur-3xl"></div>
+  <div class="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-amber/20 blur-3xl"></div>
+  
+  <div class="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+    <div class="mx-auto max-w-4xl text-center">
+      <p class="mb-6 inline-flex items-center gap-2 rounded-full border border-teal/30 bg-teal/10 px-5 py-2 text-xs font-bold uppercase tracking-widest text-teal-light shadow-glass-dark backdrop-blur-md">
         <span class="h-2 w-2 animate-pulse rounded-full bg-teal"></span>
         {{ stats.open_now }} opportunities open right now
       </p>
-      <h1 class="text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">
-        Fully-funded master's scholarships for <span class="text-teal">African students</span>
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
+        Fully-funded master's scholarships for <span class="bg-gradient-to-r from-teal-light via-teal to-forest-light bg-clip-text text-transparent">African students</span>
       </h1>
-      <p class="mt-4 text-base text-white/70 sm:text-lg">
+      <p class="mx-auto mt-6 max-w-2xl text-base font-medium text-white/80 sm:text-lg">
         Every opportunity on ScholarHub is human-verified against official sources,
         scored for your profile fit, and tracked from research to award.
       </p>
 
-      {# Prominent CTA — visible without scrolling on mobile and desktop #}
-      <div class="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      {# Prominent CTA - visible without scrolling on mobile and desktop #}
+      <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
         <a href="{% url 'scholarships:directory' %}" data-ga-event="cta_click" data-ga-label="hero_browse"
-           class="w-full rounded-xl bg-teal px-8 py-3.5 text-base font-bold text-navy shadow-lg transition hover:bg-teal-light sm:w-auto">
-          🎓 Browse 45+ scholarships
+           class="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-teal to-forest px-8 py-4 text-base font-extrabold text-navy shadow-[0_0_40px_-10px_rgba(20,184,166,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(20,184,166,0.8)] sm:w-auto">
+          <span class="text-xl transition-transform group-hover:-translate-y-1">🎓</span> Browse 45+ scholarships
         </a>
         <a href="{% url 'scholarships:by_country' %}" data-ga-event="cta_click" data-ga-label="hero_by_country"
-           class="w-full rounded-xl border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition hover:bg-white/10 sm:w-auto">
+           class="w-full rounded-2xl border-2 border-white/20 bg-white/5 px-8 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/10 hover:shadow-glass-dark sm:w-auto">
           Explore by country
         </a>
       </div>
       <p class="mt-3 text-xs text-white/50">
-        or search — <a href="{% url 'scholarships:directory' %}?q=DAAD" class="text-teal-light underline">DAAD</a>,
+        or search - <a href="{% url 'scholarships:directory' %}?q=DAAD" class="text-teal-light underline">DAAD</a>,
         <a href="{% url 'scholarships:directory' %}?country=DE" class="text-teal-light underline">Germany</a>,
         <a href="{% url 'scholarships:by_field' %}#water" class="text-teal-light underline">Water</a>,
         <a href="{% url 'scholarships:by_field' %}" class="text-teal-light underline">Public Health</a>
       </p>
 
-      <div class="mx-auto mt-6 max-w-xl">
+      <div class="mx-auto mt-10 max-w-2xl rounded-3xl bg-white/10 p-2 shadow-glass-dark backdrop-blur-md">
         {% include 'components/search_bar.html' with id='hero' large=True %}
       </div>
     </div>
@@ -51,23 +55,23 @@
 </section>
 
 <!-- Stats strip -->
-<section class="border-b border-navy/10 bg-white">
+<section class="border-b border-border bg-background">
   <div class="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 py-6 sm:px-6 md:grid-cols-4">
-    <div class="text-center">
-      <p class="text-3xl font-extrabold text-navy">{{ stats.scholarships }}</p>
-      <p class="text-xs font-semibold uppercase tracking-wide text-navy/50">Verified scholarships</p>
+    <div class="flex flex-col items-center justify-center p-4">
+      <p class="text-4xl font-extrabold bg-gradient-to-r from-navy to-sky bg-clip-text text-transparent dark:from-sky-light dark:to-white">{{ stats.scholarships }}</p>
+      <p class="mt-1 text-xs font-bold uppercase tracking-widest text-foreground/50">Verified scholarships</p>
     </div>
-    <div class="text-center">
-      <p class="text-3xl font-extrabold text-teal">{{ stats.countries }}</p>
-      <p class="text-xs font-semibold uppercase tracking-wide text-navy/50">Destination countries</p>
+    <div class="flex flex-col items-center justify-center p-4">
+      <p class="text-4xl font-extrabold bg-gradient-to-r from-teal-light to-teal bg-clip-text text-transparent">{{ stats.countries }}</p>
+      <p class="mt-1 text-xs font-bold uppercase tracking-widest text-foreground/50">Destination countries</p>
     </div>
-    <div class="text-center">
-      <p class="text-3xl font-extrabold text-amber">{{ stats.open_now }}</p>
-      <p class="text-xs font-semibold uppercase tracking-wide text-navy/50">Open now</p>
+    <div class="flex flex-col items-center justify-center p-4">
+      <p class="text-4xl font-extrabold bg-gradient-to-r from-amber-light to-amber bg-clip-text text-transparent">{{ stats.open_now }}</p>
+      <p class="mt-1 text-xs font-bold uppercase tracking-widest text-foreground/50">Open now</p>
     </div>
-    <div class="text-center">
-      <p class="text-3xl font-extrabold text-forest">{{ stats.verified }}%</p>
-      <p class="text-xs font-semibold uppercase tracking-wide text-navy/50">Human-verified data</p>
+    <div class="flex flex-col items-center justify-center p-4">
+      <p class="text-4xl font-extrabold bg-gradient-to-r from-forest-light to-forest bg-clip-text text-transparent">{{ stats.verified }}%</p>
+      <p class="mt-1 text-xs font-bold uppercase tracking-widest text-foreground/50">Human-verified data</p>
     </div>
   </div>
 </section>
@@ -87,7 +91,7 @@
     {% for scholarship in open_now %}
       {% include 'components/scholarship_card.html' %}
     {% empty %}
-      <p class="text-sm text-navy/50">Nothing open this minute — check back soon.</p>
+      <p class="text-sm text-navy/50">Nothing open this minute - check back soon.</p>
     {% endfor %}
   </div>
 </section>
@@ -102,13 +106,13 @@
       </div>
       <a href="{% url 'scholarships:by_country' %}" class="btn-ghost text-sm font-semibold text-teal hover:text-navy">All countries →</a>
     </div>
-    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
       {% for country in countries %}
         <a href="{% url 'scholarships:directory' %}?country={{ country.iso_code }}"
-           class="card flex items-center gap-2 text-sm font-semibold text-navy hover:border-teal hover:text-teal">
-          <span class="text-xl">{{ country.flag_emoji }}</span>
-          <span class="truncate">{{ country.name }}</span>
-          <span class="badge ml-auto bg-teal-light text-teal">{{ country.count }}</span>
+           class="card group flex flex-col items-center justify-center gap-3 !p-6 text-center hover:-translate-y-1 hover:border-teal hover:shadow-lg dark:hover:shadow-teal/20">
+          <span class="text-4xl transition-transform group-hover:scale-110">{{ country.flag_emoji }}</span>
+          <span class="text-sm font-bold text-foreground">{{ country.name }}</span>
+          <span class="badge bg-teal/10 text-teal">{{ country.count }} opportunities</span>
         </a>
       {% endfor %}
     </div>
@@ -124,13 +128,13 @@
     </div>
     <a href="{% url 'scholarships:by_field' %}" class="btn-ghost text-sm font-semibold text-teal hover:text-navy">All fields →</a>
   </div>
-  <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+  <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
     {% for field in fields %}
       <a href="{% url 'scholarships:directory' %}?field={{ field.slug }}"
-         class="card flex flex-col items-center gap-1.5 text-center hover:border-teal">
-        <span class="text-3xl">{{ field.icon|default:'📘' }}</span>
-        <span class="text-sm font-semibold text-navy">{{ field.name }}</span>
-        <span class="badge bg-navy/5 text-navy/60">{{ field.count }}</span>
+         class="card group flex flex-col items-center justify-center gap-3 !p-6 text-center hover:-translate-y-1 hover:border-teal hover:shadow-lg dark:hover:shadow-teal/20">
+        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-foreground/5 text-2xl transition-transform group-hover:scale-110 group-hover:bg-teal/10">{{ field.icon|default:'📘' }}</span>
+        <span class="text-sm font-bold text-foreground">{{ field.name }}</span>
+        <span class="badge bg-foreground/5 text-foreground/70">{{ field.count }} opportunities</span>
       </a>
     {% endfor %}
   </div>
@@ -155,7 +159,7 @@
       <div class="rounded-2xl bg-white/5 p-6 text-center">
         <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-forest text-xl font-extrabold text-navy">3</span>
         <h3 class="mt-4 font-bold">Track</h3>
-        <p class="mt-2 text-sm text-white/70">Move each application through your tracker — planning, drafting, submitted, decision — with a 24-item document checklist.</p>
+        <p class="mt-2 text-sm text-white/70">Move each application through your tracker - planning, drafting, submitted, decision - with a 24-item document checklist.</p>
       </div>
     </div>
     <div class="mt-8 text-center">

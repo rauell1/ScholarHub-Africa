@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Policy Generators — form-based tools producing a Privacy Policy, Cookie
+ * Policy Generators - form-based tools producing a Privacy Policy, Cookie
  * Policy and Terms of Service from company variables. Generated documents
  * can be previewed, copied and published.
  */
@@ -33,7 +33,7 @@ export function PolicyGenerator() {
     dataTypes: ['Name', 'Email address', 'Consent choices', 'Usage analytics'],
     thirdParties: ['Cloud hosting provider', 'Email delivery service'],
     analyticsTools: ['Privacy-friendly analytics'],
-    marketingTools: ['None by default — added only with consent'],
+    marketingTools: ['None by default - added only with consent'],
     retentionDays: 365,
   });
   const [active, setActive] = useState<PolicyKey>('privacy');

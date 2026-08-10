@@ -19,7 +19,7 @@ def data(db):
     water = FieldOfStudy.objects.create(name='Water & Sanitation', icon='💧')
 
     daad = Scholarship.objects.create(
-        name='DAAD EPOS — Renewable Energy Management (REM)',
+        name='DAAD EPOS - Renewable Energy Management (REM)',
         short_name='DAAD EPOS REM',
         slug='daad-epos-rem',
         country=de,

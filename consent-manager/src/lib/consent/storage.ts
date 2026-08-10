@@ -34,7 +34,7 @@ export function saveStoredConsent(state: ConsentState): void {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
-    // Storage full / disabled (Safari private mode) — banner state still works
+    // Storage full / disabled (Safari private mode) - banner state still works
     // for the current session via the in-memory hook state.
   }
 }

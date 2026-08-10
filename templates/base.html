@@ -7,14 +7,14 @@
   {# Dynamic page title: every page appends its name to the app name (SEO checklist #11). #}
   <title>{% block title %}ScholarHub Africa{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}{{ site.tagline }} Every record is human-verified against official sources and scored for fit.{% endblock %}">
-  {# Self-referencing canonical on every indexable page (path only — no query strings). #}
+  {# Self-referencing canonical on every indexable page (path only - no query strings). #}
   <link rel="canonical" href="{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% endblock %}">
   {% block robots_meta %}{% endblock %}
 
   {% block og_tags %}
-  {# Social share tags — OG + Twitter Card (SEO checklist #13) #}
+  {# Social share tags - OG + Twitter Card (SEO checklist #13) #}
   <meta property="og:site_name" content="{{ site.name }}">
-  <meta property="og:title" content="{% block og_title %}{{ site.name }} — {{ site.tagline }}{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}{{ site.name }} - {{ site.tagline }}{% endblock %}">
   <meta property="og:description" content="{% block og_description %}{{ site.tagline }}{% endblock %}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ request.build_absolute_uri }}">
@@ -23,12 +23,12 @@
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="en_GB">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{% block twitter_title %}{{ site.name }} — {{ site.tagline }}{% endblock %}">
+  <meta name="twitter:title" content="{% block twitter_title %}{{ site.name }} - {{ site.tagline }}{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}{{ site.tagline }}{% endblock %}">
   <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.png' %}">
   {% endblock %}
 
-  {# Google Analytics 4 — consent-gated: the snippet renders ONLY when the   #}
+  {# Google Analytics 4 - consent-gated: the snippet renders ONLY when the   #}
   {# visitor has granted Analytics (sh_consent cookie set by the consent      #}
   {# manager). No choice / Reject → nothing loads, nothing is collected.      #}
   {% if site.ga4_allowed %}
@@ -45,54 +45,57 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/output.css' %}">
-  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/main.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased {% block body_class %}{% endblock %}">
+<body class="{% block body_class %}{% endblock %}">
 
   {% block nav %}
-  <header class="sticky top-0 z-40 bg-navy text-white shadow-md">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6" x-data="{ open: false }">
+  <header class="glass-header text-foreground">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
       <div class="flex h-16 items-center justify-between">
-        <a href="{% url 'scholarships:home' %}" class="flex items-center gap-2 text-lg font-extrabold tracking-tight">
+        <a href="{% url 'scholarships:home' %}" class="flex items-center gap-2 text-lg font-extrabold tracking-tight transition-transform hover:scale-105">
           <span class="text-2xl">🎓</span>
           <span>ScholarHub<span class="text-teal"> Africa</span></span>
         </a>
 
-        <nav class="hidden items-center gap-1 md:flex" aria-label="Main">
-          <a href="{% url 'scholarships:directory' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">Scholarships</a>
-          <a href="{% url 'scholarships:by_country' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">By Country</a>
-          <a href="{% url 'scholarships:by_field' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">By Field</a>
+        <nav class="hidden md:flex items-center gap-2" aria-label="Main">
+          <a href="{% url 'scholarships:directory' %}" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5 transition-colors">Scholarships</a>
+          <a href="{% url 'scholarships:by_country' %}" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5 transition-colors">By Country</a>
+          <a href="{% url 'scholarships:by_field' %}" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5 transition-colors">By Field</a>
           {% if user.is_authenticated %}
-            <a href="{% url 'tracker:dashboard' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">My Tracker</a>
-            <a href="{% url 'tracker:checklist' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">Checklist</a>
+            <a href="{% url 'tracker:dashboard' %}" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5 transition-colors">My Tracker</a>
+            <a href="{% url 'tracker:checklist' %}" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5 transition-colors">Checklist</a>
             {% if user.is_staff %}
-              <a href="{% url 'admin:index' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">Admin</a>
+              <a href="{% url 'admin:index' %}" class="rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5 transition-colors">Admin</a>
             {% endif %}
-            <a href="{% url 'accounts:logout' %}" class="rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy hover:bg-teal-light">Logout</a>
+            <a href="{% url 'accounts:logout' %}" class="btn-primary ml-2">Logout</a>
           {% else %}
-            <a href="{% url 'accounts:login' %}" class="rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy hover:bg-teal-light">Login</a>
+            <a href="{% url 'accounts:login' %}" class="btn-primary ml-2">Login</a>
           {% endif %}
+          <div id="react-theme-toggle" class="ml-2"></div>
         </nav>
 
-        <button @click="open = !open" class="rounded-lg p-2 hover:bg-white/10 md:hidden" aria-label="Toggle menu">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
+        <div class="flex items-center gap-2 md:hidden">
+          <div id="react-theme-toggle-mobile"></div>
+          <button id="mobile-menu-btn" class="rounded-xl p-2 hover:bg-foreground/5 transition-colors" aria-label="Toggle menu">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <div x-show="open" x-cloak class="space-y-1 pb-4 md:hidden">
-        <a href="{% url 'scholarships:directory' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">Scholarships</a>
-        <a href="{% url 'scholarships:by_country' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">By Country</a>
-        <a href="{% url 'scholarships:by_field' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">By Field</a>
+      <div id="mobile-menu" class="hidden space-y-1 pb-4 md:hidden">
+        <a href="{% url 'scholarships:directory' %}" class="block rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5">Scholarships</a>
+        <a href="{% url 'scholarships:by_country' %}" class="block rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5">By Country</a>
+        <a href="{% url 'scholarships:by_field' %}" class="block rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5">By Field</a>
         {% if user.is_authenticated %}
-          <a href="{% url 'tracker:dashboard' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">My Tracker</a>
-          <a href="{% url 'tracker:checklist' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">Checklist</a>
-          <a href="{% url 'accounts:logout' %}" class="block rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy text-center">Logout</a>
+          <a href="{% url 'tracker:dashboard' %}" class="block rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5">My Tracker</a>
+          <a href="{% url 'tracker:checklist' %}" class="block rounded-xl px-3 py-2 text-sm font-medium hover:bg-foreground/5">Checklist</a>
+          <a href="{% url 'accounts:logout' %}" class="block mt-4 btn-primary text-center">Logout</a>
         {% else %}
-          <a href="{% url 'accounts:login' %}" class="block rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy text-center">Login</a>
+          <a href="{% url 'accounts:login' %}" class="block mt-4 btn-primary text-center">Login</a>
         {% endif %}
       </div>
     </div>
@@ -154,11 +157,12 @@
       </div>
     </div>
     <div class="border-t border-navy/10 py-4 text-center text-xs text-navy/50">
-      © {% now "Y" %} ScholarHub Africa — built for Roy, and every African student after him.
+      © {% now "Y" %} ScholarHub Africa - built for Roy, and every African student after him.
     </div>
   </footer>
 
   <script defer src="{% static 'js/alpine.min.js' %}"></script>
+  <script type="module" src="{% static 'dist/main.js' %}"></script>
   <script defer src="{% static 'js/countdown.js' %}"></script>
   <script defer src="{% static 'js/analytics.js' %}"></script>
   {% block extra_scripts %}{% endblock %}

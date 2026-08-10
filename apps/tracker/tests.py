@@ -20,7 +20,7 @@ def user_and_scholarship(db):
         name='Germany', iso_code='DE', flag_emoji='🇩🇪', region='Europe'
     )
     scholarship = Scholarship.objects.create(
-        name='DAAD EPOS — Renewable Energy Management (REM)',
+        name='DAAD EPOS - Renewable Energy Management (REM)',
         short_name='DAAD EPOS REM',
         slug='daad-epos-rem',
         country=country,

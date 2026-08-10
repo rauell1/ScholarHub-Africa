@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Customization Engine — colors, fonts, layout and per-language text for the
+ * Customization Engine - colors, fonts, layout and per-language text for the
  * end-user banner. Persisted via PUT /api/admin/config.
  */
 import { useEffect, useState } from 'react';
@@ -168,7 +168,7 @@ export function CustomizationEngine() {
       {/* Per-language texts */}
       <section className="admin-card">
         <div className="admin-card__row">
-          <h2>Banner text — translations</h2>
+          <h2>Banner text - translations</h2>
           <select value={editingLanguage} onChange={(e) => setEditingLanguage(e.target.value)}>
             {SUPPORTED_LANGUAGES.map((code) => (
               <option key={code} value={code}>

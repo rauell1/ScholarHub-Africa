@@ -4,7 +4,7 @@ import { isAdminRequest } from '@/lib/server/rbac';
 import { readConsentLogs } from '@/lib/server/store';
 
 /**
- * GET /api/admin/logs — consent audit log with pagination & filters.
+ * GET /api/admin/logs - consent audit log with pagination & filters.
  * RBAC: role === 'ADMIN' required.
  */
 export async function GET(request: NextRequest) {

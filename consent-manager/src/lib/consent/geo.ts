@@ -19,7 +19,7 @@ export async function resolveRegionClient(): Promise<ConsentRegion> {
       return data.region;
     }
   } catch {
-    /* network failure — fall through to 'none' */
+    /* network failure - fall through to 'none' */
   }
   return 'none';
 }

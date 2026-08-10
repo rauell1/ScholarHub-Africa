@@ -29,7 +29,7 @@ def site_settings(request):
             'name': 'ScholarHub Africa',
             'domain': settings.SITE_DOMAIN,
             'tagline': (
-                "Fully-funded master's scholarships for African students — "
+                "Fully-funded master's scholarships for African students - "
                 'human-verified, scored for fit.'
             ),
             'email': settings.COMPANY_EMAIL,

@@ -4,7 +4,7 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Never cache consent APIs — they are time-sensitive and compliance-critical.
+        // Never cache consent APIs - they are time-sensitive and compliance-critical.
         source: '/api/:path*',
         headers: [
           { key: 'Cache-Control', value: 'no-store, max-age=0' },

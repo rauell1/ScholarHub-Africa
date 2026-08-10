@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Preferences modal — fine-grained category toggles.
+ * Preferences modal - fine-grained category toggles.
  * "Necessary" is locked ON and cannot be disabled.
  */
 import { useState } from 'react';

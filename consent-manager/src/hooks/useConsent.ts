@@ -1,5 +1,5 @@
 /**
- * useConsent — the core end-user hook.
+ * useConsent - the core end-user hook.
  *
  * Responsibilities:
  *   1. Load persisted consent (localStorage, versioned) → banner visibility.
@@ -86,7 +86,7 @@ export function useConsent(language = 'en'): UseConsentResult {
       const resolved = await resolveRegionClient();
       if (cancelled) return;
 
-      // 1) Google Consent Mode v2 — default posture BEFORE any tag runs.
+      // 1) Google Consent Mode v2 - default posture BEFORE any tag runs.
       pushConsentDefault(resolved);
 
       // 2) If we already have stored consent, re-apply (scripts, GCM update).

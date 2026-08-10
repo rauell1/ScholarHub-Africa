@@ -14,8 +14,8 @@ def breadcrumbs(context, items, current=None):
 
     Usage: {% load pages_tags %}
            {% breadcrumbs items=breadcrumbs_items current=page_title %}
-    `items`   — list of (label, url) tuples; url may be '' or None for plain text.
-    `current` — label of the current page (rendered as the last, non-linked crumb).
+    `items`   - list of (label, url) tuples; url may be '' or None for plain text.
+    `current` - label of the current page (rendered as the last, non-linked crumb).
     """
     crumbs = []
     for index, (label, url) in enumerate(list(items or []), start=1):

@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Automatic Cookie & Tracker Scan — triggers the headless/static scanner via
+ * Automatic Cookie & Tracker Scan - triggers the headless/static scanner via
  * POST /api/admin/scan and presents findings grouped by cookie category.
  */
 import { useState } from 'react';
@@ -76,7 +76,7 @@ export function CookieScanner() {
       {result && (
         <>
           <div className="admin-card">
-            <h2>Findings — {result.url}</h2>
+            <h2>Findings - {result.url}</h2>
             <p className="admin-muted">
               Scanned {result.scannedAt.replace('T', ' ').slice(0, 19)} UTC
               {result.headless ? ' · headless (JS-executed)' : ' · static HTML analysis'}

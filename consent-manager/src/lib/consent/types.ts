@@ -1,5 +1,5 @@
 /**
- * Consent domain types — shared by the end-user environment, the admin
+ * Consent domain types - shared by the end-user environment, the admin
  * environment, API routes and the storage layer.
  */
 
@@ -17,7 +17,7 @@ export interface ConsentState {
   consentString: string;
   /** IAB TCF 2.3 TC string (empty when not applicable). */
   tcfString: string;
-  /** Schema version — bump to invalidate stale stored consents. */
+  /** Schema version - bump to invalidate stale stored consents. */
   version: number;
   accepted: boolean;
   timestamp: string;

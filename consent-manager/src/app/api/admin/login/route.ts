@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { buildSessionCookieValue, ADMIN_SESSION_COOKIE } from '@/lib/server/rbac';
 
 /**
- * POST /api/admin/login — demo auth for the admin environment.
+ * POST /api/admin/login - demo auth for the admin environment.
  * Verifies credentials against env vars, then sets an HttpOnly session
  * cookie carrying `role === 'ADMIN'`. Swap for NextAuth/IdP in production.
  */

@@ -34,8 +34,8 @@ COUNTRIES = [
     ('Singapore', 'SG', '🇸🇬', 'Asia'),
     ('Saudi Arabia', 'SA', '🇸🇦', 'Asia'),
     ('South Africa', 'ZA', '🇿🇦', 'Africa'),
-    ('Multi — Europe', 'EU', '🇪🇺', 'Multi'),
-    ('Multi — Global', 'GL', '🌍', 'Multi'),
+    ('Multi - Europe', 'EU', '🇪🇺', 'Multi'),
+    ('Multi - Global', 'GL', '🌍', 'Multi'),
 ]
 
 FIELDS = [
@@ -97,7 +97,7 @@ def S(name, country, funding_type, elig, score, status, deadline, cycle,
         'action_required': action_required,
         'official_link': official_link,
         'is_verified': True,
-        'verified_source': 'Official programme website — human-verified Aug 2026',
+        'verified_source': 'Official programme website - human-verified Aug 2026',
         'verified_at': '2026-08-01T09:00:00+03:00',
         'is_featured': is_featured,
     }
@@ -108,10 +108,10 @@ VERIFIED = ('is_verified', 'verified_source', 'verified_at')
 SCHOLARSHIPS = [
     # ── Germany ────────────────────────────────────────────────────────────
     S(
-        'DAAD EPOS — Renewable Energy Management (REM)',
+        'DAAD EPOS - Renewable Energy Management (REM)',
         'DE', 'full', 'CE', 93, 'open_now', '2026-10-31', 2027,
         fields=['renewable-energy', 'energy-efficiency', 'management', 'environmental-science'],
-        short='DAAD EPOS — REM', programme='MSc Renewable Energy Management',
+        short='DAAD EPOS - REM', programme='MSc Renewable Energy Management',
         university='TH Köln (University of Applied Sciences), Cologne',
         funding_detail='€992/month + tuition + travel + health insurance',
         english_requirement='TOEFL iBT 90 / IELTS 6.5 (or equivalent)',
@@ -119,7 +119,7 @@ SCHOLARSHIPS = [
         nationality_notes='Open to developing-country nationals, incl. Kenya',
         mba_impact='disqualifies',
         mba_notes='DAAD EPOS generally does not fund MBA/EMBA programmes.',
-        deadline_notes='~31 Oct 2026 — always verify at daad.de',
+        deadline_notes='~31 Oct 2026 - always verify at daad.de',
         notes='Flagship DAAD development-related postgraduate course (EPOS). '
               'Focus on renewable energy systems, policy and management in the '
               'Global South. German taught to B1 before the course starts.',
@@ -129,10 +129,10 @@ SCHOLARSHIPS = [
         competitiveness='Very High', is_featured=True,
     ),
     S(
-        'DAAD EPOS — Integrated Water Resources Management (IWRM)',
+        'DAAD EPOS - Integrated Water Resources Management (IWRM)',
         'DE', 'full', 'CE', 91, 'open_now', '2026-10-31', 2027,
         fields=['water-sanitation', 'environmental-science', 'urban-planning'],
-        short='DAAD EPOS — IWRM', programme='MSc Integrated Water Resources Management',
+        short='DAAD EPOS - IWRM', programme='MSc Integrated Water Resources Management',
         university='TH Köln (University of Applied Sciences), Cologne',
         funding_detail='€992/month + tuition + travel + health insurance',
         english_requirement='TOEFL iBT 90 / IELTS 6.5 (or equivalent)',
@@ -140,7 +140,7 @@ SCHOLARSHIPS = [
         nationality_notes='Open to developing-country nationals, incl. Kenya',
         mba_impact='disqualifies',
         mba_notes='DAAD EPOS generally does not fund MBA/EMBA programmes.',
-        deadline_notes='~31 Oct 2026 — always verify at daad.de',
+        deadline_notes='~31 Oct 2026 - always verify at daad.de',
         notes='Covers water governance, hydrology, and IWRM tools. Strong fit '
               'for water engineers and environmental officers.',
         action_required='Two recommendation letters + 1-2 years of professional '
@@ -149,10 +149,10 @@ SCHOLARSHIPS = [
         competitiveness='Very High',
     ),
     S(
-        'DAAD EPOS — Renewable Energy and Energy Efficiency for the MENA Region',
+        'DAAD EPOS - Renewable Energy and Energy Efficiency for the MENA Region',
         'DE', 'full', 'CE', 90, 'open_now', '2026-10-31', 2027,
         fields=['renewable-energy', 'energy-efficiency', 'electrical-engineering'],
-        short='DAAD EPOS — M.Sc. REEE', programme='MSc Renewable Energy & Energy Efficiency',
+        short='DAAD EPOS - M.Sc. REEE', programme='MSc Renewable Energy & Energy Efficiency',
         university='Hochschule Anhalt, Köthen',
         funding_detail='€992/month + tuition + travel + health insurance',
         english_requirement='IELTS 6.5 / TOEFL 90',
@@ -160,7 +160,7 @@ SCHOLARSHIPS = [
         nationality_notes='Open to developing-country nationals, incl. Kenya',
         mba_impact='disqualifies',
         mba_notes='DAAD EPOS generally does not fund MBA/EMBA programmes.',
-        deadline_notes='~31 Oct 2026 — always verify at daad.de',
+        deadline_notes='~31 Oct 2026 - always verify at daad.de',
         notes='Hands-on lab-focused MSc in renewable energy technologies and '
               'energy efficiency, with a strong practical component.',
         action_required='Prepare academic transcripts (translated) and a CV in '
@@ -169,10 +169,10 @@ SCHOLARSHIPS = [
         competitiveness='High',
     ),
     S(
-        'DAAD EPOS — Photogrammetry and Geoinformatics',
+        'DAAD EPOS - Photogrammetry and Geoinformatics',
         'DE', 'full', 'LE', 88, 'open_now', '2026-10-31', 2027,
         fields=['data-ai', 'environmental-science', 'urban-planning'],
-        short='DAAD EPOS — PG', programme='MSc Photogrammetry and Geoinformatics',
+        short='DAAD EPOS - PG', programme='MSc Photogrammetry and Geoinformatics',
         university='HFT Stuttgart',
         funding_detail='€992/month + tuition + travel + health insurance',
         english_requirement='TOEFL iBT 90 / IELTS 6.5',
@@ -180,8 +180,8 @@ SCHOLARSHIPS = [
         nationality_notes='Open to developing-country nationals, incl. Kenya',
         mba_impact='disqualifies',
         mba_notes='DAAD EPOS generally does not fund MBA/EMBA programmes.',
-        deadline_notes='~31 Oct 2026 — always verify at daad.de',
-        notes='GIS, remote sensing and geoinformatics — great for surveyors and '
+        deadline_notes='~31 Oct 2026 - always verify at daad.de',
+        notes='GIS, remote sensing and geoinformatics - great for surveyors and '
               'environmental data specialists.',
         action_required='Ensure strong GIS/maths background documented in CV.',
         official_link='https://www.daad.de/en/study-and-research-in-germany/scholarships/epos/',
@@ -200,7 +200,7 @@ SCHOLARSHIPS = [
         mba_impact='risk',
         mba_notes='MBA holders may apply only if the new master is in a clearly '
                   'different field (policy/governance).',
-        deadline_notes='~30 Nov 2026 — verify at daad.de',
+        deadline_notes='~30 Nov 2026 - verify at daad.de',
         notes='Prepares future leaders in public policy, governance and peace '
               'studies. Strong fit for public-sector applicants.',
         action_required='Draft policy-focused motivation essay (2 pages).',
@@ -216,11 +216,11 @@ SCHOLARSHIPS = [
         university='Any UK university',
         funding_detail='Full tuition + monthly stipend + flights + visa + more',
         english_requirement='IELTS 6.5+ (typical UK entry requirement)',
-        nationality_notes='Open to Kenyan citizens — 2+ years work experience required',
+        nationality_notes='Open to Kenyan citizens - 2+ years work experience required',
         mba_impact='check',
         mba_notes='Chevening funds one-year taught master\'s; MBA eligibility '
                   'depends on the course and business school ranking.',
-        deadline_notes='~03 Nov 2026 — verify at chevening.org',
+        deadline_notes='~03 Nov 2026 - verify at chevening.org',
         notes='The UK government\'s global scholarship. Requires leadership '
               'track record and a clear plan to return to Kenya for 2+ years.',
         action_required='Submit 4 essays (leadership, networking, study plan, '
@@ -236,9 +236,9 @@ SCHOLARSHIPS = [
         university='UK partner universities',
         funding_detail='Full tuition + stipend + flights (shared with universities)',
         english_requirement='Upper-second-class degree + IELTS per university',
-        nationality_notes='Open to Commonwealth citizens — Kenya eligible',
+        nationality_notes='Open to Commonwealth citizens - Kenya eligible',
         mba_impact='none',
-        deadline_notes='~Jan 2027 — verify at cscuk.fcdo.gov.uk',
+        deadline_notes='~Jan 2027 - verify at cscuk.fcdo.gov.uk',
         notes='Funded by the UK FCDO, jointly with UK universities. Focus on '
               'development-related subjects aligned with the Sustainable '
               'Development Goals.',
@@ -255,9 +255,9 @@ SCHOLARSHIPS = [
         university='UK universities',
         funding_detail='Full tuition + stipend + flights + arrival allowance',
         english_requirement='IELTS 6.5+ (typical)',
-        nationality_notes='Open to Commonwealth citizens — Kenya eligible',
+        nationality_notes='Open to Commonwealth citizens - Kenya eligible',
         mba_impact='none',
-        deadline_notes='~Mar 2027 — verify at cscuk.fcdo.gov.uk',
+        deadline_notes='~Mar 2027 - verify at cscuk.fcdo.gov.uk',
         notes='One of the most competitive UK government scholarships for '
               'development-focused study.',
         action_required='Prepare development-impact statement and transcripts.',
@@ -272,10 +272,10 @@ SCHOLARSHIPS = [
         university='University of Cambridge',
         funding_detail='Full tuition + £21,000/year stipend + visa + flights',
         english_requirement='IELTS 7.5 / TOEFL 110 (Cambridge standard)',
-        nationality_notes='Open to all nationalities — non-UK applicants',
+        nationality_notes='Open to all nationalities - non-UK applicants',
         mba_impact='check',
         mba_notes='MBA at Cambridge Judge is eligible; note the fee structure.',
-        deadline_notes='~05 Jan 2027 (most courses) — verify at gatescambridge.org',
+        deadline_notes='~05 Jan 2027 (most courses) - verify at gatescambridge.org',
         notes='Founded in memory of Bill Gates Sr. Covers any postgraduate '
               'degree. Very strong research record expected.',
         action_required='Admission to Cambridge is required FIRST; then the '
@@ -292,14 +292,14 @@ SCHOLARSHIPS = [
         funding_detail='Full tuition + £19,237/year stipend + flights + more',
         english_requirement='IELTS 7.0+ / TOEFL 100 (Oxford standard)',
         age_max=29,
-        nationality_notes='Kenya constituency — aged 19–28, first degree completed',
+        nationality_notes='Kenya constituency - aged 19–28, first degree completed',
         mba_impact='check',
         mba_notes='MBA at Saïd Business School is eligible.',
-        deadline_notes='~31 Aug 2026 — verify at rhodeshouse.ox.ac.uk',
+        deadline_notes='~31 Aug 2026 - verify at rhodeshouse.ox.ac.uk',
         notes='The oldest and one of the most prestigious graduate scholarships '
               'in the world. Selection emphasises character, leadership and '
               'academic excellence.',
-        action_required='Start now — application window closes end of August.',
+        action_required='Start now - application window closes end of August.',
         official_link='https://www.rhodeshouse.ox.ac.uk/scholarships/kenya/',
         competitiveness='Very High',
     ),
@@ -314,8 +314,8 @@ SCHOLARSHIPS = [
         nationality_notes='Open to all nationalities',
         mba_impact='check',
         mba_notes='Covers full-time MSc/MBA at Saïd Business School.',
-        deadline_notes='~08 Jan 2027 — verify at ox.ac.uk/clarendon',
-        notes='Oxford\'s flagship scholarship fund — ~500 new awards yearly, '
+        deadline_notes='~08 Jan 2027 - verify at ox.ac.uk/clarendon',
+        notes='Oxford\'s flagship scholarship fund - ~500 new awards yearly, '
               'awarded automatically with admission.',
         action_required='Apply for admission to Oxford by the January deadline; '
                         'no separate Clarendon application.',
@@ -323,7 +323,7 @@ SCHOLARSHIPS = [
         competitiveness='Very High',
     ),
     S(
-        'Mastercard Foundation Scholars — University of Edinburgh',
+        'Mastercard Foundation Scholars - University of Edinburgh',
         'UK', 'full', 'CE', 84, 'opening_soon', '2026-11-30', 2027,
         fields=['public-health', 'education', 'agriculture', 'data-ai'],
         short='MCF Edinburgh', programme='Eligible one-year master\'s programmes',
@@ -332,7 +332,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5+ (per programme)',
         nationality_notes='For young Africans (incl. Kenya) committed to returning to Africa',
         mba_impact='none',
-        deadline_notes='~30 Nov 2026 — verify at mastercardfdn.org',
+        deadline_notes='~30 Nov 2026 - verify at mastercardfdn.org',
         notes='Holistic scholarship including mentorship, leadership '
               'development and entrepreneurship training.',
         action_required='Separate MCF application after (or with) admission.',
@@ -368,7 +368,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 / TOEFL 90',
         nationality_notes='Open to non-EU/EEA students',
         mba_impact='none',
-        deadline_notes='~01 Dec 2026 (non-EU) — verify at utwente.nl',
+        deadline_notes='~01 Dec 2026 (non-EU) - verify at utwente.nl',
         notes='Covers a significant share of tuition for excellent '
               'international students.',
         action_required='Admission application + separate UTS motivation letter.',
@@ -385,7 +385,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 / TOEFL 90',
         nationality_notes='Excellent non-EU/EEA students',
         mba_impact='none',
-        deadline_notes='~01 Dec 2026 — verify at tudelft.nl',
+        deadline_notes='~01 Dec 2026 - verify at tudelft.nl',
         notes='Engineering-focused. Living costs (~€1,200/month) must be '
               'self-funded.',
         action_required='Strong GPA + two letters of recommendation.',
@@ -402,7 +402,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.0+ (per institution)',
         nationality_notes='Non-EEA students applying for the first time',
         mba_impact='none',
-        deadline_notes='~01 Feb 2027 — verify at studyinholland.nl',
+        deadline_notes='~01 Feb 2027 - verify at studyinholland.nl',
         notes='One-off grant for non-EEA students; combine with other funding.',
         action_required='Admission first; institution nominates applicants.',
         official_link='https://www.studyinholland.nl/scholarships/holland-scholarship',
@@ -420,7 +420,7 @@ SCHOLARSHIPS = [
         experience_years_min=3.0,
         nationality_notes='Open to Kenyan citizens',
         mba_impact='none',
-        deadline_notes='~09 Feb 2027 — verify at si.se',
+        deadline_notes='~09 Feb 2027 - verify at si.se',
         notes='Leadership-focused scholarship for global development '
               'professionals. Includes SI Network for Future Global Leaders.',
         action_required='Admission to a Swedish programme by ~15 Jan, then SI '
@@ -438,7 +438,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 / TOEFL 90',
         nationality_notes='Open to students from 31 eligible countries incl. Kenya',
         mba_impact='none',
-        deadline_notes='~01 Feb 2027 — verify at vliruos.be',
+        deadline_notes='~01 Feb 2027 - verify at vliruos.be',
         notes='Belgium\'s flagship development scholarships across water, '
               'agriculture, health and environment.',
         action_required='Two online application rounds; strong motivation '
@@ -454,9 +454,9 @@ SCHOLARSHIPS = [
         university='ETH Zurich',
         funding_detail='Full tuition + CHF 12,000/semester living contribution',
         english_requirement='English proficiency per programme; German often required',
-        nationality_notes='Open to all — based on academic excellence',
+        nationality_notes='Open to all - based on academic excellence',
         mba_impact='none',
-        deadline_notes='~15 Dec 2026 — verify at ethz.ch',
+        deadline_notes='~15 Dec 2026 - verify at ethz.ch',
         notes='Two-part award: scholarship + teaching assistant role. '
               'Extraordinarily competitive.',
         action_required='Outstanding grades (top 10%) + faculty nomination.',
@@ -471,9 +471,9 @@ SCHOLARSHIPS = [
         university='EPFL, Lausanne',
         funding_detail='Full tuition + CHF 16,000/year stipend',
         english_requirement='TOEFL 95 / IELTS 7.0 (or equivalent)',
-        nationality_notes='Open to all — based on academic excellence',
+        nationality_notes='Open to all - based on academic excellence',
         mba_impact='none',
-        deadline_notes='~15 Jan 2027 (round 1) — verify at epfl.ch',
+        deadline_notes='~15 Jan 2027 (round 1) - verify at epfl.ch',
         notes='Awarded to the top MSc applicants across EPFL\'s engineering '
               'and computer science programmes.',
         action_required='Apply for EPFL admission; fellowship awarded '
@@ -492,14 +492,14 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 / TOEFL 83',
         nationality_notes='Non-EU/EEA students in specific country groups',
         mba_impact='none',
-        deadline_notes='~15 Jan 2027 — verify at ku.dk',
+        deadline_notes='~15 Jan 2027 - verify at ku.dk',
         notes='Tuition waiver plus a limited number of monthly stipends.',
         action_required='Admission + scholarship application in one portal.',
         official_link='https://studies.ku.dk/masters/scholarships-grants/danish-government-scholarships/',
         competitiveness='Moderate',
     ),
     S(
-        'University of Helsinki — Finland Scholarship',
+        'University of Helsinki - Finland Scholarship',
         'FI', 'tuition_only', 'PE', 71, 'open_now', '2027-01-15', 2027,
         fields=['education', 'data-ai', 'environmental-science'],
         short='Finland Scholarship', programme='Eligible master\'s programmes at UH',
@@ -508,7 +508,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 / TOEFL 92',
         nationality_notes='Non-EU/EEA students',
         mba_impact='none',
-        deadline_notes='~15 Jan 2027 — verify at helsinki.fi',
+        deadline_notes='~15 Jan 2027 - verify at helsinki.fi',
         notes='Covers tuition; the €5,000 grant helps with relocation and '
               'early living costs.',
         action_required='Apply for admission by the January deadline.',
@@ -525,7 +525,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 5.5–6.5 (per programme)',
         nationality_notes='Open to Kenyan applicants via Kenya\'s Ministry of Education',
         mba_impact='none',
-        deadline_notes='~15 Jan 2027 — verify at stipendiumhungaricum.hu',
+        deadline_notes='~15 Jan 2027 - verify at stipendiumhungaricum.hu',
         notes='Large government programme; Kenyan quota applies through the '
               'Ministry of Education.',
         action_required='Application endorsed by Kenya\'s Ministry of '
@@ -544,7 +544,7 @@ SCHOLARSHIPS = [
         age_max=35,
         nationality_notes='Open to Kenyan citizens',
         mba_impact='none',
-        deadline_notes='~20 Feb 2027 — verify at turkiyeburslari.gov.tr',
+        deadline_notes='~20 Feb 2027 - verify at turkiyeburslari.gov.tr',
         notes='One application covers admission + scholarship; highly '
               'structured with university placement.',
         action_required='Single online application with 1 recommendation '
@@ -563,9 +563,9 @@ SCHOLARSHIPS = [
         english_requirement='TOEFL iBT 80+ (typical US entry)',
         nationality_notes='Kenyan citizens with 2+ years of work experience',
         mba_impact='check',
-        mba_notes='MBA eligible in some years — confirm with the Kenyan '
+        mba_notes='MBA eligible in some years - confirm with the Kenyan '
                   'Fulbright commission.',
-        deadline_notes='~May 2027 — verify at usief.or.ke',
+        deadline_notes='~May 2027 - verify at usief.or.ke',
         notes='Flagship US exchange scholarship via the US International '
               'University Exchange Program (USIEF) in Kenya.',
         action_required='Attend USIEF information session; strong TOEFL/GRE '
@@ -574,7 +574,7 @@ SCHOLARSHIPS = [
         competitiveness='Very High',
     ),
     S(
-        'Knight-Hennessy Scholars — Stanford',
+        'Knight-Hennessy Scholars - Stanford',
         'US', 'full', 'LE', 91, 'opening_soon', '2026-10-14', 2027,
         fields=['management', 'data-ai', 'public-policy', 'economics'],
         short='Knight-Hennessy', programme='Any graduate degree at Stanford (incl. MBA, MS, JD)',
@@ -584,7 +584,7 @@ SCHOLARSHIPS = [
         nationality_notes='Open to all nationalities',
         mba_impact='none',
         mba_notes='Fully funds the Stanford GSB MBA.',
-        deadline_notes='~14 Oct 2026 — verify at knight-hennessy.stanford.edu',
+        deadline_notes='~14 Oct 2026 - verify at knight-hennessy.stanford.edu',
         notes='Develops a multidisciplinary community of emerging leaders. '
               'Admission to a Stanford graduate programme required.',
         action_required='Stanford admission application + KH application '
@@ -601,9 +601,9 @@ SCHOLARSHIPS = [
         funding_detail='Full tuition + stipend + travel (up to 2 years)',
         english_requirement='IELTS 7.0 / TOEFL 100 (per partner)',
         experience_years_min=3.0,
-        nationality_notes='Open to all — 3+ years peace/development experience',
+        nationality_notes='Open to all - 3+ years peace/development experience',
         mba_impact='none',
-        deadline_notes='~15 May 2027 — verify at rotary.org',
+        deadline_notes='~15 May 2027 - verify at rotary.org',
         notes='For professionals working in peacebuilding, conflict '
               'resolution and development.',
         action_required='Endorsement from a Rotary club or district.',
@@ -621,7 +621,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 (per institution)',
         nationality_notes='Kenya is an eligible partner country',
         mba_impact='none',
-        deadline_notes='~30 Apr 2027 — verify at australiaawardsafrica.org',
+        deadline_notes='~30 Apr 2027 - verify at australiaawardsafrica.org',
         notes='DFAT\'s development scholarships across Africa. Strong '
               'commitment to return and contribute required.',
         action_required='Statement of development impact + employer support '
@@ -639,7 +639,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 (per institution)',
         nationality_notes='Kenya is an eligible country',
         mba_impact='none',
-        deadline_notes='~28 Feb 2027 — verify at scholarships.nz',
+        deadline_notes='~28 Feb 2027 - verify at scholarships.nz',
         notes='Development-focused scholarships administered by MFAT.',
         action_required='Prepare a development impact statement.',
         official_link='https://www.scholarships.govt.nz/',
@@ -657,7 +657,7 @@ SCHOLARSHIPS = [
         age_max=34,
         nationality_notes='Kenyan citizens via the Embassy of Japan in Nairobi',
         mba_impact='none',
-        deadline_notes='~May–Jun 2027 — verify at ke.emb-japan.go.jp',
+        deadline_notes='~May–Jun 2027 - verify at ke.emb-japan.go.jp',
         notes='Embassy-recommended track: exams + interview in Nairobi, then '
               'placement in a Japanese university.',
         action_required='Prepare for written exams (English + subject) at the '
@@ -677,7 +677,7 @@ SCHOLARSHIPS = [
         gpa_minimum=0.80,
         nationality_notes='Open to Kenyan applicants via embassy/universities track',
         mba_impact='none',
-        deadline_notes='~Mar 2027 — verify at studyinkorea.go.kr',
+        deadline_notes='~Mar 2027 - verify at studyinkorea.go.kr',
         notes='Comprehensive Korean government scholarship with language '
               'training included.',
         action_required='Two tracks: embassy (Mar) or university (later).',
@@ -694,7 +694,7 @@ SCHOLARSHIPS = [
         english_requirement='TOEFL iBT 83 / IELTS 6.5 (typical)',
         nationality_notes='Open to all international students',
         mba_impact='none',
-        deadline_notes='~Apr 2027 (fall intake) — verify at kaist.ac.kr',
+        deadline_notes='~Apr 2027 (fall intake) - verify at kaist.ac.kr',
         notes='Research-oriented MS with monthly assistantship stipends.',
         action_required='Contact potential supervisors (thesis track).',
         official_link='https://admission.kaist.ac.kr/intl-graduate/',
@@ -710,8 +710,8 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 / TOEFL 90 (per institution)',
         nationality_notes='Open to ADB developing-member nationals incl. Kenya',
         mba_impact='none',
-        deadline_notes='~Apr 2027 — verify at adb.org',
-        notes='Funded by Japan, administered by ADB — for economics, '
+        deadline_notes='~Apr 2027 - verify at adb.org',
+        notes='Funded by Japan, administered by ADB - for economics, '
               'management, science & technology.',
         action_required='Admission to a partner institution first.',
         official_link='https://www.adb.org/work-with-us/careers/adb-japan-scholarship-program',
@@ -728,7 +728,7 @@ SCHOLARSHIPS = [
         age_max=35,
         nationality_notes='Open to Kenyan applicants (bilateral track)',
         mba_impact='none',
-        deadline_notes='~Mar 2027 — verify at campuschina.org',
+        deadline_notes='~Mar 2027 - verify at campuschina.org',
         notes='China\'s main scholarship channel via the Chinese Embassy in '
               'Nairobi (bilateral) or universities.',
         action_required='CSC online application + embassy nomination.',
@@ -745,7 +745,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 / TOEFL 92',
         nationality_notes='Open to all international students',
         mba_impact='none',
-        deadline_notes='~Jun 2027 (Jan 2028 intake) — verify at singa.a-star.edu.sg',
+        deadline_notes='~Jun 2027 (Jan 2028 intake) - verify at singa.a-star.edu.sg',
         notes='Research scholarship covering PhD at top Singaporean '
               'institutions.',
         action_required='Strong research proposal + referee reports.',
@@ -762,7 +762,7 @@ SCHOLARSHIPS = [
         english_requirement='TOEFL 79 / IELTS 6.5 (typical)',
         nationality_notes='Open to all nationalities',
         mba_impact='none',
-        deadline_notes='Rolling — verify at kaust.edu.sa',
+        deadline_notes='Rolling - verify at kaust.edu.sa',
         notes='One of the most generous graduate packages in the world. '
               'Research-focused with on-campus housing.',
         action_required='Online application with 2 recommendation letters; '
@@ -782,7 +782,7 @@ SCHOLARSHIPS = [
         age_max=29,
         nationality_notes='African citizens aged 19–29',
         mba_impact='none',
-        deadline_notes='~21 Apr 2027 — verify at mandelarhodes.org',
+        deadline_notes='~21 Apr 2027 - verify at mandelarhodes.org',
         notes='Combines funding with a life-changing leadership development '
               'programme at the Mandela Rhodes Foundation.',
         action_required='Strong academic record + leadership evidence.',
@@ -791,7 +791,7 @@ SCHOLARSHIPS = [
     ),
     # ── Multi-country programmes ────────────────────────────────────────────
     S(
-        'Erasmus Mundus Joint Master — FIPDes (Food Innovation & Product Design)',
+        'Erasmus Mundus Joint Master - FIPDes (Food Innovation & Product Design)',
         'EU', 'full', 'LE', 82, 'open_now', '2027-01-15', 2027,
         fields=['agriculture', 'management', 'data-ai'],
         short='EMJM FIPDes', programme='MSc Food Innovation & Product Design',
@@ -800,7 +800,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 / TOEFL 90',
         nationality_notes='Category A: non-European students (Kenya eligible)',
         mba_impact='none',
-        deadline_notes='~15 Jan 2027 — verify at fipdes.eu',
+        deadline_notes='~15 Jan 2027 - verify at fipdes.eu',
         notes='Flagship Erasmus Mundus joint master\'s in food science across '
               'France, Ireland, Italy and Denmark.',
         action_required='Online application + 2 reference letters + video '
@@ -809,7 +809,7 @@ SCHOLARSHIPS = [
         competitiveness='High',
     ),
     S(
-        'Erasmus Mundus Joint Master — IMRD (Rural Development)',
+        'Erasmus Mundus Joint Master - IMRD (Rural Development)',
         'EU', 'full', 'LE', 83, 'open_now', '2027-03-01', 2027,
         fields=['agriculture', 'environmental-science', 'economics'],
         short='EMJM IMRD', programme='MSc International Master in Rural Development',
@@ -818,15 +818,15 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 / TOEFL 90',
         nationality_notes='Category A: non-European students (Kenya eligible)',
         mba_impact='none',
-        deadline_notes='~01 Mar 2027 — verify at erasmusmundus.imrd.fr',
-        notes='One of the largest EMJM programmes — rural development, '
+        deadline_notes='~01 Mar 2027 - verify at erasmusmundus.imrd.fr',
+        notes='One of the largest EMJM programmes - rural development, '
               'agri-food policy and sustainable livelihoods.',
         action_required='Motivation letter + transcripts + 2 references.',
         official_link='https://www.imrd.fr/',
         competitiveness='High',
     ),
     S(
-        'Erasmus Mundus Joint Master — Flood Risk Management (FLOODMaster)',
+        'Erasmus Mundus Joint Master - Flood Risk Management (FLOODMaster)',
         'EU', 'full', 'LE', 81, 'open_now', '2027-02-01', 2027,
         fields=['water-sanitation', 'civil-engineering', 'environmental-science'],
         short='EMJM FLOODMaster', programme='MSc Flood Risk Management',
@@ -835,7 +835,7 @@ SCHOLARSHIPS = [
         english_requirement='IELTS 6.5 / TOEFL 90',
         nationality_notes='Category A: non-European students (Kenya eligible)',
         mba_impact='none',
-        deadline_notes='~01 Feb 2027 — verify at floodmaster.nl',
+        deadline_notes='~01 Feb 2027 - verify at floodmaster.nl',
         notes='Specialised water-engineering master\'s with mobility across '
               'the Netherlands, Germany and Spain.',
         action_required='Engineering background + online application.',
@@ -850,10 +850,10 @@ SCHOLARSHIPS = [
         university='Universities across the Commonwealth',
         funding_detail='Full tuition + living allowance + flights + settlement grant',
         english_requirement='IELTS 6.5 (typical)',
-        nationality_notes='Open to Commonwealth citizens — Kenya eligible',
+        nationality_notes='Open to Commonwealth citizens - Kenya eligible',
         mba_impact='none',
-        deadline_notes='~10 Jan 2027 — verify at qecscholarship.com',
-        notes='Study in a different Commonwealth country — great cultural '
+        deadline_notes='~10 Jan 2027 - verify at qecscholarship.com',
+        notes='Study in a different Commonwealth country - great cultural '
               'mobility experience.',
         action_required='Two applications: university admission + QECS portal.',
         official_link='https://qecscholarship.com/',
@@ -865,11 +865,11 @@ SCHOLARSHIPS = [
         fields=['education', 'public-health', 'data-ai', 'management'],
         short='AKF ISP', programme='Postgraduate studies at universities worldwide',
         university='Any accredited university',
-        funding_detail='50% grant + 50% loan (partial) — priority to first-degree holders',
+        funding_detail='50% grant + 50% loan (partial) - priority to first-degree holders',
         english_requirement='Per university',
         nationality_notes='Open to exceptional students from developing countries',
         mba_impact='none',
-        deadline_notes='~31 Mar 2027 — verify at akdn.org',
+        deadline_notes='~31 Mar 2027 - verify at akdn.org',
         notes='Funds half the cost as a grant and half as a loan, targeting '
               'students with no other means of support.',
         action_required='Interview with AKF national committee + admission '
@@ -887,7 +887,7 @@ SCHOLARSHIPS = [
         english_requirement='Per university',
         nationality_notes='Open to students from IsDB member countries',
         mba_impact='none',
-        deadline_notes='~Mar 2027 — verify at isdb.org',
+        deadline_notes='~Mar 2027 - verify at isdb.org',
         notes='For students in STEM, health and economics from member '
               'countries, with a service commitment.',
         action_required='Admission to a top-50 ranked university + IsDB '
@@ -906,14 +906,14 @@ SCHOLARSHIPS = [
         english_requirement='French or English (per programme)',
         nationality_notes='Open to non-French applicants',
         mba_impact='none',
-        deadline_notes='2026 cycle closed — reopen ~Oct 2026',
+        deadline_notes='2026 cycle closed - reopen ~Oct 2026',
         notes='Closed for the 2026 cycle. Track the new cycle for 2027.',
         action_required='Watch for the 2027 cycle opening in late 2026.',
         official_link='https://www.campusfrance.org/en/eiffel-scholarship-programme',
         competitiveness='High',
     ),
     S(
-        'Orange Knowledge Programme (OKP) — final cycle closed',
+        'Orange Knowledge Programme (OKP) - final cycle closed',
         'NL', 'full', 'LE', 85, 'closed', '2025-12-01', 2026,
         fields=['water-sanitation', 'public-health', 'agriculture', 'environmental-science'],
         short='OKP (ended)', programme='Eligible master\'s at Dutch universities',
@@ -924,8 +924,8 @@ SCHOLARSHIPS = [
         mba_impact='none',
         deadline_notes='Programme formally ended in 2024',
         notes='The Orange Knowledge Programme was discontinued. Keep on file '
-              'for reference — watch for successor programmes.',
-        action_required='No action — programme closed permanently.',
+              'for reference - watch for successor programmes.',
+        action_required='No action - programme closed permanently.',
         official_link='https://www.nuffic.nl/',
         competitiveness='High',
     ),

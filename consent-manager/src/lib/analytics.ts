@@ -1,5 +1,5 @@
 /**
- * Consent-log analytics — opt-in rates over time and per-category totals.
+ * Consent-log analytics - opt-in rates over time and per-category totals.
  * Consumed by the admin dashboard charts.
  */
 import type { ConsentLogEntry } from '@/lib/consent/types';

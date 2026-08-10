@@ -1,5 +1,5 @@
 """
-Marketing / static pages (Django — original framework, no TypeScript):
+Marketing / static pages (Django - original framework, no TypeScript):
 
   /about/        About Us with team grid
   /faq/          5-question accordion
@@ -29,7 +29,7 @@ def about(request):
             'photo': 'img/team/roy.jpg',
             'photo_webp': 'img/team/roy.webp',
             'bio': (
-                'Started ScholarHub Africa to solve his own search problem — '
+                'Started ScholarHub Africa to solve his own search problem - '
                 'hundreds of spreadsheets, missed deadlines, zero clarity. Now '
                 'he builds the tool every African student needs.'
             ),
@@ -85,7 +85,7 @@ def faq(request):
             'answer': (
                 'Yes. Every scholarship listing, filter, score and tracking tool '
                 'is completely free. We believe verified scholarship information '
-                'should never be paywalled — especially for students who need it most.'
+                'should never be paywalled - especially for students who need it most.'
             ),
         },
         {
@@ -103,7 +103,7 @@ def faq(request):
                 'Phase 1 is a private dashboard, but the directory is being opened '
                 'to any African student looking for fully-funded international '
                 "master's opportunities. Nationality notes on each listing tell you "
-                'exactly who is eligible — Kenya and most African countries are '
+                'exactly who is eligible - Kenya and most African countries are '
                 'covered by the major programmes.'
             ),
         },
@@ -121,7 +121,7 @@ def faq(request):
             'question': 'How does the application tracker help me?',
             'answer': (
                 'Add any scholarship to your tracker with one click, then move it '
-                'through stages — planning, drafting, submitted, decision. The '
+                'through stages - planning, drafting, submitted, decision. The '
                 'built-in 24-item document checklist and the Monday email digest '
                 'keep your documents ready and your deadlines in front of you.'
             ),
@@ -162,7 +162,7 @@ def case_studies(request):
         ],
         'challenge': [
             'Information was scattered across a dozen spreadsheets, bookmarked pages and '
-            'WhatsApp forwards — deadlines kept getting missed.',
+            'WhatsApp forwards - deadlines kept getting missed.',
             'Eligibility rules (DAAD "two years of experience", English thresholds, '
             'age limits) were hard to compare quickly across programmes.',
             'No central place to track document readiness; transcripts and references '
@@ -183,12 +183,12 @@ def case_studies(request):
             {'value': '14', 'label': 'applications tracked in one dashboard'},
             {'value': '3', 'label': 'applications submitted before their deadlines'},
             {'value': '2', 'label': 'interviews secured'},
-            {'value': '1', 'label': 'fully funded offer — DAAD EPOS, TH Köln'},
+            {'value': '1', 'label': 'fully funded offer - DAAD EPOS, TH Köln'},
         ],
         'quote': {
             'text': (
                 'The score badge changed everything. I stopped applying to everything '
-                'and started applying to what fit — the tracker made it feel like a '
+                'and started applying to what fit - the tracker made it feel like a '
                 'project I could actually win.'
             ),
             'author': 'Roy Okola Otieno',
@@ -196,7 +196,7 @@ def case_studies(request):
         },
         'next': {
             'title': 'Start your own case study',
-            'text': 'The same tools are waiting for you — free.',
+            'text': 'The same tools are waiting for you - free.',
             'cta': 'Browse scholarships',
             'url': reverse('scholarships:directory'),
         },
@@ -245,7 +245,7 @@ def robots_txt(request):
 
 
 def llms_txt(request):
-    """AEO helper file (Track 2.3) — helpful, never authoritative."""
+    """AEO helper file (Track 2.3) - helpful, never authoritative."""
     return render(request, 'llms.txt', content_type='text/plain; charset=utf-8')
 
 

@@ -21,7 +21,7 @@ from .serializers import (
 
 
 class ScholarshipViewSet(viewsets.ReadOnlyModelViewSet):
-    """GET /api/v1/scholarships/ — filterable, searchable, paginated."""
+    """GET /api/v1/scholarships/ - filterable, searchable, paginated."""
     queryset = (
         Scholarship.objects
         .filter(is_active=True)
@@ -59,7 +59,7 @@ class ScholarshipViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CountryViewSet(viewsets.ReadOnlyModelViewSet):
-    """GET /api/v1/countries/ — all countries + scholarship counts."""
+    """GET /api/v1/countries/ - all countries + scholarship counts."""
     queryset = (
         Country.objects
         .annotate(scholarship_count=Count('scholarships', filter=Q(scholarships__is_active=True)))
@@ -70,7 +70,7 @@ class CountryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class FieldViewSet(viewsets.ReadOnlyModelViewSet):
-    """GET /api/v1/fields/ — all fields of study."""
+    """GET /api/v1/fields/ - all fields of study."""
     queryset = FieldOfStudy.objects.annotate(
         scholarship_count=Count('scholarships')
     ).filter(scholarship_count__gt=0)
@@ -79,7 +79,7 @@ class FieldViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SearchView(APIView):
-    """GET /api/v1/search/?q=<query> — full-text search endpoint."""
+    """GET /api/v1/search/?q=<query> - full-text search endpoint."""
 
     def get(self, request):
         query = request.query_params.get('q', '').strip()

@@ -39,7 +39,7 @@ export const DEFAULT_CONFIG: ConsentConfig = {
     terms: '/terms',
   },
   scripts: {
-    gtmId: '', // e.g. 'GTM-XXXXXXX' — injected only after consent
+    gtmId: '', // e.g. 'GTM-XXXXXXX' - injected only after consent
     custom: [],
   },
   version: 1,

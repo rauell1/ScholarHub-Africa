@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Admin login — credentials verified server-side; the session cookie carries
+ * Admin login - credentials verified server-side; the session cookie carries
  * role === 'ADMIN' (see /api/admin/login + lib/server/rbac.ts).
  */
 import { useState, type FormEvent } from 'react';
@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
       <form className="admin-login__card" onSubmit={submit}>
         <div className="admin-login__brand">🛡️</div>
         <h1>Consent Manager</h1>
-        <p className="admin-muted">Admin Environment — restricted access.</p>
+        <p className="admin-muted">Admin Environment - restricted access.</p>
 
         {error && <div className="admin-alert admin-alert--error">{error}</div>}
 

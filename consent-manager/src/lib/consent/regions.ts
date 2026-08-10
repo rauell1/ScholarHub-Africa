@@ -1,7 +1,7 @@
 /**
  * Region tables & posture logic (GDPR vs CCPA).
  *
- *   GDPR  = EU-27 + EEA (NO, IS, LI) + UK (and CH — closer to GDPR than CCPA,
+ *   GDPR  = EU-27 + EEA (NO, IS, LI) + UK (and CH - closer to GDPR than CCPA,
  *           handled here as GDPR with a comment; adjust per your legal advice).
  *   CCPA  = United States (state privacy laws: CCPA/CPRA, VCDPA, CPA, UCPA…).
  *
@@ -34,7 +34,7 @@ export function resolveRegion(country: string): ConsentRegion {
 /** Default per-category state for each region. */
 export function defaultCategoriesForRegion(region: ConsentRegion): CategoryState {
   if (region === 'gdpr') {
-    // STRICT OPT-IN — everything except necessary is OFF.
+    // STRICT OPT-IN - everything except necessary is OFF.
     return {
       necessary: true,
       analytics: false,
@@ -42,7 +42,7 @@ export function defaultCategoriesForRegion(region: ConsentRegion): CategoryState
       preferences: false,
     };
   }
-  // CCPA / none — OPT-OUT model, categories ON until the user opts out.
+  // CCPA / none - OPT-OUT model, categories ON until the user opts out.
   return {
     necessary: true,
     analytics: true,

@@ -9,12 +9,12 @@
  *   • every event here is additionally client-side gated.
  *
  * Events tracked (no PII in payloads):
- *   cta_click          — elements with [data-ga-event] (+ data-ga-label)
- *   outbound_link_click— external links (target=_blank or different origin)
- *   contact_form_submit— the /contact/ form
- *   search             — the directory search form
- *   ai_referrer        — when a known AI-search assistant referred the visit
- *   web_vitals         — LCP / INP / CLS via PerformanceObserver
+ *   cta_click          - elements with [data-ga-event] (+ data-ga-label)
+ *   outbound_link_click- external links (target=_blank or different origin)
+ *   contact_form_submit- the /contact/ form
+ *   search             - the directory search form
+ *   ai_referrer        - when a known AI-search assistant referred the visit
+ *   web_vitals         - LCP / INP / CLS via PerformanceObserver
  */
 (function () {
   'use strict';
@@ -150,7 +150,7 @@
   }
 
   function init() {
-    if (!analyticsAllowed()) return; // hard gate — Reject / no choice → nothing
+    if (!analyticsAllowed()) return; // hard gate - Reject / no choice → nothing
     bindCtaClicks();
     bindOutboundLinks();
     bindFormEvents();

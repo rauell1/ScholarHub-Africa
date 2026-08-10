@@ -6,7 +6,7 @@ import { getConfig } from '@/lib/server/store';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'ScholarHub Africa — Consent Manager Demo',
+  title: 'ScholarHub Africa - Consent Manager Demo',
   description:
     'GDPR & CCPA-compliant cookie and consent management for ScholarHub Africa.',
 };

@@ -1,4 +1,4 @@
-# ScholarHub Africa — Full System Design
+# ScholarHub Africa - Full System Design
 
 **Version 1.0 | Author: Roy Okola Otieno | Date: 10 August 2026** *A modern scholarship discovery and tracking platform built for African students seeking international master's opportunities.*
 
@@ -6,7 +6,7 @@
 
 ### 1.1 Product Vision
 
-ScholarHub Africa is a web platform where students — starting with Roy Okola Otieno, eventually any African student — can discover, filter, and track fully-funded international master's scholarship opportunities. Every record is human-verified against official sources, scored for profile fit, and kept up to date.
+ScholarHub Africa is a web platform where students - starting with Roy Okola Otieno, eventually any African student - can discover, filter, and track fully-funded international master's scholarship opportunities. Every record is human-verified against official sources, scored for profile fit, and kept up to date.
 
 ### 1.2 Design Principles
 
@@ -15,7 +15,7 @@ ScholarHub Africa is a web platform where students — starting with Roy Okola O
 - **Data trustworthiness**: Every scholarship entry shows its verification date and official source link. No stale data.
 - **Progressive**: Start as Roy's private dashboard. Flip a feature flag to open registration to the public.
 
-### 1.3 Core Features (Phase 1 — Private)
+### 1.3 Core Features (Phase 1 - Private)
 
 | Feature | Description |
 |---|---|
@@ -31,7 +31,7 @@ ScholarHub Africa is a web platform where students — starting with Roy Okola O
 | Admin panel | Django Admin for Roy to add/edit/close scholarships without writing code |
 | Weekly email digest | Automated Monday briefing with new deadlines and updates |
 
-### 1.4 Extended Features (Phase 2 — Public)
+### 1.4 Extended Features (Phase 2 - Public)
 
 - User registration and login (email + Google OAuth)
 - Personalised profile: degree field, nationality, GPA, experience years
@@ -52,12 +52,12 @@ ScholarHub Africa is a web platform where students — starting with Roy Okola O
 | **Template rendering** | Django Templates (server-side HTML) | No JS bundle overhead. Pages render fully on the server. Great for SEO. |
 | **Styling** | Tailwind CSS v3 | Utility-first, mobile-first, no unused CSS in production (PurgeCSS built in) |
 | **Interactivity** | Alpine.js v3 | Lightweight (15kB). Handles search dropdowns, filters, modals, tab switches without a JS framework |
-| **Rich UI components** | SvelteKit (compiled to web components) | Used *only* where Alpine.js is insufficient — e.g. an interactive search-and-filter panel with live results |
-| **Database** | Neon PostgreSQL (serverless) | Scales to zero when not in use (cost-effective at start). Full PostgreSQL — pg_trgm for full-text search, JSONB for flexible metadata |
+| **Rich UI components** | SvelteKit (compiled to web components) | Used *only* where Alpine.js is insufficient - e.g. an interactive search-and-filter panel with live results |
+| **Database** | Neon PostgreSQL (serverless) | Scales to zero when not in use (cost-effective at start). Full PostgreSQL - pg_trgm for full-text search, JSONB for flexible metadata |
 | **ORM** | Django ORM | Works natively with PostgreSQL. Migrations built in. |
-| **Hosting — App server** | Railway.app | Python/Django-native. One-command deploy from GitHub. Free tier generous. Pairs perfectly with Neon. |
-| **Hosting — CDN/DNS/Proxy** | Cloudflare | Sits in front of Railway. Free CDN, DDoS protection, caching, custom domain, SSL. Also hosts static assets via Cloudflare R2. |
-| **Static files** | Cloudflare R2 (S3-compatible) | CSS, JS bundles, images served from the CDN edge — never hits Django. |
+| **Hosting - App server** | Railway.app | Python/Django-native. One-command deploy from GitHub. Free tier generous. Pairs perfectly with Neon. |
+| **Hosting - CDN/DNS/Proxy** | Cloudflare | Sits in front of Railway. Free CDN, DDoS protection, caching, custom domain, SSL. Also hosts static assets via Cloudflare R2. |
+| **Static files** | Cloudflare R2 (S3-compatible) | CSS, JS bundles, images served from the CDN edge - never hits Django. |
 | **Email** | Resend (or SendGrid free tier) | Transactional emails: weekly digest, deadline alerts, account confirmations |
 | **Task queue** | Celery + Redis (Railway add-on) | Async tasks: weekly email digest, score recalculation, data verification checks |
 | **Environment config** | python-decouple + Railway env vars | No secrets in code. `.env` for local, Railway dashboard for production. |
@@ -86,7 +86,7 @@ ScholarHub Africa is a web platform where students — starting with Roy Okola O
                 │ (cache miss)                  │ (served directly)
                 ▼                              (no Django hit)
 ┌─────────────────────────────┐
-│    RAILWAY.APP — App Server  │
+│    RAILWAY.APP - App Server  │
 │  ┌─────────────────────────┐│
 │  │  Django 5.x (Gunicorn)  ││
 │  │  + Django REST Framework││
@@ -388,7 +388,7 @@ scholarhub/                         # Django project root
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  [Search bar — full width]                           │
+│  [Search bar - full width]                           │
 ├──────────────┬──────────────────────────────────────┤
 │ FILTER PANEL │ SCHOLARSHIP CARDS GRID               │
 │ (Alpine.js   │                                      │
@@ -453,7 +453,7 @@ GET  /api/v1/countries/                 # All countries + scholarship count
 GET  /api/v1/fields/                    # All fields of study
 GET  /api/v1/search/?q=<query>          # Full-text search endpoint
 
-# Tracker (auth required — Phase 1: single admin user)
+# Tracker (auth required - Phase 1: single admin user)
 GET  /api/v1/tracker/applications/
 POST /api/v1/tracker/applications/
 PUT  /api/v1/tracker/applications/<id>/
@@ -468,7 +468,7 @@ PUT  /api/v1/tracker/documents/<id>/
 
 ## 8. Search Implementation
 
-### Phase 1 — PostgreSQL Full-Text Search
+### Phase 1 - PostgreSQL Full-Text Search
 
 ```python
 # apps/scholarships/search.py
@@ -490,9 +490,9 @@ def search_scholarships(queryset, query_string):
     )
 ```
 
-### Phase 2 — Meilisearch (if full-text proves insufficient)
+### Phase 2 - Meilisearch (if full-text proves insufficient)
 
-Meilisearch is a Rust-based search engine with typo-tolerance and instant results. Drop-in replacement — swap the search backend without changing the API. Host on Railway alongside Django.
+Meilisearch is a Rust-based search engine with typo-tolerance and instant results. Drop-in replacement - swap the search backend without changing the API. Host on Railway alongside Django.
 
 ## 9. Filtering with django-filter
 
@@ -649,10 +649,10 @@ module.exports = {
 
 ## 12. SvelteKit Component (Advanced Search Panel)
 
-Used only where Alpine.js is too limited — e.g. a typeahead search with real-time API results. Compiled as a standalone web component and embedded in a Django template.
+Used only where Alpine.js is too limited - e.g. a typeahead search with real-time API results. Compiled as a standalone web component and embedded in a Django template.
 
 ```svelte
-<!-- SearchPanel.svelte — compiled to SearchPanel.js + SearchPanel.css -->
+<!-- SearchPanel.svelte - compiled to SearchPanel.js + SearchPanel.css -->
 <script>
   import { onMount } from 'svelte';
 
@@ -863,7 +863,7 @@ def send_weekly_digest():
     resend.Emails.send({
         "from": "ScholarHub <digest@scholarhub.africa>",
         "to": ["royokola3@gmail.com"],
-        "subject": f"📚 Scholarship Digest — Week of {now.strftime('%d %b %Y')}",
+        "subject": f"📚 Scholarship Digest - Week of {now.strftime('%d %b %Y')}",
         "html": html_body,
     })
 ```
@@ -922,7 +922,7 @@ REDIS_URL=redis://:...@...railway.app:6379
 ### 16.3 Cloudflare Setup
 
 1. Add your domain to Cloudflare (update nameservers at your registrar)
-2. Create a CNAME record: `@ → <railway-domain>.railway.app` (proxy ON — orange cloud)
+2. Create a CNAME record: `@ → <railway-domain>.railway.app` (proxy ON - orange cloud)
 3. Create CNAME: `www → scholarhub.africa`
 4. Set SSL mode to **Full (Strict)**
 5. Create a **Cache Rule**: cache `*.css`, `*.js`, `*.png`, `*.jpg`, `*.svg` for 30 days
@@ -1022,5 +1022,5 @@ openpyxl==3.1.5               # for import command
 
 ---
 
-*End of System Design v1.0 — ScholarHub Africa*
+*End of System Design v1.0 - ScholarHub Africa*
 *Stack: Django 5 · Tailwind CSS · Alpine.js · SvelteKit (components) · Neon PostgreSQL · Railway · Cloudflare*

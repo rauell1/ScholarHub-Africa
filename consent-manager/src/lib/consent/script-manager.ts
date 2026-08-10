@@ -1,5 +1,5 @@
 /**
- * Script injection manager — enforces auto-blocking.
+ * Script injection manager - enforces auto-blocking.
  *
  * Rules:
  *   • Any <script data-consent-category="..."> found in the DOM at boot is
@@ -47,7 +47,7 @@ export class ScriptManager {
           if (attr.name.startsWith(ATTRIBUTE_PREFIX) || attr.name === 'src') continue;
           attributes[attr.name] = attr.value;
         }
-        // `type="text/plain"` markers never execute — they become real
+        // `type="text/plain"` markers never execute - they become real
         // scripts only when injected by this manager after consent.
         if (node.type && node.type !== 'text/javascript') {
           attributes.type = 'text/javascript';

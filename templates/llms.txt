@@ -13,7 +13,7 @@ application tracker with a 24-item document checklist. All content is
 server-rendered and readable without JavaScript.
 
 ## Key Pages
-- / (Homepage — directory overview and search)
+- / (Homepage - directory overview and search)
 - /scholarships/ (Searchable directory of verified scholarships)
 - /scholarships/country/ (Scholarships grouped by destination country)
 - /scholarships/field/ (Scholarships grouped by field of study)

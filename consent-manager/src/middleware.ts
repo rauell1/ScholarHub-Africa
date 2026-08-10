@@ -1,11 +1,11 @@
 /**
- * Edge middleware — Geolocation / Region detection (GDPR vs CCPA).
+ * Edge middleware - Geolocation / Region detection (GDPR vs CCPA).
  *
  * Runs at the edge (Vercel Edge Functions, Cloudflare via cf-ipcountry, etc.)
  * BEFORE the request reaches the app, and stamps every response with:
- *   • `sh_region`        — readable cookie the client `useConsent` hook reads
- *   • `sh_region_http`   — HTTP-only cookie used by API routes as the authority
- *   • `X-Consent-Region` — response header for debugging / proxies
+ *   • `sh_region`        - readable cookie the client `useConsent` hook reads
+ *   • `sh_region_http`   - HTTP-only cookie used by API routes as the authority
+ *   • `X-Consent-Region` - response header for debugging / proxies
  *
  * The region determines the DEFAULT consent posture:
  *   GDPR (EU/EEA/UK) → STRICT OPT-IN  (all non-essential categories OFF)

@@ -1,9 +1,9 @@
 """
 Application tracking models (System Design v1.0 §4, §6.5).
 
-ApplicantProfile — Roy's (later any user's) profile.
-TrackedApplication — one row per scholarship being applied to.
-DocumentItem — the 24-item document readiness checklist.
+ApplicantProfile - Roy's (later any user's) profile.
+TrackedApplication - one row per scholarship being applied to.
+DocumentItem - the 24-item document readiness checklist.
 """
 from django.conf import settings
 from django.db import models

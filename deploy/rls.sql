@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════
--- Row-Level Security (Track 3.5) — PostgreSQL only.
+-- Row-Level Security (Track 3.5) - PostgreSQL only.
 --
 -- Enforced at the DATABASE, not just the UI. Apply on Neon/Postgres with:
 --     python manage.py enable_rls
@@ -11,7 +11,7 @@
 --         c.execute("SET LOCAL app.user_id = %s", [request.user.id])
 -- The GUC is a plain string; cast safely. Wire this middleware before
 -- enabling RLS in production (Phase 2 multi-user). Until then this file
--- is the reviewed starting template — the closest compliant alternative.
+-- is the reviewed starting template - the closest compliant alternative.
 -- ═══════════════════════════════════════════════════════════════════════
 
 -- 1) Scholarships: public directory rows are readable by anyone, but

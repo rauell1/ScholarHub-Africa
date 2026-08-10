@@ -25,7 +25,7 @@ function escapeCsv(value: string): string {
 }
 
 /**
- * GET /api/admin/export/csv — download the consent log as CSV for audits.
+ * GET /api/admin/export/csv - download the consent log as CSV for audits.
  * RBAC: role === 'ADMIN' required.
  */
 export async function GET(request: NextRequest) {

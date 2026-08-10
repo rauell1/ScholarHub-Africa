@@ -68,7 +68,7 @@ class Command(BaseCommand):
                 updated += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f'Done — created: {created}, updated: {updated}, skipped: {skipped}.'
+            f'Done - created: {created}, updated: {updated}, skipped: {skipped}.'
         ))
 
     def _upsert(self, data):

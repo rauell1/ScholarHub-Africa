@@ -3,7 +3,7 @@ Server-side form validation for public inputs (Track 3: Security / 3.1).
 
 Defence in depth: the client only marks fields `required`; this Django Form
 re-validates everything server-side (the Django counterpart of "Zod on the
-server" — never trust client validation alone). A honeypot field filters
+server" - never trust client validation alone). A honeypot field filters
 bots, and values are never rendered as raw HTML (templates auto-escape).
 """
 from django import forms
@@ -38,7 +38,7 @@ class ContactForm(forms.Form):
             'min_length': 'Please write a message of at least 10 characters.',
         },
     )
-    # Honeypot — hidden from humans; bots fill it in. If filled, drop silently.
+    # Honeypot - hidden from humans; bots fill it in. If filled, drop silently.
     website = forms.CharField(required=False, max_length=100)
 
     # AEO attribution (Track 2.5): catches how visitors heard about us,

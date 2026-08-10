@@ -11,7 +11,7 @@ def data(db):
     energy = FieldOfStudy.objects.create(name='Renewable Energy', icon='🌱')
 
     daad = Scholarship.objects.create(
-        name='DAAD EPOS — Renewable Energy Management (REM)',
+        name='DAAD EPOS - Renewable Energy Management (REM)',
         short_name='DAAD EPOS REM', slug='daad-epos-rem',
         country=de, funding_type='full', eligibility_label='CE',
         score=93, status='open_now', deadline_date='2026-10-31',
@@ -334,7 +334,7 @@ def test_detail_meta_description_capped(client, data):
 
 
 def test_contact_hear_about_field(client, db):
-    """AEO 2.5 — 'how did you hear about us' attribution field."""
+    """AEO 2.5 - 'how did you hear about us' attribution field."""
     content = client.get('/contact/').content.decode()
     assert 'hear_about' in content
     assert 'AI assistant' in content
@@ -359,18 +359,18 @@ def test_enable_rls_noop_on_sqlite(db, capsys):
 def test_unique_page_titles(client):
     """Every page appends its name to the app name (SEO checklist #11)."""
     cases = [
-        ('/about/', 'About us — ScholarHub Africa'),
-        ('/faq/', 'FAQ — ScholarHub Africa'),
-        ('/contact/', 'Contact us — ScholarHub Africa'),
-        ('/privacy/', 'Privacy Policy — ScholarHub Africa'),
-        ('/case-studies/', '— ScholarHub Africa'),
+        ('/about/', 'About us - ScholarHub Africa'),
+        ('/faq/', 'FAQ - ScholarHub Africa'),
+        ('/contact/', 'Contact us - ScholarHub Africa'),
+        ('/privacy/', 'Privacy Policy - ScholarHub Africa'),
+        ('/case-studies/', '- ScholarHub Africa'),
     ]
     for url, expected in cases:
         response = client.get(url)
         assert response.status_code == 200
         title = response.content.decode().split('<title>')[1].split('</title>')[0]
-        assert title.endswith('— ScholarHub Africa'), title
-        if expected != '— ScholarHub Africa':
+        assert title.endswith('- ScholarHub Africa'), title
+        if expected != '- ScholarHub Africa':
             assert title == expected, title
 
 

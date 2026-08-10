@@ -1,10 +1,10 @@
 /**
- * Policy generators — Privacy Policy, Cookie Policy and Terms of Service
+ * Policy generators - Privacy Policy, Cookie Policy and Terms of Service
  * produced dynamically from company variables.
  *
  * The admin fills a form; these templates render markdown that can be
  * published to the site (and downloaded as .md/.html). Output is a solid
- * starting point — always have a lawyer review before going live.
+ * starting point - always have a lawyer review before going live.
  */
 import type { ConsentConfig } from '@/lib/consent/types';
 
@@ -34,7 +34,7 @@ const DEFAULT_FACTS: CompanyFacts = {
   dataTypes: ['Name', 'Email address', 'Country / region', 'Consent choices', 'Usage analytics'],
   thirdParties: ['Cloud hosting provider', 'Email delivery service', 'Analytics providers'],
   analyticsTools: ['Plausible Analytics (privacy-friendly, cookieless)'],
-  marketingTools: ['None by default — added only with consent'],
+  marketingTools: ['None by default - added only with consent'],
   retentionDays: 365,
 };
 
@@ -42,7 +42,7 @@ const list = (items: string[]) => items.map((i) => `- ${i}`).join('\n');
 
 export function generatePrivacyPolicy(facts: Partial<CompanyFacts>): string {
   const f: CompanyFacts = { ...DEFAULT_FACTS, ...facts };
-  return `# Privacy Policy — ${f.companyName}
+  return `# Privacy Policy - ${f.companyName}
 
 **Effective date:** ${f.effectiveDate}
 **Jurisdiction:** ${f.jurisdiction}
@@ -91,7 +91,7 @@ We will post changes on this page with a new effective date.
 export function generateCookiePolicy(facts: Partial<CompanyFacts>, config?: ConsentConfig): string {
   const f: CompanyFacts = { ...DEFAULT_FACTS, ...facts };
   const domain = config?.company.domain ?? f.domain;
-  return `# Cookie Policy — ${f.companyName}
+  return `# Cookie Policy - ${f.companyName}
 
 **Effective date:** ${f.effectiveDate}
 **Applies to:** ${domain}
@@ -101,10 +101,10 @@ Cookies are small text files stored on your device. We also use similar
 technologies (localStorage, pixels).
 
 ## 2. Categories we use
-- **Necessary** — required for the site to function (e.g. security, session). Always active.
-- **Preferences** — remembers choices such as language and region.
-- **Analytics** — measures how visitors use the site. ${f.analyticsTools.join(', ')}.
-- **Marketing** — powers personalised advertising and social tracking. ${f.marketingTools.join(', ')}.
+- **Necessary** - required for the site to function (e.g. security, session). Always active.
+- **Preferences** - remembers choices such as language and region.
+- **Analytics** - measures how visitors use the site. ${f.analyticsTools.join(', ')}.
+- **Marketing** - powers personalised advertising and social tracking. ${f.marketingTools.join(', ')}.
 
 ## 3. How consent works
 - **GDPR (EU/EEA/UK):** strict opt-in. Non-essential cookies are OFF until you accept them.
@@ -130,7 +130,7 @@ Questions: **${f.contactEmail}** · DPO: **${f.dpoEmail}**
 
 export function generateTerms(facts: Partial<CompanyFacts>): string {
   const f: CompanyFacts = { ...DEFAULT_FACTS, ...facts };
-  return `# Terms of Service — ${f.companyName}
+  return `# Terms of Service - ${f.companyName}
 
 **Effective date:** ${f.effectiveDate}
 **Service:** ${f.domain}

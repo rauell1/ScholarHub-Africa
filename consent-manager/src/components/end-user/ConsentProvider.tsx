@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * ConsentContext — bridges the runtime config (from the admin environment)
+ * ConsentContext - bridges the runtime config (from the admin environment)
  * and the useConsent hook to the end-user components.
  */
 import { createContext, useContext, useEffect, type ReactNode } from 'react';
@@ -51,7 +51,7 @@ export function ConsentProvider({
   }, [config]);
 
   // Register third-party scripts from the admin config with the ScriptManager.
-  // They are NOT injected until the user grants their category — the manager
+  // They are NOT injected until the user grants their category - the manager
   // applies them on every consent change.
   useEffect(() => {
     const manager = ScriptManager.getInstance();

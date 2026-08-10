@@ -1,11 +1,11 @@
 """
-Sitemaps (SEO Track 1.2) — auto-generated via django.contrib.sitemaps.
+Sitemaps (SEO Track 1.2) - auto-generated via django.contrib.sitemaps.
 
 Lists ONLY canonical, indexable URLs:
   • home, directory, by-country, by-field
   • marketing pages (about, faq, contact, case studies, privacy)
   • every active scholarship detail page
-Query-string variants (filtered directory URLs) are deliberately excluded —
+Query-string variants (filtered directory URLs) are deliberately excluded -
 they are not canonical.
 """
 from django.contrib.sitemaps import Sitemap

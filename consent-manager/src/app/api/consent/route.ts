@@ -4,11 +4,11 @@ import { anonymizeIp, appendConsentLog } from '@/lib/server/store';
 import type { CategoryState, ConsentRegion } from '@/lib/consent/types';
 
 /**
- * POST /api/consent — record a user's consent choice in the compliance log.
+ * POST /api/consent - record a user's consent choice in the compliance log.
  * Public (no auth): this is the end-user banner reporting its state.
  *
  * Rate-limited per IP (Security 3.7). The limiter is in-memory here; for
- * multi-instance production replace with a shared store (Upstash/Redis) —
+ * multi-instance production replace with a shared store (Upstash/Redis) -
  * fail closed: if the limiter errors, reject with 429.
  */
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         );
       }
     } catch {
-      // Fail closed — limiter error must never mean "no limiter".
+      // Fail closed - limiter error must never mean "no limiter".
       return NextResponse.json(
         { error: 'Service busy. Please try again shortly.' },
         { status: 429 },

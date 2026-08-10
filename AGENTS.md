@@ -1,4 +1,4 @@
-# Webpage Standards Enforcement — Always-On Project Rules
+# Webpage Standards Enforcement - Always-On Project Rules
 
 > Source: thelazydeveloper.org/resources (all four tracks). These rules apply to
 > **every** page, route, component, API handler, or config created or modified in
@@ -9,7 +9,7 @@
 > Framework note: this repo is **Django 5 + Django templates + Tailwind + Alpine.js
 > (no TypeScript)** for the primary app, with a Next.js 14 consent-manager demo in
 > `consent-manager/`. JS-framework-specific items (Zod, VITE_/NEXT_PUBLIC_,
-> TanStack Query, next/head) map to their Django/vanilla equivalents — the mapping
+> TanStack Query, next/head) map to their Django/vanilla equivalents - the mapping
 > is documented in `docs/standards-enforcement.md`.
 >
 > Status of every criterion: see `docs/standards-enforcement.md` (acceptance audit).
@@ -68,16 +68,16 @@ just the one the task is nominally about.
   clear names. No PII in event payloads.
 - Report Core Web Vitals to GA4.
 - Implement cookie consent so that a "Reject" choice collects nothing: gate
-  analytics loading AND event dispatch on consent — do not just hide a banner
+  analytics loading AND event dispatch on consent - do not just hide a banner
   while still tracking.
 
 ### BONUS starter files
 
-- `sitemap.xml` — served at `/sitemap.xml` (Django: `django.contrib.sitemaps`),
+- `sitemap.xml` - served at `/sitemap.xml` (Django: `django.contrib.sitemaps`),
   referenced from robots.txt.
-- `robots.txt` — served at `/robots.txt`; allow crawling, block private/admin
+- `robots.txt` - served at `/robots.txt`; allow crawling, block private/admin
   routes, `Crawl-delay: 1`, reference the sitemap.
-- `llms.txt` — served at `/llms.txt` (punctuation adjusted to remove dashes):
+- `llms.txt` - served at `/llms.txt` (punctuation adjusted to remove dashes):
   one-line summary, About, Key Pages, Key Facts, Contact.
 
 ---
@@ -109,7 +109,7 @@ just the one the task is nominally about.
 - Bottom line up front in each section.
 - Self-contained sections that make sense out of context.
 - Name concrete entities explicitly rather than leaning on pronouns.
-- Plain sentences — this is about markup and structure.
+- Plain sentences - this is about markup and structure.
 
 ### 2.5 Measuring AI Visibility (SOON)
 
@@ -221,7 +221,7 @@ just the one the task is nominally about.
 
 ### 4.6 Client Caching and Refetching (SOON)
 
-- Cache and dedupe requests (TanStack Query/SWR — N/A for SSR-only Django;
+- Cache and dedupe requests (TanStack Query/SWR - N/A for SSR-only Django;
   server-side caching + HTTP cache headers apply).
 - Replace polling with events or a live channel where one exists.
 
@@ -298,5 +298,5 @@ same file.
 - **Neon MCP** is configured project-scoped in `.mcp.json`
   (`https://mcp.neon.tech/mcp`, streamable HTTP). It gives agents direct access
   to the Neon project (SQL, branches, roles). Auth via the `NEON_API_KEY`
-  environment variable — the config only holds a `${NEON_API_KEY}` placeholder;
+  environment variable - the config only holds a `${NEON_API_KEY}` placeholder;
   never commit a real key (Track 3.4). See README "Neon MCP".

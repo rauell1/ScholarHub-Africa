@@ -2,12 +2,12 @@
  * Server-side persistence for the admin environment.
  *
  * Files (all under ./data, gitignored):
- *   consent-logs.jsonl — append-only compliance audit log
- *   config.json        — admin-customised banner config overrides
- *   policies.json      — generated & published legal policies
+ *   consent-logs.jsonl - append-only compliance audit log
+ *   config.json        - admin-customised banner config overrides
+ *   policies.json      - generated & published legal policies
  *
  * For production, swap these helpers for a real database (Postgres/Redis)
- * — the API routes only depend on these function signatures.
+ * - the API routes only depend on these function signatures.
  */
 import { createHmac } from 'crypto';
 import { promises as fs } from 'fs';

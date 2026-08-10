@@ -1,7 +1,7 @@
 """
 Generate the social share (OG/Twitter) image at static/img/og-image.png.
 
-Deterministic 1200×630 banner rendered with Pillow — navy background,
+Deterministic 1200×630 banner rendered with Pillow - navy background,
 teal accents, a drawn mortarboard, and the site name/tagline. Used by the
 og:image / twitter:image meta tags (SEO checklist #13).
 

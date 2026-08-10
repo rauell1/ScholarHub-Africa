@@ -3,9 +3,9 @@
  *
  * Sets up the `dataLayer` + `gtag` stubs and pushes `consent` commands:
  *
- *   • `gtag('consent', 'default', {...})`  — fired BEFORE any tag loads, using
+ *   • `gtag('consent', 'default', {...})`  - fired BEFORE any tag loads, using
  *     the region's default posture (GDPR: denied / CCPA: granted).
- *   • `gtag('consent', 'update', {...})`   — fired the moment the user saves
+ *   • `gtag('consent', 'update', {...})`   - fired the moment the user saves
  *     their preferences.
  *
  * This must be included as early as possible in <head> (see ConsentProvider).
@@ -27,7 +27,7 @@ declare global {
 export function ensureDataLayer(): void {
   if (typeof window === 'undefined') return;
   window.dataLayer = window.dataLayer || [];
-  // Standard gtag stub — queues commands until the real gtag loads.
+  // Standard gtag stub - queues commands until the real gtag loads.
   window.gtag =
     window.gtag ||
     function gtag(...args: unknown[]) {

@@ -1,5 +1,5 @@
 /**
- * i18n dictionary — ready for 35 languages, English by default.
+ * i18n dictionary - ready for 35 languages, English by default.
  *
  * Languages marked "full" ship complete translations; any other locale
  * automatically falls back to English (configurable in the admin).

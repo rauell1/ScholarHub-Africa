@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load scholarship_tags pages_tags %}
 
-{% block title %}{{ scholarship.short_name|default:scholarship.name|truncatechars:42 }} — ScholarHub Africa{% endblock %}
+{% block title %}{{ scholarship.short_name|default:scholarship.name|truncatechars:42 }} - ScholarHub Africa{% endblock %}
 
 {% block meta_description %}{{ scholarship.notes|default:scholarship.name|truncatechars:160 }}{% endblock %}
 
 {% block og_tags %}
 <meta property="og:site_name" content="ScholarHub Africa">
-<meta property="og:title" content="{{ scholarship.name }} — Score {{ scholarship.score }}/100">
+<meta property="og:title" content="{{ scholarship.name }} - Score {{ scholarship.score }}/100">
 <meta property="og:description" content="{{ scholarship.notes|truncatechars:155 }}">
 <meta property="og:type" content="article">
 <meta property="og:url" content="{{ request.build_absolute_uri }}">
@@ -74,7 +74,7 @@
       <div class="card">
         <h2 class="text-lg font-bold text-navy">Overview</h2>
         <p class="mt-2 text-sm leading-relaxed text-navy/70">
-          {{ scholarship.notes|default:'No notes yet — check the official link below.' }}
+          {{ scholarship.notes|default:'No notes yet - check the official link below.' }}
         </p>
         {% if scholarship.action_required %}
         <div class="mt-4 rounded-xl bg-amber-light p-4">
@@ -176,11 +176,11 @@
       </div>
       {% endif %}
 
-      {# Related scholarships — natural internal links (UX checklist #3) #}
+      {# Related scholarships - natural internal links (UX checklist #3) #}
       {% if related %}
       <div class="card">
         <h2 class="text-lg font-bold text-navy">🔗 You might also consider</h2>
-        <p class="mt-1 text-xs text-navy/50">Similar programmes — same field or destination country.</p>
+        <p class="mt-1 text-xs text-navy/50">Similar programmes - same field or destination country.</p>
         <div class="mt-3 space-y-2">
           {% for item in related %}
             <a href="{{ item.get_absolute_url }}" class="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-4 py-3 transition hover:bg-teal-light">
@@ -229,12 +229,12 @@
               <p class="mt-1">Source: {{ scholarship.verified_source }}</p>
             {% endif %}
           {% else %}
-            <p class="font-semibold text-amber">⚠️ Not yet verified — cross-check before applying</p>
+            <p class="font-semibold text-amber">⚠️ Not yet verified - cross-check before applying</p>
           {% endif %}
         </div>
 
         <p class="text-xs text-navy/40">
-          Score {{ scholarship.score }}/100 — {{ scholarship.score|score_label }} fit.
+          Score {{ scholarship.score }}/100 - {{ scholarship.score|score_label }} fit.
           {% if scholarship.competitiveness %}Competitiveness: {{ scholarship.competitiveness }}.{% endif %}
         </p>
       </div>

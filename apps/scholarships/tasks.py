@@ -63,7 +63,7 @@ def render_digest_email(context):
 def send_digest_emails():
     """Send the digest to every address in DIGEST_EMAILS (comma-separated)."""
     context = build_digest_context()
-    subject = f"📚 Scholarship Digest — Week of {context['generated_on'].strftime('%d %b %Y')}"
+    subject = f"📚 Scholarship Digest - Week of {context['generated_on'].strftime('%d %b %Y')}"
     html_body = render_digest_email(context)
 
     recipients = settings.DIGEST_EMAILS or config('DIGEST_EMAILS', default='royokola3@gmail.com')
@@ -83,7 +83,7 @@ def send_digest_emails():
     else:
         send_mail(
             subject=subject,
-            message='This digest is HTML — open it in an HTML-capable client.',
+            message='This digest is HTML - open it in an HTML-capable client.',
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=list(recipients),
             html_message=html_body,
@@ -93,6 +93,6 @@ def send_digest_emails():
 
 @shared_task
 def send_weekly_digest():
-    """Celery task — scheduled in CELERY_BEAT_SCHEDULE (settings/base.py)."""
+    """Celery task - scheduled in CELERY_BEAT_SCHEDULE (settings/base.py)."""
     subject, count = send_digest_emails()
     return f'Sent "{subject}" to {count} recipient(s)'

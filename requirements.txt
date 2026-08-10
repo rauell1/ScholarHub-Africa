@@ -1,4 +1,4 @@
-# ScholarHub Africa — Python dependencies (System Design v1.0 §17)
+# ScholarHub Africa - Python dependencies (System Design v1.0 §17)
 # Django 5.x (Python 3.11+)
 Django==5.0.7
 djangorestframework==3.15.2

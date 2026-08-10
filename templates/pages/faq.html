@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load pages_tags %}
 
-{% block title %}FAQ — ScholarHub Africa{% endblock %}
+{% block title %}FAQ - ScholarHub Africa{% endblock %}
 
 {% block meta_description %}Answers about ScholarHub Africa: is it free, how are scholarships verified, who is eligible, what the 0–100 fit score means, and how the tracker works.{% endblock %}
 
@@ -15,25 +15,24 @@
 </section>
 
 <section class="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-  <!-- Accordion (Alpine.js — 5 FAQs) -->
-  <div x-data="{ open: 1 }" class="space-y-3">
+  <!-- Accordion (Vanilla JS) -->
+  <div class="space-y-3 faq-container">
     {% for faq in faqs %}
-    <div class="overflow-hidden rounded-2xl bg-white ring-1 ring-navy/5">
+    <div class="overflow-hidden rounded-2xl bg-card ring-1 ring-border shadow-sm">
       <h2>
         <button
           type="button"
-          @click="open = open === {{ forloop.counter }} ? 0 : {{ forloop.counter }}"
-          :aria-expanded="open === {{ forloop.counter }} ? 'true' : 'false'"
+          data-faq-toggle="{{ forloop.counter }}"
+          aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
           aria-controls="faq-{{ forloop.counter }}"
-          class="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-semibold text-navy transition-colors hover:text-teal"
+          class="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-semibold text-foreground transition-colors hover:text-teal"
         >
           <span>{{ faq.question }}</span>
-          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-teal-light text-lg font-bold text-teal"
-                x-text="open === {{ forloop.counter }} ? '−' : '+'"></span>
+          <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-teal/10 text-lg font-bold text-teal"
+                data-faq-icon="{{ forloop.counter }}">{% if forloop.first %}-{% else %}+{% endif %}</span>
         </button>
       </h2>
-      <div id="faq-{{ forloop.counter }}" x-show="open === {{ forloop.counter }}" x-cloak
-           class="px-5 pb-5 text-sm leading-relaxed text-navy/70">
+      <div id="faq-{{ forloop.counter }}" class="faq-content {% if not forloop.first %}hidden{% endif %} px-5 pb-5 text-sm leading-relaxed text-foreground/70">
         <p>{{ faq.answer }}</p>
       </div>
     </div>
@@ -47,7 +46,7 @@
   </div>
 </section>
 
-{# FAQPage structured data — must mirror the visible Q&A content exactly #}
+{# FAQPage structured data - must mirror the visible Q&A content exactly #}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

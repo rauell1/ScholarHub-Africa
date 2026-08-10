@@ -27,12 +27,12 @@ function cookieValueIsAdmin(value: string | undefined): boolean {
   return role === ADMIN_ROLE && token === SESSION_TOKEN;
 }
 
-/** Server-component guard — usage: `const { isAdmin } = await requireAdmin()` */
+/** Server-component guard - usage: `const { isAdmin } = await requireAdmin()` */
 export function isAdminSession(): boolean {
   return cookieValueIsAdmin(cookies().get(ADMIN_SESSION_COOKIE)?.value);
 }
 
-/** Route-handler guard — pass the incoming request. */
+/** Route-handler guard - pass the incoming request. */
 export function isAdminRequest(request: NextRequest): boolean {
   const fromCookie = cookieValueIsAdmin(request.cookies.get(ADMIN_SESSION_COOKIE)?.value);
   if (fromCookie) return true;

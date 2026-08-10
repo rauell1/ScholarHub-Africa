@@ -9,7 +9,7 @@ third-party consent dependencies (own GCM v2 + IAB TCF 2.3 encoder).
 
 ```
 consent-manager/
-├── middleware.ts                  # Edge geolocation (GDPR vs CCPA) — stamps region cookies
+├── middleware.ts                  # Edge geolocation (GDPR vs CCPA) - stamps region cookies
 ├── package.json / tsconfig.json / next.config.mjs
 ├── .env.example
 └── src/
@@ -57,17 +57,17 @@ consent-manager/
     │       │   ├── login/page.tsx         # admin sign-in
     │       │   └── consent-manager/page.tsx  # PROTECTED route (server-side RBAC)
     │       └── api/
-    │           ├── consent/route.ts       # POST — record consent (public)
-    │           ├── consent/region/route.ts# GET  — region resolution (public)
+    │           ├── consent/route.ts       # POST - record consent (public)
+    │           ├── consent/region/route.ts# GET  - region resolution (public)
     │           └── admin/
-    │               ├── login/route.ts     # POST — set ADMIN session cookie
+    │               ├── login/route.ts     # POST - set ADMIN session cookie
     │               ├── logout/route.ts
-    │               ├── logs/route.ts      # GET  — audit log (RBAC)
-    │               ├── analytics/route.ts # GET  — chart data (RBAC)
-    │               ├── export/csv/route.ts# GET  — audit CSV (RBAC)
-    │               ├── export/report/route.ts # GET — printable report (RBAC)
-    │               ├── scan/route.ts      # POST — run scanner (RBAC)
-    │               └── config/route.ts    # GET/PUT — customization (RBAC)
+    │               ├── logs/route.ts      # GET  - audit log (RBAC)
+    │               ├── analytics/route.ts # GET  - chart data (RBAC)
+    │               ├── export/csv/route.ts# GET  - audit CSV (RBAC)
+    │               ├── export/report/route.ts # GET - printable report (RBAC)
+    │               ├── scan/route.ts      # POST - run scanner (RBAC)
+    │               └── config/route.ts    # GET/PUT - customization (RBAC)
 ```
 
 ---
@@ -92,7 +92,7 @@ consent-manager/
 └────────────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────── ADMIN ENVIRONMENT ─────────────────────────────┐
-│  /admin/consent-manager — server-side redirect unless role === 'ADMIN'     │
+│  /admin/consent-manager - server-side redirect unless role === 'ADMIN'     │
 │  Every /api/admin/* route independently enforces RBAC (403 otherwise).     │
 │  Customization Engine · Cookie Scanner · Policy Generators ·               │
 │  Consent Logs (anonymized IP, geo, string, version) · Recharts analytics · │
@@ -109,7 +109,7 @@ cp .env.example .env.local        # set ADMIN_PASSWORD, ADMIN_SESSION_TOKEN
 npm run dev                       # → http://localhost:3000
 ```
 
-- **End-user demo:** http://localhost:3000 — the banner appears only when no
+- **End-user demo:** http://localhost:3000 - the banner appears only when no
   consent is stored. The page shows two consent-gated scripts (declared as
   `type="text/plain"`) that stay blocked until you grant their category.
 - **Admin:** http://localhost:3000/admin/consent-manager
@@ -119,8 +119,8 @@ npm run dev                       # → http://localhost:3000
 
 | Region | Default posture | Banner behaviour |
 |---|---|---|
-| **GDPR** (EU-27 + EEA + UK) | Strict opt-in — all non-essential cookies **OFF** | Accept all · Reject non-essential · Manage |
-| **CCPA** (US) | Opt-out — categories ON until refused | "Do Not Sell or Share My Personal Information" link + opt-out |
+| **GDPR** (EU-27 + EEA + UK) | Strict opt-in - all non-essential cookies **OFF** | Accept all · Reject non-essential · Manage |
+| **CCPA** (US) | Opt-out - categories ON until refused | "Do Not Sell or Share My Personal Information" link + opt-out |
 | Unregulated | Opt-out baseline | Same as CCPA |
 
 - **Auto-blocking:** scripts carrying `data-consent-category` (or registered via
@@ -139,7 +139,7 @@ npm run dev                       # → http://localhost:3000
 |---|---|---|---|
 | POST | `/api/consent` | public | Record consent; sets HTTP-only `sh_consent` |
 | GET | `/api/consent/region` | public | Region for the client hook |
-| POST | `/api/admin/login` · `/logout` | — | Admin session (role ADMIN) |
+| POST | `/api/admin/login` · `/logout` | - | Admin session (role ADMIN) |
 | GET | `/api/admin/logs` | ADMIN | Audit log (page, page_size, region, accepted, from, to) |
 | GET | `/api/admin/analytics?days=` | ADMIN | Opt-in rate series |
 | GET | `/api/admin/export/csv` | ADMIN | Audit CSV download |
@@ -149,7 +149,7 @@ npm run dev                       # → http://localhost:3000
 
 ## Production swap notes
 
-- **Auth:** replace the demo login with NextAuth / your IdP — keep the
+- **Auth:** replace the demo login with NextAuth / your IdP - keep the
   `isAdminSession()` / `isAdminRequest()` gates.
 - **Storage:** swap `lib/server/store.ts` (JSONL) for Postgres/Redis.
 - **Headless scan:** point `HEADLESS_SCANNER_URL` at a Puppeteer/Playwright
@@ -157,7 +157,7 @@ npm run dev                       # → http://localhost:3000
 - **TCF:** the bundled encoder is wire-compatible and self-tested; you can swap
   in `@iabtcf/cmpapi` if you prefer the official library, and register a real
   CMP id with IAB Europe.
-- **Legal:** generated policies are a starting point — have counsel review.
+- **Legal:** generated policies are a starting point - have counsel review.
 
 ---
 

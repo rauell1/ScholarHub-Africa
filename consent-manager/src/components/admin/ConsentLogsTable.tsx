@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Consent Logs — secure audit table (Anonymized IP · Timestamp · Geolocation
+ * Consent Logs - secure audit table (Anonymized IP · Timestamp · Geolocation
  * · Consent String/State · Version) with filters and pagination.
  */
 import { useCallback, useEffect, useState } from 'react';
@@ -46,7 +46,7 @@ export function ConsentLogsTable() {
         <h1>Consent Logs</h1>
         <p>
           Every consent decision, stored with an anonymized IP, timestamp,
-          geolocation, consent string and version — exportable for audits.
+          geolocation, consent string and version - exportable for audits.
         </p>
       </div>
 
@@ -92,7 +92,7 @@ export function ConsentLogsTable() {
               {(data?.items ?? []).length === 0 && (
                 <tr>
                   <td colSpan={7} className="admin-muted">
-                    No consent records yet — open the site and make a choice in the banner.
+                    No consent records yet - open the site and make a choice in the banner.
                   </td>
                 </tr>
               )}

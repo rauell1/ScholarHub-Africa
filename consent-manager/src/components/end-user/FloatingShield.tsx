@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Floating shield — a subtle affordance (footer/floating corner) that lets
+ * Floating shield - a subtle affordance (footer/floating corner) that lets
  * users reopen the preference panel after the banner has been dismissed.
  */
 import { t } from '@/lib/consent/i18n';

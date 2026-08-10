@@ -1,5 +1,5 @@
 """
-Core data models — mirror the database schema in System Design v1.0 §4.
+Core data models - mirror the database schema in System Design v1.0 §4.
 
 Country, FieldOfStudy, Scholarship (with M2M fields) and ChangeLog.
 """
@@ -228,4 +228,4 @@ class ChangeLog(models.Model):
         ordering = ['-changed_at']
 
     def __str__(self):
-        return f'{self.scholarship} — {self.field_changed or self.change_type}'
+        return f'{self.scholarship} - {self.field_changed or self.change_type}'

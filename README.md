@@ -13,21 +13,21 @@ Every scholarship record is human-verified against official sources, scored 0–
 
 | Feature | Status |
 |---|---|
-| Scholarship directory — 45 verified opportunities, 23 countries, 18 fields | ✅ |
+| Scholarship directory - 45 verified opportunities, 23 countries, 18 fields | ✅ |
 | Full-text search (`/api/v1/search/` + directory `?q=`) with Postgres `SearchVector` + SQLite fallback | ✅ |
-| Filters — country, field, funding, eligibility, status, min score, deadline window | ✅ |
+| Filters - country, field, funding, eligibility, status, min score, deadline window | ✅ |
 | Country & field grouping pages | ✅ |
 | Detail pages with live deadline countdown, score badge, change history, JSON-LD, OG tags | ✅ |
-| Django Admin — colour-coded badges, fieldsets, bulk actions, auto change-log | ✅ |
-| Application tracker — kanban dashboard (Planning → Drafting → Submitted → Decision) | ✅ |
+| Django Admin - colour-coded badges, fieldsets, bulk actions, auto change-log | ✅ |
+| Application tracker - kanban dashboard (Planning → Drafting → Submitted → Decision) | ✅ |
 | 24-item document checklist with readiness progress | ✅ |
 | Weekly Monday email digest (Celery beat + manual command) | ✅ |
-| DRF API — `/api/v1/scholarships/`, `open_now/`, `top/`, `countries/`, `fields/`, `search/`, tracker CRUD | ✅ |
+| DRF API - `/api/v1/scholarships/`, `open_now/`, `top/`, `countries/`, `fields/`, `search/`, tracker CRUD | ✅ |
 | Sitemap, structured data, SEO meta (server-rendered HTML) | ✅ |
 | UX/SEO checklist: custom 404, hero CTA, breadcrumbs, sticky mobile CTA, About/team grid, FAQ accordion, contact + map + 24h promise, thank-you page, case study template, testimonials, robots.txt, OG/Twitter tags, GA4, JSON-LD, privacy policy | ✅ |
 | Excel import command (`import_scholarships`) | ✅ |
 | CI (GitHub Actions → pytest) | ✅ |
-| Phase 2 — registration, OAuth, bookmarks, AI match scores, alerts | 🔜 Roadmap |
+| Phase 2 - registration, OAuth, bookmarks, AI match scores, alerts | 🔜 Roadmap |
 
 ---
 
@@ -35,8 +35,8 @@ Every scholarship record is human-verified against official sources, scored 0–
 
 | URL | Page |
 |---|---|
-| `/` | Homepage — hero with above-the-fold CTA, testimonials, sticky mobile CTA |
-| `/about/` | About us — story, stats, team photo grid |
+| `/` | Homepage - hero with above-the-fold CTA, testimonials, sticky mobile CTA |
+| `/about/` | About us - story, stats, team photo grid |
 | `/faq/` | 5-question Alpine.js accordion |
 | `/contact/` | Contact form + 24h response promise + Google Maps embed & directions |
 | `/thank-you/` | Post-submission confirmation with next steps |
@@ -47,7 +47,7 @@ Every scholarship record is human-verified against official sources, scored 0–
 
 SEO details (3 meta-description variations, alt-text guidance, GA4 placement, internal-linking review, dynamic title structure): see [`docs/seo-guide.md`](docs/seo-guide.md).
 
-**Web standards enforcement** (SEO/AEO/Security/Performance — thelazydeveloper.org four-track checklist, with acceptance-criteria audit): see [`docs/standards-enforcement.md`](docs/standards-enforcement.md). Highlights: consent-gated GA4 (Reject → nothing loads), canonical + OG/Twitter on every page, Organization/WebSite/FAQPage/Article/MonetaryGrant JSON-LD, AI-crawler robots.txt + `llms.txt`, CSP + Permissions-Policy + rate limiting (fail-closed), WebP images, zero N+1 queries.
+**Web standards enforcement** (SEO/AEO/Security/Performance - thelazydeveloper.org four-track checklist, with acceptance-criteria audit): see [`docs/standards-enforcement.md`](docs/standards-enforcement.md). Highlights: consent-gated GA4 (Reject → nothing loads), canonical + OG/Twitter on every page, Organization/WebSite/FAQPage/Article/MonetaryGrant JSON-LD, AI-crawler robots.txt + `llms.txt`, CSP + Permissions-Policy + rate limiting (fail-closed), WebP images, zero N+1 queries.
 
 ## 🛢️ Neon MCP (database tooling)
 
@@ -55,7 +55,7 @@ The repo ships a project-scoped MCP config (`.mcp.json`) pointing at the officia
 **Neon MCP server** (`https://mcp.neon.tech/mcp`, streamable HTTP) so coding agents
 (Claude Code, Cursor, VS Code…) can manage the Neon project and run SQL directly.
 
-**No secret is committed** — the config references `${NEON_API_KEY}` from the
+**No secret is committed** - the config references `${NEON_API_KEY}` from the
 environment (Track 3.4: secrets stay server-side):
 
 ```bash
@@ -70,7 +70,7 @@ npx add-mcp https://mcp.neon.tech/mcp -a claude-code -t http -h 'Authorization: 
 ```
 
 > Note: the remote endpoint is not reachable from restricted sandboxes (e.g. this
-> repo's CI sandbox blocks TLS to neon.tech) — the config works from any normal
+> repo's CI sandbox blocks TLS to neon.tech) - the config works from any normal
 > dev machine. An alternative stdio transport is `@neondatabase/mcp-server-neon`
 > if you prefer a local process.
 
@@ -92,7 +92,7 @@ cp .env.example .env              # edit if you want a PostgreSQL URL
 # 4. Database + demo data
 python manage.py migrate
 python manage.py seed_demo        # 45 scholarships, demo user "roy"
-python manage.py createsuperuser  # (optional — seed_demo already creates "roy")
+python manage.py createsuperuser  # (optional - seed_demo already creates "roy")
 
 # 5. Tailwind (separate terminal, re-run after template edits)
 npm run watch:css
@@ -103,14 +103,14 @@ python manage.py runserver
 
 Open **http://localhost:8000** (site) and **http://localhost:8000/admin** (admin).
 
-### Demo login (Phase 1 — private tracker)
+### Demo login (Phase 1 - private tracker)
 
 `seed_demo` creates a superuser:
 
 ```
 username: roy
 email:    royokola3@gmail.com
-password: change-me-roy-2026   (set via DEMO_PASSWORD in .env — change it!)
+password: change-me-roy-2026   (set via DEMO_PASSWORD in .env - change it!)
 ```
 
 ---
@@ -118,7 +118,7 @@ password: change-me-roy-2026   (set via DEMO_PASSWORD in .env — change it!)
 ## 🗄️ Database
 
 - **Local:** SQLite out of the box (`db.sqlite3`, gitignored).
-- **Production:** Neon PostgreSQL — set `DATABASE_URL`; `settings/production.py` parses it with `sslmode=require` and `conn_max_age=600` (System Design §16.4).
+- **Production:** Neon PostgreSQL - set `DATABASE_URL`; `settings/production.py` parses it with `sslmode=require` and `conn_max_age=600` (System Design §16.4).
 - PostgreSQL unlocks `SearchVector` full-text search; SQLite automatically falls back to `icontains` (same code path in `apps/scholarships/search.py`).
 
 ```bash
@@ -139,16 +139,16 @@ Production: Celery beat fires it every **Monday 05:00 UTC (08:00 EAT)**. Emails 
 ## 🧪 Tests
 
 ```bash
-python -m pytest          # 19 tests — models, search, filters, views, API, tracker
+python -m pytest          # 19 tests - models, search, filters, views, API, tracker
 ```
 
 ## 🚢 Deployment
 
 Railway + Neon + Cloudflare per System Design §16:
 
-- `railway.toml` — web (Gunicorn), worker (Celery), beat (Celery beat with `django_celery_beat`)
-- `Procfile` — same roles
-- `settings/production.py` — Neon DB, Whitenoise (or Cloudflare R2 static storage), secure cookies/HSTS, SSL redirect
+- `railway.toml` - web (Gunicorn), worker (Celery), beat (Celery beat with `django_celery_beat`)
+- `Procfile` - same roles
+- `settings/production.py` - Neon DB, Whitenoise (or Cloudflare R2 static storage), secure cookies/HSTS, SSL redirect
 - Cloudflare sits in front as CDN/DNS/proxy with cache rules for static assets
 
 Set env vars on Railway from `.env.example`.
@@ -157,15 +157,15 @@ Set env vars on Railway from `.env.example`.
 
 ## 🗺️ Roadmap
 
-- **Phase 1.5** — email alerts, data verification checks (Celery)
-- **Phase 2** — user registration (email + Google OAuth), personalised profiles, AI match scores, bookmarks, shareable shortlists
-- **Phase 3** — community submissions with moderation, PWA/mobile
+- **Phase 1.5** - email alerts, data verification checks (Celery)
+- **Phase 2** - user registration (email + Google OAuth), personalised profiles, AI match scores, bookmarks, shareable shortlists
+- **Phase 3** - community submissions with moderation, PWA/mobile
 
 ---
 
 ## 🛡️ Consent Manager
 
-The repo also contains a complete **GDPR & CCPA-compliant Cookie & Consent Management System** at [`consent-manager/`](consent-manager/README.md) — a Next.js 14 app with:
+The repo also contains a complete **GDPR & CCPA-compliant Cookie & Consent Management System** at [`consent-manager/`](consent-manager/README.md) - a Next.js 14 app with:
 
 - Edge geolocation middleware (GDPR opt-in vs CCPA opt-out)
 - `useConsent` hook with Google Consent Mode v2 + IAB TCF 2.3 TC-string encoding
@@ -178,4 +178,4 @@ cd consent-manager && npm install && npm run dev   # http://localhost:3000
 
 ---
 
-*Built for Roy Okola Otieno — and every African student after him. 🇰🇪 → 🌍*
+*Built for Roy Okola Otieno - and every African student after him. 🇰🇪 → 🌍*

@@ -33,7 +33,7 @@ export default function DemoPage() {
       <section className="demo-hero">
         <h1>ScholarHub Africa</h1>
         <p>
-          Fully-funded master's scholarships for African students — with a
+          Fully-funded master's scholarships for African students - with a
           GDPR &amp; CCPA-compliant consent layer.
         </p>
         <a className="demo-cta" href="/admin/consent-manager">
@@ -41,7 +41,7 @@ export default function DemoPage() {
         </a>
       </section>
 
-      {/* Consent-gated scripts — auto-blocked until the user consents.
+      {/* Consent-gated scripts - auto-blocked until the user consents.
           They are declared as `type="text/plain"` so the browser NEVER
           executes them; the ScriptManager captures them on boot and
           re-injects them as executable scripts only when the matching
@@ -66,8 +66,8 @@ export default function DemoPage() {
             <dt>Region</dt>
             <dd>
               {consent.region ? consent.region.toUpperCase() : 'resolving…'}
-              {consent.region === 'gdpr' && <em> — strict opt-in (GDPR)</em>}
-              {consent.region === 'ccpa' && <em> — opt-out (CCPA)</em>}
+              {consent.region === 'gdpr' && <em> - strict opt-in (GDPR)</em>}
+              {consent.region === 'ccpa' && <em> - opt-out (CCPA)</em>}
             </dd>
           </div>
           <div>
@@ -77,16 +77,16 @@ export default function DemoPage() {
                 ? Object.entries(consent.categories)
                     .map(([key, value]) => `${key[0].toUpperCase()}:${value ? '1' : '0'}`)
                     .join(' · ')
-                : '—'}
+                : '-'}
             </dd>
           </div>
           <div>
             <dt>Consent string</dt>
-            <dd className="demo-mono demo-truncate">{consent.consentString || '—'}</dd>
+            <dd className="demo-mono demo-truncate">{consent.consentString || '-'}</dd>
           </div>
           <div>
             <dt>TC string (TCF 2.3)</dt>
-            <dd className="demo-mono demo-truncate">{consent.tcfString || '(not applicable — non-GDPR region)'}</dd>
+            <dd className="demo-mono demo-truncate">{consent.tcfString || '(not applicable - non-GDPR region)'}</dd>
           </div>
         </dl>
       </section>
@@ -99,7 +99,7 @@ export default function DemoPage() {
             It stays blocked until you accept the Analytics category.
           </p>
           <p className="demo-status">
-            {analyticsFired ? '✅ Executed — analytics consent granted' : '⏸ Blocked — awaiting consent'}
+            {analyticsFired ? '✅ Executed - analytics consent granted' : '⏸ Blocked - awaiting consent'}
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export default function DemoPage() {
             It stays blocked until you accept the Marketing category.
           </p>
           <p className="demo-status">
-            {marketingFired ? '✅ Executed — marketing consent granted' : '⏸ Blocked — awaiting consent'}
+            {marketingFired ? '✅ Executed - marketing consent granted' : '⏸ Blocked - awaiting consent'}
           </p>
         </div>
       </section>
@@ -120,10 +120,10 @@ export default function DemoPage() {
         <ol className="demo-steps">
           <li>
             The banner appears only when <strong>no prior consent</strong> is stored. Choose
-            “Reject non-essential” — the trackers above stay blocked.
+            “Reject non-essential” - the trackers above stay blocked.
           </li>
           <li>
-            Reopen preferences via the <strong>floating shield</strong> and enable Analytics —
+            Reopen preferences via the <strong>floating shield</strong> and enable Analytics -
             the script executes immediately and the state updates.
           </li>
           <li>

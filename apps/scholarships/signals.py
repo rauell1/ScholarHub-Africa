@@ -1,5 +1,5 @@
 """
-Signals — automatic ChangeLog entries whenever a Scholarship is edited.
+Signals - automatic ChangeLog entries whenever a Scholarship is edited.
 
 Every field change on an existing scholarship is recorded so the detail
 page can show a transparent change history (System Design v1.0 §6.3).
@@ -15,7 +15,7 @@ SKIP_FIELDS = {'updated_at', 'created_at', 'id'}
 @receiver(pre_save, sender=Scholarship)
 def log_scholarship_changes(sender, instance, **kwargs):
     if not instance.pk:
-        return  # brand new record — no history yet
+        return  # brand new record - no history yet
 
     try:
         old = Scholarship.objects.get(pk=instance.pk)

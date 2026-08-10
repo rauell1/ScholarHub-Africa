@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Export buttons — CSV download (audit log) and PDF (printable report).
+ * Export buttons - CSV download (audit log) and PDF (printable report).
  * Both endpoints are RBAC-protected.
  */
 export function ExportButtons() {

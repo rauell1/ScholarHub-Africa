@@ -1,12 +1,12 @@
 /**
  * Machine-readable consent strings.
  *
- * 1. Consent Mode v2 string  — JSON snapshot pushed to `dataLayer`.
- * 2. IAB TCF 2.3 TC string   — bit-packed per the IAB Europe Transparency &
+ * 1. Consent Mode v2 string  - JSON snapshot pushed to `dataLayer`.
+ * 2. IAB TCF 2.3 TC string   - bit-packed per the IAB Europe Transparency &
  *    Consent Framework encoding (version 2, base64url). This module encodes
  *    the CORE TC string (version … publisherCC) followed by the
  *    vendor-consent segment (bitfield or range encoding). For production,
- *    you can swap in the official `@iabtcf/cmpapi` library — this module
+ *    you can swap in the official `@iabtcf/cmpapi` library - this module
  *    produces the same wire format and round-trips through its own decoder
  *    (self-tested in dev).
  */
@@ -214,7 +214,7 @@ export function buildTcfString(options: TcfOptions): string {
   return encodeBase64Url(combined);
 }
 
-/** Decoder for the core segment — used for self-verification + admin viewer. */
+/** Decoder for the core segment - used for self-verification + admin viewer. */
 export function decodeTcfString(tcString: string): Record<string, number> {
   const reader = new BitReader(decodeBase64Url(tcString));
   return {
@@ -285,7 +285,7 @@ export function buildConsentPayload(
   const tcfString =
     region === 'gdpr'
       ? buildTcfString({
-          cmpId: opts.cmpId ?? 42, // demo CMP id — register a real one for production
+          cmpId: opts.cmpId ?? 42, // demo CMP id - register a real one for production
           cmpVersion: opts.cmpVersion ?? 1,
           consentScreen: opts.consentScreen ?? 1,
           consentLanguage: opts.consentLanguage ?? (language.slice(0, 2) || 'en'),

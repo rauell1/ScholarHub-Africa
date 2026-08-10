@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static pages_tags %}
 
-{% block title %}Case study — DAAD EPOS scholarship — ScholarHub Africa{% endblock %}
+{% block title %}Case study - DAAD EPOS scholarship - ScholarHub Africa{% endblock %}
 
 {% block meta_description %}{{ study.summary|truncatechars:158 }}{% endblock %}
 
@@ -64,7 +64,7 @@
     <!-- Quote -->
     <blockquote class="my-8 rounded-2xl bg-teal-light p-6">
       <p class="text-base font-medium leading-relaxed text-navy">“{{ study.quote.text }}”</p>
-      <footer class="mt-3 text-sm font-bold text-navy">— {{ study.quote.author }}, <span class="font-normal text-navy/60">{{ study.quote.role }}</span></footer>
+      <footer class="mt-3 text-sm font-bold text-navy">- {{ study.quote.author }}, <span class="font-normal text-navy/60">{{ study.quote.role }}</span></footer>
     </blockquote>
 
     <!-- Next steps CTA -->
@@ -78,7 +78,7 @@
   </div>
 </article>
 
-{# Article structured data — accurate to the visible case-study content #}
+{# Article structured data - accurate to the visible case-study content #}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

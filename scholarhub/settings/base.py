@@ -1,10 +1,10 @@
 """
-ScholarHub Africa — shared settings.
+ScholarHub Africa - shared settings.
 
 Settings are split across three modules (System Design v1.0 §5):
-  base.py       — everything shared between environments
-  local.py      — local development overrides
-  production.py — production overrides (Neon, Cloudflare R2, email, security)
+  base.py       - everything shared between environments
+  local.py      - local development overrides
+  production.py - production overrides (Neon, Cloudflare R2, email, security)
 """
 from datetime import timedelta  # noqa: F401  (used by CELERY_BEAT_SCHEDULE)
 from pathlib import Path
@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'scholarhub.wsgi.application'
 ASGI_APPLICATION = 'scholarhub.asgi.application'
 
 # ---------------------------------------------------------------------------
-# Database — local defaults to SQLite; production uses Neon PostgreSQL
+# Database - local defaults to SQLite; production uses Neon PostgreSQL
 # (System Design v1.0 §4, §16.4)
 # ---------------------------------------------------------------------------
 DATABASES = {
@@ -100,7 +100,7 @@ DATABASES = {
 }
 
 # ---------------------------------------------------------------------------
-# Cache — shared store for the rate limiter (Security 3.7: "shared store,
+# Cache - shared store for the rate limiter (Security 3.7: "shared store,
 # not per-instance memory"). Uses Redis when REDIS_URL is set (Railway),
 # otherwise local-memory for development only.
 # ---------------------------------------------------------------------------
@@ -214,14 +214,14 @@ DEFAULT_FROM_EMAIL = config(
     default='ScholarHub Africa <digest@scholarhub.africa>',
 )
 
-# Resend API key — used directly by the weekly digest task (never commit it)
+# Resend API key - used directly by the weekly digest task (never commit it)
 RESEND_API_KEY = config('RESEND_API_KEY', default='')
 DIGEST_EMAILS = config('DIGEST_EMAILS', default='royokola3@gmail.com', cast=Csv())
 
 # ---------------------------------------------------------------------------
 # Marketing / SEO (System Design v1.0 §19)
 # ---------------------------------------------------------------------------
-# Google Analytics 4 measurement ID — empty locally, set in production.
+# Google Analytics 4 measurement ID - empty locally, set in production.
 # The snippet renders in <head> only when this is configured.
 GA4_MEASUREMENT_ID = config('GA4_MEASUREMENT_ID', default='')
 

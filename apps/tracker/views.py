@@ -1,5 +1,5 @@
 """
-Tracker views (System Design v1.0 §6.5) — private, login required.
+Tracker views (System Design v1.0 §6.5) - private, login required.
 
 Dashboard (kanban-style stage columns) and the 24-item document checklist.
 """
@@ -88,7 +88,7 @@ def update_application(request, application_id):
         form.save()
         messages.success(request, 'Application updated.')
     else:
-        messages.error(request, 'Could not update — please check the form.')
+        messages.error(request, 'Could not update - please check the form.')
     return redirect('tracker:dashboard')
 
 

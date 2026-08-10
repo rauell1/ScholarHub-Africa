@@ -1,5 +1,5 @@
 """
-Tracker API (System Design v1.0 §7) — auth required (Phase 1: single admin user).
+Tracker API (System Design v1.0 §7) - auth required (Phase 1: single admin user).
 
 GET/POST /api/v1/tracker/applications/
 PUT      /api/v1/tracker/applications/<id>/

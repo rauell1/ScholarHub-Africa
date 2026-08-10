@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Admin Command Center — the entire admin surface lives behind
+ * Admin Command Center - the entire admin surface lives behind
  * `/admin/consent-manager`, and the server page redirects non-ADMIN users.
  * Every tab below talks only to RBAC-protected /api/admin/* routes.
  */

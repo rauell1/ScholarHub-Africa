@@ -1,11 +1,11 @@
 """
 Security & abuse middleware (Track 3: Security Hardening).
 
-  • SecurityHeadersMiddleware — CSP, Permissions-Policy, Referrer-Policy,
+  • SecurityHeadersMiddleware - CSP, Permissions-Policy, Referrer-Policy,
     nosniff on every response (baseline headers, 3.10). No raw errors or
     stack traces are ever returned (Django's DEBUG pages are dev-only; the
     500 handler renders a generic branded page).
-  • RateLimitMiddleware — every public mutating POST is rate-limited per IP
+  • RateLimitMiddleware - every public mutating POST is rate-limited per IP
     using the Django cache (a shared store in production: Redis/Memcached).
     Fails CLOSED: if the limiter itself errors, the request is rejected with
     429 rather than letting abuse through unthrottled.
@@ -108,7 +108,7 @@ class RateLimitMiddleware:
                     )
                 cache.set(key, hits + 1, RATE_LIMIT_WINDOW)
             except Exception:
-                # Fail closed — limiter error must not mean "no limiter".
+                # Fail closed - limiter error must not mean "no limiter".
                 return JsonResponse(
                     {'detail': 'Service busy. Please try again shortly.'},
                     status=429,
