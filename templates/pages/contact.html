@@ -64,6 +64,15 @@
           <input type="text" id="id_subject" name="subject" value="{{ form.subject.value|default:'' }}" maxlength="200" class="input" placeholder="What's this about?">
         </div>
         <div>
+          <label for="id_hear_about" class="mb-1 block text-sm font-semibold text-navy">How did you hear about us?</label>
+          <select id="id_hear_about" name="hear_about" class="input">
+            {% for value, label in form.HEAR_ABOUT_CHOICES %}
+              <option value="{{ value }}" {% if form.hear_about.value == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <p class="mt-1 text-xs text-navy/50">Helps us understand where students find ScholarHub — including AI assistants.</p>
+        </div>
+        <div>
           <label for="id_message" class="mb-1 block text-sm font-semibold text-navy">Message</label>
           <textarea id="id_message" name="message" rows="5" required maxlength="4000" class="input" placeholder="Write your message…">{{ form.message.value|default:'' }}</textarea>
           {% for error in form.message.errors %}<p class="mt-1 text-xs text-crimson">{{ error }}</p>{% endfor %}

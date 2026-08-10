@@ -3,7 +3,7 @@
 
 {% block title %}{{ scholarship.short_name|default:scholarship.name|truncatechars:42 }} — ScholarHub Africa{% endblock %}
 
-{% block meta_description %}{{ scholarship.notes|truncatechars:155 }} {% if scholarship.funding_detail %}{{ scholarship.funding_detail|truncatechars:40 }}{% endif %}{% endblock %}
+{% block meta_description %}{{ scholarship.notes|default:scholarship.name|truncatechars:160 }}{% endblock %}
 
 {% block og_tags %}
 <meta property="og:site_name" content="ScholarHub Africa">

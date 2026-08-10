@@ -41,6 +41,23 @@ class ContactForm(forms.Form):
     # Honeypot — hidden from humans; bots fill it in. If filled, drop silently.
     website = forms.CharField(required=False, max_length=100)
 
+    # AEO attribution (Track 2.5): catches how visitors heard about us,
+    # including AI assistants, which analytics miss. Optional; no PII.
+    HEAR_ABOUT_CHOICES = [
+        ('', 'How did you hear about us? (optional)'),
+        ('google', 'Google search'),
+        ('ai_assistant', 'ChatGPT / Claude / Perplexity / other AI assistant'),
+        ('social', 'Social media (X, LinkedIn, Instagram…)'),
+        ('whatsapp', 'WhatsApp'),
+        ('friend', 'Friend or family'),
+        ('other', 'Other'),
+    ]
+    hear_about = forms.ChoiceField(
+        required=False,
+        choices=HEAR_ABOUT_CHOICES,
+        widget=forms.Select,
+    )
+
     def clean(self):
         cleaned = super().clean()
         if cleaned.get('website'):

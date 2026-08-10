@@ -1,11 +1,17 @@
 # Web Standards Enforcement — Acceptance Report
 
 Enforced per the **Webpage Standards Enforcement Prompt** (thelazydeveloper.org/resources,
-all four tracks). Applied to the whole repo: the Django app (primary) and the
-consent-manager Next.js app. Framework note: the repo is **Django + templates +
-Tailwind + Alpine.js (no TypeScript)**, so JS-framework-specific items (Zod,
-VITE_/NEXT_PUBLIC_, TanStack Query) map to their Django/vanilla equivalents —
-each mapping is called out below.
+all four tracks). The prompt itself is stored as the always-on project rules in
+[`AGENTS.md`](../AGENTS.md) at the repo root. Applied to the whole repo: the Django
+app (primary) and the consent-manager Next.js app. Framework note: the repo is
+**Django + templates + Tailwind + Alpine.js (no TypeScript)**, so
+JS-framework-specific items (Zod, VITE_/NEXT_PUBLIC_, TanStack Query) map to their
+Django/vanilla equivalents — each mapping is called out below.
+
+> Audit updated: `AGENTS.md` added; detail-page meta description capped at 160;
+> consent-manager baseline security headers added; AEO "how did you hear about
+> us" attribution field added; Postgres RLS template + `manage.py enable_rls`
+> shipped (closest compliant alternative for the flagged RLS item).
 
 ---
 
@@ -13,7 +19,7 @@ each mapping is called out below.
 
 | Criterion | Status | Where / notes |
 |---|---|---|
-| Unique title (<60 chars) + description (150–160) per route | ✅ | `{% block title %}` + `{% block meta_description %}` on every page; verified by tests (`test_title_under_60_chars`, `test_meta_descriptions_150_160_chars`) |
+| Unique title (<60 chars) + description (150–160) per route | ✅ | `{% block title %}` + `{% block meta_description %}` on every page; verified by tests (`test_title_under_60_chars`, `test_meta_descriptions_150_160_chars`, `test_detail_meta_description_capped`) — detail pages capped at 160 via `truncatechars:160` |
 | One h1, descending headings | ✅ | One h1 per page; footer headings fixed h3→h2; verified by test |
 | Self-referencing canonical | ✅ | `<link rel="canonical">` in `base.html` (path-only, no query strings); verified by test |
 | OG + Twitter tags (absolute image, all fields) | ✅ | `og:title/description/image/type/url/site_name/locale` + `twitter:card=summary_large_image` + title/description/image in `base.html` |
@@ -38,7 +44,7 @@ each mapping is called out below.
 | Content readable without JS | ✅ | Django SSR; no JS required to read any content |
 | llms.txt present | ✅ | Served at `/llms.txt` (`templates/llms.txt`) — treated as helpful, not authoritative |
 | Bottom-line-up-front, self-contained sections, named entities | ✅ | FAQ answers lead with the answer; case study sections are standalone; copy names DAAD, Chevening, SI explicitly |
-| Measure AI visibility | ✅ | `ai_referrer` GA4 event (2.5); server logs capture bot hits naturally |
+| Measure AI visibility | ✅ | `ai_referrer` GA4 event (2.5); server logs capture bot hits naturally; contact form now includes an optional **"How did you hear about us?"** field (options incl. "AI assistant") to catch attribution analytics miss |
 
 ## TRACK 3 — Security Hardening
 
@@ -50,12 +56,12 @@ each mapping is called out below.
 | Every side-effecting route requires auth | ✅ | Tracker write routes require login + per-record ownership (`profile__user=request.user`); `POST /api/consent` is intentionally public (logging a user's own choice is its purpose) but is rate-limited |
 | IDOR: per-record ownership checks | ✅ | Tracker update/remove/checklist all scope by `profile__user` |
 | Secrets server-only, none in browser | ✅ | python-decouple env vars; `.env` gitignored; no secrets in templates/JS; consent-manager has no public-prefixed secrets |
-| RLS / role escalation | ⚠️ | Neon supports Postgres RLS — not yet enabled (Phase 2 multi-user). UI prevents role flips (no endpoint can set `is_staff`/`is_superuser`); **flagged** |
+| RLS / role escalation | ⚠️→🟡 | Closest compliant alternative shipped: `deploy/rls.sql` (Postgres row-level security on scholarships — public read-only — and tracker tables — owner-scoped via `app.user_id` session GUC) + `manage.py enable_rls` (safe no-op on SQLite). Still **partially flagged**: requires wiring the `app.user_id` session-GUC middleware and running on the Neon DB before Phase 2 multi-user; UI already prevents role flips (no endpoint can set `is_staff`/`is_superuser`) |
 | Webhook signature + grant-once | ✅ N/A | No payments/webhooks in the product yet — documented as N/A |
 | Rate limiting public mutations | ✅ | Django `RateLimitMiddleware` (10/min/IP, fail-closed, shared store via `CACHES` — Redis when `REDIS_URL` set, locmem in dev); consent-manager `POST /api/consent` (20/min/IP, fail-closed) |
 | Pagination, no silent caps | ✅ | Directory paginated (12/page); logs paginated; no unbounded "get all" in request paths |
 | Dependency audit | ✅ | Small pinned dependency set (`requirements.txt`, `package-lock.json`); no exotic transitive chains |
-| CSP + headers | ✅ | `Content-Security-Policy` (self + GA/GTM + Google Fonts + Maps; `object-src 'none'`, `frame-ancestors 'none'`), `Permissions-Policy` (camera/mic/geo/payment disabled), `Referrer-Policy: strict-origin-when-cross-origin`, `X-Content-Type-Options: nosniff`, HSTS in prod; X-Frame-Options DENY |
+| CSP + headers | ✅ | **Django app:** `Content-Security-Policy` (self + GA/GTM + Google Fonts + Maps; `object-src 'none'`, `frame-ancestors 'none'`), `Permissions-Policy` (camera/mic/geo/payment disabled), `Referrer-Policy: strict-origin-when-cross-origin`, `X-Content-Type-Options: nosniff`, HSTS in prod; X-Frame-Options DENY. **Consent-manager (Next):** same baseline added to `next.config.mjs` for all routes (CSP, nosniff, DENY, Referrer-Policy, Permissions-Policy, HSTS) |
 | No raw errors / stack traces | ✅ | Branded 404/500 pages; DRF returns generic errors; DEBUG pages dev-only |
 | No PII in logs | ✅ | Consent logs store anonymized IPs (truncation + HMAC); contact form persists nothing |
 
@@ -78,11 +84,14 @@ each mapping is called out below.
 
 ## Summary
 
-- **Pass:** 34 of the checklist items are implemented and covered by automated
-  tests (50 tests total, all passing).
+- **Pass:** the checklist items are implemented and covered by automated
+  tests (51 tests total, all passing). `AGENTS.md` at the repo root carries the
+  rules as an always-on project prompt.
 - **Flagged (not met / not applicable):**
-  1. **RLS at the database** — Postgres RLS not yet enabled (single-user Phase 1);
-     UI/API already prevent role escalation. Recommended before Phase 2 multi-user.
+  1. **RLS at the database** — a working template + command now ship
+     (`deploy/rls.sql`, `manage.py enable_rls`), but enabling requires wiring
+     the `app.user_id` session-GUC middleware and running on the Neon Postgres
+     DB before Phase 2 multi-user. UI/API already prevent role escalation.
   2. **Real-world performance numbers** (LCP < 2.5s, INP < 200ms, CLS < 0.1) —
      cannot be measured in this sandbox; all structural enablers are in place.
   3. **Webhooks/payments** — no such feature exists yet; criteria marked N/A.

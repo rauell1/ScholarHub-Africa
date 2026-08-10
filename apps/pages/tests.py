@@ -323,6 +323,39 @@ def test_private_pages_noindex(client, db):
     assert 'noindex, nofollow' in content
 
 
+def test_detail_meta_description_capped(client, data):
+    """Detail-page meta description must not exceed 160 chars (1.1)."""
+    import re
+    response = client.get(data['daad'].get_absolute_url())
+    content = response.content.decode()
+    match = re.search(r'name="description" content="([^"]+)"', content)
+    assert match
+    assert len(match.group(1)) <= 160
+
+
+def test_contact_hear_about_field(client, db):
+    """AEO 2.5 — 'how did you hear about us' attribution field."""
+    content = client.get('/contact/').content.decode()
+    assert 'hear_about' in content
+    assert 'AI assistant' in content
+
+    response = client.post('/contact/', {
+        'name': 'Achieng Otieno',
+        'email': 'achieng@example.com',
+        'message': 'A genuine question about the platform.',
+        'hear_about': 'ai_assistant',
+    })
+    assert response.status_code == 302  # accepted with the new optional field
+
+
+def test_enable_rls_noop_on_sqlite(db, capsys):
+    """RLS command is a safe no-op on the local SQLite database (3.5)."""
+    from django.core.management import call_command
+    call_command('enable_rls')
+    out = capsys.readouterr().out
+    assert 'not PostgreSQL' in out
+
+
 def test_unique_page_titles(client):
     """Every page appends its name to the app name (SEO checklist #11)."""
     cases = [
