@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Scholarships by Field — ScholarHub Africa{% endblock %}
+
+{% block meta_description %}Browse fully-funded master's scholarships by field of study — renewable energy, water and sanitation, public health, data and AI, engineering and more.{% endblock %}
+
+{% block content %}
+<section class="bg-navy py-10 text-white">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <h1 class="text-2xl font-extrabold sm:text-3xl">📚 Scholarships by Field of Study</h1>
+    <p class="mt-1 text-sm text-white/60">Pick your field and find fully-funded master's opportunities.</p>
+  </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+  <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+    {% for field in fields %}
+      <a id="{{ field.slug }}"
+         href="{% url 'scholarships:directory' %}?field={{ field.slug }}"
+         class="card flex flex-col items-center gap-1.5 py-5 text-center transition hover:-translate-y-0.5 hover:shadow-md">
+        <span class="text-3xl">{{ field.icon|default:'📘' }}</span>
+        <span class="text-sm font-semibold text-navy">{{ field.name }}</span>
+        <span class="badge bg-teal-light text-teal">{{ field.count }} scholarship{{ field.count|pluralize }}</span>
+      </a>
+    {% empty %}
+      <p class="text-sm text-navy/50">No fields yet — check back soon.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load scholarship_tags pages_tags %}
+
+{% block title %}{{ scholarship.short_name|default:scholarship.name|truncatechars:42 }} — ScholarHub Africa{% endblock %}
+
+{% block meta_description %}{{ scholarship.notes|default:scholarship.name|truncatechars:160 }}{% endblock %}
+
+{% block og_tags %}
+<meta property="og:site_name" content="ScholarHub Africa">
+<meta property="og:title" content="{{ scholarship.name }} — Score {{ scholarship.score }}/100">
+<meta property="og:description" content="{{ scholarship.notes|truncatechars:155 }}">
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% endblock %}
+
+{% block extra_head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MonetaryGrant",
+  "name": {{ scholarship.name|escapejs|safe }},
+  "description": {{ scholarship.notes|truncatechars:300|escapejs|safe }},
+  "url": "{{ request.build_absolute_uri }}",
+  "funder": {
+    "@type": "Organization",
+    "name": {{ scholarship.university|default:scholarship.name|escapejs|safe }}
+  },
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": {{ scholarship.university|default:scholarship.name|escapejs|safe }}
+  },
+  "amount": {
+    "@type": "MonetaryAmount",
+    "currency": "{{ scholarship.currency }}",
+    "value": {{ scholarship.funding_detail|default:scholarship.funding_type|escapejs|safe }}
+  },
+  "startDate": "{{ scholarship.deadline_date|date:'Y-m-d'|default:'' }}",
+  "eligibleRegion": {{ scholarship.nationality_notes|default:'African students'|escapejs|safe }}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="bg-navy text-white">
+  <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    {% breadcrumbs items=breadcrumbs_items current=breadcrumbs_current %}
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div class="max-w-3xl">
+        <div class="mb-2 flex flex-wrap items-center gap-2">
+          <span class="text-2xl">{{ scholarship.country.flag_emoji }}</span>
+          <span class="font-semibold text-white/80">{{ scholarship.country.name }}</span>
+          {% include 'components/eligibility_badge.html' %}
+          {% include 'components/score_badge.html' %}
+          <span class="badge bg-white/10 text-white/80">{{ scholarship.status|title|cut:'_' }}</span>
+        </div>
+        <h1 class="text-2xl font-extrabold leading-tight sm:text-3xl">{{ scholarship.name }}</h1>
+        {% if scholarship.university %}
+          <p class="mt-1.5 text-white/70">{{ scholarship.university }}</p>
+        {% endif %}
+        {% if scholarship.programme %}
+          <p class="mt-0.5 text-sm text-white/50">{{ scholarship.programme }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+  <div class="grid gap-8 lg:grid-cols-3">
+    <!-- Main column -->
+    <div class="space-y-6 lg:col-span-2">
+
+      <div class="card">
+        <h2 class="text-lg font-bold text-navy">Overview</h2>
+        <p class="mt-2 text-sm leading-relaxed text-navy/70">
+          {{ scholarship.notes|default:'No notes yet — check the official link below.' }}
+        </p>
+        {% if scholarship.action_required %}
+        <div class="mt-4 rounded-xl bg-amber-light p-4">
+          <h3 class="text-sm font-bold text-amber">⚡ Action required</h3>
+          <p class="mt-1 text-sm text-navy/70">{{ scholarship.action_required }}</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2 class="text-lg font-bold text-navy">💰 Funding</h2>
+        <dl class="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+          <div class="rounded-xl bg-gray-50 p-3">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-navy/50">Type</dt>
+            <dd class="mt-1 font-semibold text-navy">{{ scholarship.funding_type|funding_label }}</dd>
+          </div>
+          {% if scholarship.funding_detail %}
+          <div class="rounded-xl bg-gray-50 p-3">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-navy/50">What's covered</dt>
+            <dd class="mt-1 font-semibold text-navy">{{ scholarship.funding_detail }}</dd>
+          </div>
+          {% endif %}
+          {% if scholarship.application_fee %}
+          <div class="rounded-xl bg-gray-50 p-3">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-navy/50">Application fee</dt>
+            <dd class="mt-1 font-semibold text-navy">{{ scholarship.application_fee }} {{ scholarship.currency }}</dd>
+          </div>
+          {% endif %}
+          {% if scholarship.deadline_notes %}
+          <div class="rounded-xl bg-gray-50 p-3">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-navy/50">Deadline note</dt>
+            <dd class="mt-1 font-semibold text-navy">{{ scholarship.deadline_notes }}</dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+
+      <div class="card">
+        <h2 class="text-lg font-bold text-navy">🎯 Eligibility</h2>
+        <dl class="mt-3 space-y-3 text-sm">
+          <div class="flex flex-wrap gap-2">
+            {% if scholarship.eligibility_label %}
+              <span class="badge bg-navy/5 text-navy">Label: {{ scholarship.eligibility_label|eligibility_label }}</span>
+            {% endif %}
+            {% if scholarship.age_max %}<span class="badge bg-navy/5 text-navy">Max age: {{ scholarship.age_max }}</span>{% endif %}
+            {% if scholarship.experience_years_min %}<span class="badge bg-navy/5 text-navy">Min experience: {{ scholarship.experience_years_min }} yrs</span>{% endif %}
+            {% if scholarship.gpa_minimum %}<span class="badge bg-navy/5 text-navy">Min GPA: {{ scholarship.gpa_minimum }}</span>{% endif %}
+            {% if scholarship.cycle_year %}<span class="badge bg-navy/5 text-navy">Cycle: {{ scholarship.cycle_year }}</span>{% endif %}
+          </div>
+          {% if scholarship.nationality_notes %}
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-navy/50">Nationality</dt>
+              <dd class="mt-0.5 text-navy/70">{{ scholarship.nationality_notes }}</dd>
+            </div>
+          {% endif %}
+          {% if scholarship.english_requirement %}
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-navy/50">English requirement</dt>
+              <dd class="mt-0.5 text-navy/70">{{ scholarship.english_requirement }}</dd>
+            </div>
+          {% endif %}
+          {% if scholarship.mba_impact != 'none' %}
+            <div class="rounded-xl bg-crimson-light p-3">
+              <dt class="text-xs font-semibold uppercase tracking-wide text-crimson">MBA impact: {{ scholarship.get_mba_impact_display }}</dt>
+              <dd class="mt-0.5 text-navy/70">{{ scholarship.mba_notes|default:'Confirm with the programme directly.' }}</dd>
+            </div>
+          {% endif %}
+        </dl>
+      </div>
+
+      <div class="card">
+        <h2 class="text-lg font-bold text-navy">📚 Fields of study</h2>
+        <div class="mt-3 flex flex-wrap gap-2">
+          {% for field in scholarship.fields.all %}
+            <a href="{% url 'scholarships:directory' %}?field={{ field.slug }}"
+               class="badge bg-sky-light text-sky hover:bg-sky hover:text-white">
+              {{ field.icon|default:'' }} {{ field.name }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if change_logs %}
+      <div class="card">
+        <h2 class="text-lg font-bold text-navy">🕓 Change history</h2>
+        <p class="mt-1 text-xs text-navy/50">Transparency: every edit is logged, so you know the data is current.</p>
+        <ul class="mt-3 space-y-2 text-sm">
+          {% for log in change_logs %}
+            <li class="flex items-start justify-between gap-3 rounded-lg bg-gray-50 px-3 py-2">
+              <span class="text-navy/70">
+                <span class="font-semibold text-navy">{{ log.field_changed|title }}</span>
+                {% if log.old_value %}<span class="text-navy/40 line-through">{{ log.old_value|truncatechars:40 }}</span> → {% endif %}
+                <span class="text-forest">{{ log.new_value|truncatechars:40 }}</span>
+              </span>
+              <span class="shrink-0 text-xs text-navy/40">{{ log.changed_at|date:'d M Y' }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {# Related scholarships — natural internal links (UX checklist #3) #}
+      {% if related %}
+      <div class="card">
+        <h2 class="text-lg font-bold text-navy">🔗 You might also consider</h2>
+        <p class="mt-1 text-xs text-navy/50">Similar programmes — same field or destination country.</p>
+        <div class="mt-3 space-y-2">
+          {% for item in related %}
+            <a href="{{ item.get_absolute_url }}" class="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-4 py-3 transition hover:bg-teal-light">
+              <span class="text-sm font-semibold text-navy">{{ item.short_name|default:item.name }}</span>
+              <span class="shrink-0 text-xs text-navy/50">{{ item.country.flag_emoji }} {{ item.country.name }} · {{ item.score }}/100</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Sticky action panel -->
+    <aside class="lg:col-span-1">
+      <div class="card sticky top-20 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="font-bold text-navy">Application</h2>
+          {% include 'components/deadline_badge.html' %}
+        </div>
+
+        <p class="text-sm text-navy/60">
+          Status: <span class="font-semibold text-navy">{{ scholarship.get_status_display }}</span>
+          {% if scholarship.days_until_deadline %}· {{ scholarship.days_until_deadline }} days to deadline{% endif %}
+        </p>
+
+        {% if user.is_authenticated %}
+          <form action="{% url 'tracker:add' scholarship.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-primary w-full">＋ Add to Tracker</button>
+          </form>
+        {% else %}
+          <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn-primary w-full">Login to track this</a>
+        {% endif %}
+
+        {% if scholarship.official_link %}
+          <a href="{{ scholarship.official_link }}" target="_blank" rel="noopener noreferrer"
+             class="btn-outline w-full">🔗 Official link ↗</a>
+        {% endif %}
+
+        <div class="rounded-xl bg-gray-50 p-3 text-xs text-navy/60">
+          {% if scholarship.is_verified %}
+            <p class="font-semibold text-forest">✅ Human-verified</p>
+            <p class="mt-1">Verified {{ scholarship.verified_at|date:'d M Y' }}</p>
+            {% if scholarship.verified_source %}
+              <p class="mt-1">Source: {{ scholarship.verified_source }}</p>
+            {% endif %}
+          {% else %}
+            <p class="font-semibold text-amber">⚠️ Not yet verified — cross-check before applying</p>
+          {% endif %}
+        </div>
+
+        <p class="text-xs text-navy/40">
+          Score {{ scholarship.score }}/100 — {{ scholarship.score|score_label }} fit.
+          {% if scholarship.competitiveness %}Competitiveness: {{ scholarship.competitiveness }}.{% endif %}
+        </p>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

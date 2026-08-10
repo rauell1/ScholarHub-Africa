@@ -1,0 +1,64 @@
+{% comment %}
+Testimonials section (UX checklist #10).
+Placeholder reviews: text, star rating, reviewer name + photo (initials avatar).
+Rendered server-side; the data below is demo content — replace with real reviews.
+{% endcomment %}
+<section class="bg-white py-12" aria-labelledby="testimonials-title">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
+    <h2 id="testimonials-title" class="section-title text-center">What applicants say</h2>
+    <p class="mt-2 text-center text-sm text-navy/60">Real words from students who stopped guessing and started tracking.</p>
+
+    <div class="mt-8 grid gap-4 md:grid-cols-3">
+      <figure class="card flex flex-col gap-3">
+        <div class="flex gap-1 text-amber" aria-label="Rated 5 out of 5 stars">
+          <span aria-hidden="true">★</span><span aria-hidden="true">★</span><span aria-hidden="true">★</span><span aria-hidden="true">★</span><span aria-hidden="true">★</span>
+        </div>
+        <blockquote class="text-sm leading-relaxed text-navy/70">
+          "I used to keep deadlines in a notes app. ScholarHub's countdown and digest
+          caught two applications I would definitely have missed."
+        </blockquote>
+        <figcaption class="mt-auto flex items-center gap-3">
+          <span class="avatar avatar--teal" aria-hidden="true">JM</span>
+          <div>
+            <div class="text-sm font-bold text-navy">Joy Mwangi</div>
+            <div class="text-xs text-navy/50">MSc applicant · Nairobi, Kenya</div>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure class="card flex flex-col gap-3">
+        <div class="flex gap-1 text-amber" aria-label="Rated 5 out of 5 stars">
+          <span aria-hidden="true">★</span><span aria-hidden="true">★</span><span aria-hidden="true">★</span><span aria-hidden="true">★</span><span aria-hidden="true">★</span>
+        </div>
+        <blockquote class="text-sm leading-relaxed text-navy/70">
+          "The fit score is honest. It told me where I was competitive and where I
+          wasn't — that focus got me an interview with the Swedish Institute."
+        </blockquote>
+        <figcaption class="mt-auto flex items-center gap-3">
+          <span class="avatar avatar--amber" aria-hidden="true">KO</span>
+          <div>
+            <div class="text-sm font-bold text-navy">Kwame Osei</div>
+            <div class="text-xs text-navy/50">Public policy · Accra, Ghana</div>
+          </div>
+        </figcaption>
+      </figure>
+
+      <figure class="card flex flex-col gap-3">
+        <div class="flex gap-1 text-amber" aria-label="Rated 4 out of 5 stars">
+          <span aria-hidden="true">★</span><span aria-hidden="true">★</span><span aria-hidden="true">★</span><span aria-hidden="true">★</span><span aria-hidden="true">☆</span>
+        </div>
+        <blockquote class="text-sm leading-relaxed text-navy/70">
+          "The 24-item checklist made my documents ready months before the deadline.
+          I just followed it top to bottom."
+        </blockquote>
+        <figcaption class="mt-auto flex items-center gap-3">
+          <span class="avatar avatar--sky" aria-hidden="true">AT</span>
+          <div>
+            <div class="text-sm font-bold text-navy">Amina Traoré</div>
+            <div class="text-xs text-navy/50">Water engineering · Bamako, Mali</div>
+          </div>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>

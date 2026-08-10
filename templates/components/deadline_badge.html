@@ -1,0 +1,10 @@
+{% load scholarship_tags %}
+{% if scholarship.deadline_date %}
+  <span class="deadline-badge font-semibold {{ scholarship|deadline_class }}"
+        data-deadline="{{ scholarship.deadline_date|date:'c' }}"
+        title="{{ scholarship.deadline_notes }}">
+    Loading…
+  </span>
+{% else %}
+  <span class="text-sm text-navy/40">No deadline set</span>
+{% endif %}

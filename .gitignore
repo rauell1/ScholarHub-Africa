@@ -1,0 +1,31 @@
+# Local / environment secrets — never commit
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / Tailwind build
+node_modules/
+npm-debug.log*
+
+# Django runtime
+db.sqlite3
+staticfiles/
+media/
+*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# CI workflow — commit manually (this GitHub App token lacks workflows permission)
+.github/workflows/

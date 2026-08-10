@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {# Dynamic page title: every page appends its name to the app name (SEO checklist #11). #}
+  <title>{% block title %}ScholarHub Africa{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ site.tagline }} Every record is human-verified against official sources and scored for fit.{% endblock %}">
+  {# Self-referencing canonical on every indexable page (path only — no query strings). #}
+  <link rel="canonical" href="{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% endblock %}">
+  {% block robots_meta %}{% endblock %}
+
+  {% block og_tags %}
+  {# Social share tags — OG + Twitter Card (SEO checklist #13) #}
+  <meta property="og:site_name" content="{{ site.name }}">
+  <meta property="og:title" content="{% block og_title %}{{ site.name }} — {{ site.tagline }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ site.tagline }}{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.png' %}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}{{ site.name }} — {{ site.tagline }}{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}{{ site.tagline }}{% endblock %}">
+  <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.png' %}">
+  {% endblock %}
+
+  {# Google Analytics 4 — consent-gated: the snippet renders ONLY when the   #}
+  {# visitor has granted Analytics (sh_consent cookie set by the consent      #}
+  {# manager). No choice / Reject → nothing loads, nothing is collected.      #}
+  {% if site.ga4_allowed %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.ga4_measurement_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ site.ga4_measurement_id }}', { anonymize_ip: true });
+  </script>
+  {% endif %}
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased {% block body_class %}{% endblock %}">
+
+  {% block nav %}
+  <header class="sticky top-0 z-40 bg-navy text-white shadow-md">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6" x-data="{ open: false }">
+      <div class="flex h-16 items-center justify-between">
+        <a href="{% url 'scholarships:home' %}" class="flex items-center gap-2 text-lg font-extrabold tracking-tight">
+          <span class="text-2xl">🎓</span>
+          <span>ScholarHub<span class="text-teal"> Africa</span></span>
+        </a>
+
+        <nav class="hidden items-center gap-1 md:flex" aria-label="Main">
+          <a href="{% url 'scholarships:directory' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">Scholarships</a>
+          <a href="{% url 'scholarships:by_country' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">By Country</a>
+          <a href="{% url 'scholarships:by_field' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">By Field</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'tracker:dashboard' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">My Tracker</a>
+            <a href="{% url 'tracker:checklist' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">Checklist</a>
+            {% if user.is_staff %}
+              <a href="{% url 'admin:index' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">Admin</a>
+            {% endif %}
+            <a href="{% url 'accounts:logout' %}" class="rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy hover:bg-teal-light">Logout</a>
+          {% else %}
+            <a href="{% url 'accounts:login' %}" class="rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy hover:bg-teal-light">Login</a>
+          {% endif %}
+        </nav>
+
+        <button @click="open = !open" class="rounded-lg p-2 hover:bg-white/10 md:hidden" aria-label="Toggle menu">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div x-show="open" x-cloak class="space-y-1 pb-4 md:hidden">
+        <a href="{% url 'scholarships:directory' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">Scholarships</a>
+        <a href="{% url 'scholarships:by_country' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">By Country</a>
+        <a href="{% url 'scholarships:by_field' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">By Field</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'tracker:dashboard' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">My Tracker</a>
+          <a href="{% url 'tracker:checklist' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">Checklist</a>
+          <a href="{% url 'accounts:logout' %}" class="block rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy text-center">Logout</a>
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="block rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy text-center">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+  {% endblock %}
+
+  {% if messages %}
+  <div class="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
+    {% for message in messages %}
+      <div class="{% if message.tags == 'success' %}bg-forest-light text-forest{% elif message.tags == 'error' %}bg-crimson-light text-crimson{% else %}bg-sky-light text-sky{% endif %} rounded-xl px-4 py-3 text-sm font-medium shadow-sm">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="mt-16 border-t border-navy/10 bg-white">
+    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <div class="flex items-center gap-2 text-lg font-extrabold text-navy">
+          <span class="text-2xl">🎓</span>
+          <span>ScholarHub<span class="text-teal"> Africa</span></span>
+        </div>
+        <p class="mt-3 text-sm text-navy/60">
+          Fully-funded international master's scholarships for African students.
+          Every record is human-verified against official sources.
+        </p>
+      </div>
+      <div>
+        <h2 class="text-sm font-bold uppercase tracking-wide text-navy">Explore</h2>
+        <ul class="mt-3 space-y-2 text-sm text-navy/70">
+          <li><a href="{% url 'scholarships:directory' %}" class="hover:text-teal">All scholarships</a></li>
+          <li><a href="{% url 'scholarships:by_country' %}" class="hover:text-teal">Browse by country</a></li>
+          <li><a href="{% url 'scholarships:by_field' %}" class="hover:text-teal">Browse by field</a></li>
+          <li><a href="{% url 'pages:case_studies' %}" class="hover:text-teal">Case studies</a></li>
+          <li><a href="{% url 'tracker:dashboard' %}" class="hover:text-teal">Application tracker</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="text-sm font-bold uppercase tracking-wide text-navy">Company</h2>
+        <ul class="mt-3 space-y-2 text-sm text-navy/70">
+          <li><a href="{% url 'pages:about' %}" class="hover:text-teal">About us</a></li>
+          <li><a href="{% url 'pages:faq' %}" class="hover:text-teal">FAQ</a></li>
+          <li><a href="{% url 'pages:contact' %}" class="hover:text-teal">Contact & directions</a></li>
+          <li><a href="{% url 'pages:privacy' %}" class="hover:text-teal">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="text-sm font-bold uppercase tracking-wide text-navy">Trust &amp; data</h2>
+        <ul class="mt-3 space-y-2 text-sm text-navy/70">
+          <li>✅ Every entry shows a <span class="font-semibold">verification date</span> and official source link</li>
+          <li>🔄 Deadlines reviewed weekly</li>
+          <li>🔒 Your application data is private (Phase 1)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-navy/10 py-4 text-center text-xs text-navy/50">
+      © {% now "Y" %} ScholarHub Africa — built for Roy, and every African student after him.
+    </div>
+  </footer>
+
+  <script defer src="{% static 'js/alpine.min.js' %}"></script>
+  <script defer src="{% static 'js/countdown.js' %}"></script>
+  <script defer src="{% static 'js/analytics.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+
+  {# Site-wide structured data (SEO checklist 1.3): Organization + WebSite with SearchAction #}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
+        "name": "{{ site.name }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}/",
+        "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.png' %}",
+        "email": "{{ site.email }}",
+        "telephone": "{{ site.phone }}",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "{{ site.address }}",
+          "addressLocality": "Nairobi",
+          "addressCountry": "KE"
+        },
+        "openingHours": "Mo-Fr 09:00-18:00",
+        "sameAs": []
+      },
+      {
+        "@type": "WebSite",
+        "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
+        "url": "{{ request.scheme }}://{{ request.get_host }}/",
+        "name": "{{ site.name }}",
+        "publisher": { "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "{{ request.scheme }}://{{ request.get_host }}{% url 'scholarships:directory' %}?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  }
+  </script>
+</body>
+</html>

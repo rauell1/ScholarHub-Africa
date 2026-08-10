@@ -1,0 +1,47 @@
+{% load scholarship_tags %}
+{% comment %}Reusable scholarship card (System Design v1.0 §6.2).{% endcomment %}
+<article class="card flex flex-col gap-3 transition hover:shadow-lg">
+  <div class="flex items-start justify-between gap-2">
+    {% include 'components/flag_chip.html' %}
+    <div class="flex shrink-0 items-center gap-1.5">
+      {% include 'components/eligibility_badge.html' %}
+      {% include 'components/score_badge.html' %}
+    </div>
+  </div>
+
+  <div>
+    <h3 class="font-bold leading-snug text-navy">
+      <a href="{{ scholarship.get_absolute_url }}" class="hover:text-teal">
+        {{ scholarship.name }}
+      </a>
+    </h3>
+    <p class="mt-0.5 text-sm text-navy/60">
+      {{ scholarship.university|default:scholarship.programme }}
+    </p>
+  </div>
+
+  <dl class="space-y-1.5 text-sm">
+    <div class="flex items-center justify-between gap-2">
+      <dt class="text-navy/60">💰 Funding</dt>
+      <dd class="text-right font-medium">
+        {{ scholarship.funding_type|funding_label|title }}
+        {% if scholarship.funding_detail %}
+          <span class="block text-xs text-navy/50">{{ scholarship.funding_detail|truncatechars:42 }}</span>
+        {% endif %}
+      </dd>
+    </div>
+    <div class="flex items-center justify-between gap-2">
+      <dt class="text-navy/60">🗓 Deadline</dt>
+      <dd>{% include 'components/deadline_badge.html' %}</dd>
+    </div>
+  </dl>
+
+  <div class="flex flex-wrap gap-1">
+    {% for field in scholarship.fields.all|slice:":3" %}
+      <span class="badge bg-sky-light text-sky">{{ field.name }}</span>
+    {% endfor %}
+  </div>
+
+  <a href="{{ scholarship.get_absolute_url }}"
+     class="btn-primary mt-auto w-full">View Details →</a>
+</article>

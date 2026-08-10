@@ -1,0 +1,19 @@
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# Dependencies
+node_modules/
+
+# Local env
+.env.local
+.env*.local
+
+# Runtime data written by the admin environment (logs, overrides, policies)
+data/
+
+# Misc
+.DS_Store
+npm-debug.log*
+*.tsbuildinfo
