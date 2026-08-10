@@ -49,6 +49,31 @@ SEO details (3 meta-description variations, alt-text guidance, GA4 placement, in
 
 **Web standards enforcement** (SEO/AEO/Security/Performance — thelazydeveloper.org four-track checklist, with acceptance-criteria audit): see [`docs/standards-enforcement.md`](docs/standards-enforcement.md). Highlights: consent-gated GA4 (Reject → nothing loads), canonical + OG/Twitter on every page, Organization/WebSite/FAQPage/Article/MonetaryGrant JSON-LD, AI-crawler robots.txt + `llms.txt`, CSP + Permissions-Policy + rate limiting (fail-closed), WebP images, zero N+1 queries.
 
+## 🛢️ Neon MCP (database tooling)
+
+The repo ships a project-scoped MCP config (`.mcp.json`) pointing at the official
+**Neon MCP server** (`https://mcp.neon.tech/mcp`, streamable HTTP) so coding agents
+(Claude Code, Cursor, VS Code…) can manage the Neon project and run SQL directly.
+
+**No secret is committed** — the config references `${NEON_API_KEY}` from the
+environment (Track 3.4: secrets stay server-side):
+
+```bash
+# Create a key at console.neon.tech → Account settings → API keys, then:
+export NEON_API_KEY=neon_...          # shell, or your agent's environment
+```
+
+Install / update:
+
+```bash
+npx add-mcp https://mcp.neon.tech/mcp -a claude-code -t http -h 'Authorization: Bearer ${NEON_API_KEY}' -y
+```
+
+> Note: the remote endpoint is not reachable from restricted sandboxes (e.g. this
+> repo's CI sandbox blocks TLS to neon.tech) — the config works from any normal
+> dev machine. An alternative stdio transport is `@neondatabase/mcp-server-neon`
+> if you prefer a local process.
+
 ## 🚀 Quickstart (local)
 
 ```bash

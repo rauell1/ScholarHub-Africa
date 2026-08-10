@@ -290,3 +290,13 @@ and preload critical fonts with `font-display: swap`, reserve space for media.
 **When you finish a task, report which criteria pass and flag any that do not.**
 Live audit: `docs/standards-enforcement.md`. Framework mappings & rationale:
 same file.
+
+---
+
+## Project tooling
+
+- **Neon MCP** is configured project-scoped in `.mcp.json`
+  (`https://mcp.neon.tech/mcp`, streamable HTTP). It gives agents direct access
+  to the Neon project (SQL, branches, roles). Auth via the `NEON_API_KEY`
+  environment variable — the config only holds a `${NEON_API_KEY}` placeholder;
+  never commit a real key (Track 3.4). See README "Neon MCP".
