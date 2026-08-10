@@ -60,7 +60,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apps.pages.middleware.SecurityHeadersMiddleware',
     'apps.pages.middleware.Branded404Middleware',
+    'apps.pages.middleware.RateLimitMiddleware',
 ]
 
 ROOT_URLCONF = 'scholarhub.urls'
@@ -96,6 +98,28 @@ DATABASES = {
         conn_health_checks=True,
     )
 }
+
+# ---------------------------------------------------------------------------
+# Cache — shared store for the rate limiter (Security 3.7: "shared store,
+# not per-instance memory"). Uses Redis when REDIS_URL is set (Railway),
+# otherwise local-memory for development only.
+# ---------------------------------------------------------------------------
+REDIS_URL = config('REDIS_URL', default='')
+if REDIS_URL:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL,
+            'OPTIONS': {'socket_timeout': 2},
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'scholarhub-rate-limit-dev',
+        }
+    }
 
 # ---------------------------------------------------------------------------
 # Auth

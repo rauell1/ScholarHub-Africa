@@ -16,6 +16,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
+from .forms import ContactForm
+
 
 # ── Static pages ────────────────────────────────────────────────────────────
 
@@ -25,6 +27,7 @@ def about(request):
             'name': 'Roy Okola Otieno',
             'role': 'Founder & CEO',
             'photo': 'img/team/roy.jpg',
+            'photo_webp': 'img/team/roy.webp',
             'bio': (
                 'Started ScholarHub Africa to solve his own search problem — '
                 'hundreds of spreadsheets, missed deadlines, zero clarity. Now '
@@ -36,6 +39,7 @@ def about(request):
             'name': 'Amara Njoroge',
             'role': 'Head of Research & Verification',
             'photo': 'img/team/amara.jpg',
+            'photo_webp': 'img/team/amara.webp',
             'bio': (
                 'Leads the human-verification desk. Every deadline, funding '
                 'figure and eligibility rule on the platform is checked against '
@@ -47,6 +51,7 @@ def about(request):
             'name': 'Daniel Ochieng',
             'role': 'Partnerships Lead',
             'photo': 'img/team/daniel.jpg',
+            'photo_webp': 'img/team/daniel.webp',
             'bio': (
                 'Builds relationships with universities and scholarship bodies '
                 'across Europe and Africa so the directory keeps growing with '
@@ -58,6 +63,7 @@ def about(request):
             'name': 'Wanjiru Kamau',
             'role': 'Product & Community',
             'photo': 'img/team/wanjiru.jpg',
+            'photo_webp': 'img/team/wanjiru.webp',
             'bio': (
                 'Turns student feedback into shipped features and runs the '
                 'Phase 2 community programme for applicants across the continent.'
@@ -206,10 +212,19 @@ def case_studies(request):
 
 def contact(request):
     if request.method == 'POST':
-        name = (request.POST.get('name') or '').strip()
-        # Demo handler: no data is persisted in Phase 1 — wire to a backend later.
-        return redirect(reverse('pages:thank_you') + (f'?name={quote(name)}' if name else ''))
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Demo handler: nothing is persisted or emailed in Phase 1.
+            # Wire to a backend task here (rate-limited by middleware).
+            name = form.cleaned_data['name']
+            return redirect(reverse('pages:thank_you') + f'?name={quote(name)}')
+        return render(request, 'pages/contact.html', {
+            'form': form,
+            'breadcrumbs_items': [('Home', '/')],
+            'breadcrumbs_current': 'Contact',
+        }, status=422)
     return render(request, 'pages/contact.html', {
+        'form': ContactForm(),
         'breadcrumbs_items': [('Home', '/')],
         'breadcrumbs_current': 'Contact',
     })
@@ -227,6 +242,11 @@ def thank_you(request):
 
 def robots_txt(request):
     return render(request, 'robots.txt', content_type='text/plain; charset=utf-8')
+
+
+def llms_txt(request):
+    """AEO helper file (Track 2.3) — helpful, never authoritative."""
+    return render(request, 'llms.txt', content_type='text/plain; charset=utf-8')
 
 
 def handler404(request, exception=None):

@@ -39,9 +39,23 @@ def home(request):
         .order_by('name')
     )
     fields = FieldOfStudy.objects.annotate(count=Count('scholarships')).filter(count__gt=0)
-    open_now = _visible_scholarships().filter(status='open_now').order_by('deadline_date')[:6]
-    featured = _visible_scholarships().filter(is_featured=True).order_by('-score')[:4]
+    # Batch related lookups — no per-card queries (Performance 4.4)
+    open_now = (
+        _visible_scholarships()
+        .filter(status='open_now')
+        .select_related('country')
+        .prefetch_related('fields')
+        .order_by('deadline_date')[:6]
+    )
+    featured = (
+        _visible_scholarships()
+        .filter(is_featured=True)
+        .select_related('country')
+        .prefetch_related('fields')
+        .order_by('-score')[:4]
+    )
 
+    # Aggregations in SQL (Performance 4.5)
     stats = {
         'scholarships': _visible_scholarships().count(),
         'countries': countries.count(),
@@ -123,12 +137,14 @@ def detail(request, slug):
 
     # Internal linking (UX checklist #3): related scholarships sharing a
     # field of study or destination country with this one.
+    # select_related + prefetch_related avoid N+1 on the card renders.
     related = (
         Scholarship.objects
         .filter(is_active=True)
         .filter(Q(fields__in=scholarship.fields.all()) | Q(country=scholarship.country))
         .exclude(pk=scholarship.pk)
         .select_related('country')
+        .prefetch_related('fields')
         .distinct()
         .order_by('-score')[:3]
     )

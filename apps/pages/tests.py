@@ -62,7 +62,7 @@ def test_contact_post_redirects_to_thank_you(client):
         'name': 'Achieng Otieno',
         'email': 'achieng@example.com',
         'subject': 'Question',
-        'message': 'Hello!',
+        'message': 'Hello there, this is a real question.',
     })
     assert response.status_code == 302
     assert '/thank-you/' in response['Location']
@@ -124,6 +124,203 @@ def test_404_passthrough_for_api_and_assets(client):
     asset = client.get('/static/does-not-exist.css')
     assert asset.status_code == 404
     assert b'Error 404' not in asset.content
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Web standards enforcement (SEO / AEO / Security / Performance)
+# ═══════════════════════════════════════════════════════════════════════
+
+def test_canonical_on_indexable_pages(client, data):
+    """Self-referencing canonical on every page (no query strings)."""
+    for url in ['/', '/about/', '/scholarships/', '/scholarships/daad-epos-rem/',
+                '/faq/', '/contact/', '/privacy/', '/case-studies/']:
+        response = client.get(url)
+        assert response.status_code == 200
+        content = response.content.decode()
+        expected = f'rel="canonical" href="http://testserver{url}"'
+        assert expected in content, (url, expected)
+
+
+def test_single_h1_and_descending_headings(client, db):
+    """One h1 per page; no skipped heading levels."""
+    import re
+    for url in ['/', '/about/', '/scholarships/', '/scholarships/daad-epos-rem/',
+                '/faq/', '/contact/', '/case-studies/', '/privacy/']:
+        content = client.get(url).content.decode()
+        h1s = re.findall(r'<h1[\s>]', content)
+        assert len(h1s) == 1, url
+        # No h3 that isn't preceded by an h2 (rough check: no h3 on pages
+        # whose only section headings are h1 → h3).
+        if '<h3' in content and '<h2' not in content:
+            raise AssertionError(f'{url}: h3 without h2')
+
+
+def test_title_under_60_chars(client, db):
+    for url in ['/', '/about/', '/faq/', '/contact/', '/privacy/', '/case-studies/',
+                '/scholarships/', '/scholarships/daad-epos-rem/']:
+        response = client.get(url)
+        title = response.content.decode().split('<title>')[1].split('</title>')[0]
+        assert len(title) <= 60, (url, title, len(title))
+
+
+def test_meta_descriptions_150_160_chars(client, db):
+    for url in ['/', '/about/', '/faq/', '/contact/', '/privacy/', '/scholarships/']:
+        content = client.get(url).content.decode()
+        match = __import__('re').search(r'name="description" content="([^"]+)"', content)
+        assert match, url
+        length = len(match.group(1))
+        assert 150 <= length <= 160, (url, length)
+
+
+def test_sitewide_structured_data(client, db):
+    """Organization + WebSite with SearchAction JSON-LD on every page."""
+    content = client.get('/').content.decode()
+    assert '"@type": "Organization"' in content
+    assert '"@type": "WebSite"' in content
+    assert 'SearchAction' in content
+    assert '/scholarships/?q={search_term_string}' in content
+
+
+def test_faqpage_schema_matches_visible_faqs(client):
+    content = client.get('/faq/').content.decode()
+    assert '"@type": "FAQPage"' in content
+    assert content.count('"@type": "Question"') == 5  # exactly the 5 visible FAQs
+
+
+def test_article_schema_on_case_study(client):
+    content = client.get('/case-studies/').content.decode()
+    assert '"@type": "Article"' in content
+
+
+def test_sitemap_lists_only_canonical_urls(client, data):
+    content = client.get('/sitemap.xml').content.decode()
+    # Marketing pages present
+    for url in ['/about', '/faq', '/contact', '/case-studies/', '/privacy']:
+        assert url in content
+    # Scholarship detail present
+    assert '/scholarships/daad-epos-rem/' in content
+    # No query-string (filtered) URLs in the sitemap
+    assert '?country=' not in content
+    assert '?q=' not in content
+    # Not listing admin/api
+    assert '/admin/' not in content
+    assert '/api/' not in content
+
+
+def test_robots_txt_allows_ai_crawlers(client):
+    body = client.get('/robots.txt').content.decode()
+    for agent in ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended',
+                  'anthropic-ai', 'ChatGPT-User']:
+        assert f'User-agent: {agent}' in body
+    assert 'Disallow: /admin/' in body
+    assert 'Disallow: /api/' in body
+    assert 'Crawl-delay: 1' in body
+    assert 'Sitemap:' in body
+
+
+def test_llms_txt(client):
+    response = client.get('/llms.txt')
+    assert response.status_code == 200
+    assert response['Content-Type'].startswith('text/plain')
+    body = response.content.decode()
+    assert '# ScholarHub Africa' in body
+    assert 'Key Pages' in body
+    assert 'Key Facts' in body
+
+
+def test_security_headers(client, db):
+    response = client.get('/')
+    assert response.headers.get('Content-Security-Policy', '').startswith("default-src 'self'")
+    assert 'object-src' in response.headers['Content-Security-Policy']
+    assert "frame-ancestors 'none'" in response.headers['Content-Security-Policy']
+    assert 'Permissions-Policy' in response.headers
+    assert 'geolocation=()' in response.headers['Permissions-Policy']
+    assert response.headers.get('X-Content-Type-Options') == 'nosniff'
+    assert response.headers.get('Referrer-Policy') == 'strict-origin-when-cross-origin'
+
+
+def test_no_wildcard_cors(client, db):
+    assert client.get('/').headers.get('Access-Control-Allow-Origin') is None
+
+
+def test_contact_form_server_side_validation(client):
+    """Django-side re-validation (the framework counterpart of Zod)."""
+    response = client.post('/contact/', {
+        'name': 'A',                    # too short
+        'email': 'not-an-email',
+        'message': 'short',
+    })
+    assert response.status_code == 422
+    content = response.content.decode()
+    assert 'Please fix the following' in content
+    # Honeypot: a bot-filled hidden field is silently rejected
+    response = client.post('/contact/', {
+        'name': 'Achieng Otieno',
+        'email': 'achieng@example.com',
+        'message': 'A genuine question about the platform.',
+        'website': 'http://spam.example.com',
+    })
+    assert response.status_code != 302
+
+
+def test_contact_rate_limited(client):
+    """Public mutation is rate-limited and fails closed (Security 3.7)."""
+    import json
+    from django.core.cache import cache
+    cache.clear()
+    last = None
+    for _ in range(12):  # limit is 10/min
+        last = client.post('/contact/', {
+            'name': 'Achieng Otieno',
+            'email': 'achieng@example.com',
+            'message': 'A genuine question about the platform.',
+        })
+    assert last.status_code == 429
+    assert json.loads(last.content)['detail']
+
+
+def test_ga4_consent_gating(client, db):
+    """GA4 loads only when the consent cookie grants analytics."""
+    from django.test import override_settings
+
+    with override_settings(GA4_MEASUREMENT_ID='G-TEST123'):
+        # No consent cookie → snippet NOT rendered
+        content = client.get('/').content.decode()
+        assert 'gtag/js?id=G-TEST123' not in content
+
+        # Consent cookie grants analytics → snippet rendered
+        client.cookies['sh_consent'] = '{"necessary":true,"analytics":true,"marketing":false,"preferences":false}'
+        content = client.get('/').content.decode()
+        assert 'gtag/js?id=G-TEST123' in content
+
+        # Reject (analytics false) → nothing rendered
+        client.cookies['sh_consent'] = '{"necessary":true,"analytics":false,"marketing":false,"preferences":false}'
+        content = client.get('/').content.decode()
+        assert 'gtag/js?id=G-TEST123' not in content
+
+
+def test_analytics_js_gates_on_consent():
+    """The client-side event layer must refuse to run without consent."""
+    from pathlib import Path
+    js = (Path(__file__).parent.parent.parent / 'static' / 'js' / 'analytics.js').read_text()
+    assert 'analyticsAllowed' in js
+    assert "state.categories.analytics" in js
+    assert 'web_vitals' in js
+    assert 'cta_click' in js
+    assert 'ai_referrer' in js
+
+
+def test_no_nplus1_in_home_and_related(client, data, django_assert_max_num_queries):
+    """Home + related-scholarship renders must not query per card (Perf 4.4)."""
+    with django_assert_max_num_queries(12):
+        client.get('/')
+    with django_assert_max_num_queries(12):
+        client.get('/scholarships/daad-epos-rem/')
+
+
+def test_private_pages_noindex(client, db):
+    content = client.get('/accounts/login/').content.decode()
+    assert 'noindex, nofollow' in content
 
 
 def test_unique_page_titles(client):

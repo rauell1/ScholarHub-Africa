@@ -3,7 +3,7 @@
 
 {% block title %}FAQ — ScholarHub Africa{% endblock %}
 
-{% block meta_description %}Frequently asked questions about ScholarHub Africa: is it free, how scholarships are verified, what the fit score means, and how the application tracker works.{% endblock %}
+{% block meta_description %}Answers about ScholarHub Africa: is it free, how are scholarships verified, who is eligible, what the 0–100 fit score means, and how the tracker works.{% endblock %}
 
 {% block content %}
 <section class="bg-navy py-10 text-white">
@@ -46,4 +46,21 @@
     <a href="{% url 'pages:contact' %}" class="btn-primary mt-4">Contact us</a>
   </div>
 </section>
+
+{# FAQPage structured data — must mirror the visible Q&A content exactly #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for faq in faqs %}
+    {
+      "@type": "Question",
+      "name": {{ faq.question|escapejs }},
+      "acceptedAnswer": { "@type": "Answer", "text": {{ faq.answer|escapejs }} }
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
 {% endblock %}

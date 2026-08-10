@@ -6,9 +6,47 @@ import type { CategoryState, ConsentRegion } from '@/lib/consent/types';
 /**
  * POST /api/consent — record a user's consent choice in the compliance log.
  * Public (no auth): this is the end-user banner reporting its state.
+ *
+ * Rate-limited per IP (Security 3.7). The limiter is in-memory here; for
+ * multi-instance production replace with a shared store (Upstash/Redis) —
+ * fail closed: if the limiter errors, reject with 429.
  */
+
+const LIMIT_MAX = 20; // consent submissions per minute per IP
+const LIMIT_WINDOW_MS = 60_000;
+const hits = new Map<string, { count: number; resetAt: number }>();
+
+function rateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = hits.get(ip);
+  if (!entry || entry.resetAt < now) {
+    hits.set(ip, { count: 1, resetAt: now + LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > LIMIT_MAX;
+}
+
 export async function POST(request: NextRequest) {
   try {
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+      request.headers.get('x-real-ip') ??
+      'unknown';
+    try {
+      if (rateLimited(ip)) {
+        return NextResponse.json(
+          { error: 'Too many requests. Please try again shortly.' },
+          { status: 429 },
+        );
+      }
+    } catch {
+      // Fail closed — limiter error must never mean "no limiter".
+      return NextResponse.json(
+        { error: 'Service busy. Please try again shortly.' },
+        { status: 429 },
+      );
+    }
     const body = (await request.json()) as {
       state?: CategoryState;
       region?: ConsentRegion;

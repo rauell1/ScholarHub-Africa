@@ -22,6 +22,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Validate the target strictly (SSRF defence) — http(s) only, real host.
+  let parsed: URL;
+  try {
+    parsed = new URL(target);
+  } catch {
+    return NextResponse.json({ error: 'Target must be a valid absolute URL.' }, { status: 400 });
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    return NextResponse.json({ error: 'Target must use http or https.' }, { status: 400 });
+  }
+  if (!parsed.hostname.includes('.')) {
+    return NextResponse.json({ error: 'Target must be a public hostname.' }, { status: 400 });
+  }
+
   try {
     const result = await scanUrl(target);
     result.cookies = await scanWithHeadless(target);

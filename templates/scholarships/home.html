@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ScholarHub Africa — Fully-Funded Master's Scholarships for African Students{% endblock %}
+{% block title %}ScholarHub Africa — Scholarships for African Students{% endblock %}
 
-{% block meta_description %}Discover fully-funded master's scholarships for African students — 45+ human-verified opportunities across 23 countries, scored for your profile fit and ready to track. Free.{% endblock %}
+{% block meta_description %}Discover fully-funded master's scholarships for African students — 45+ human-verified opportunities across 23 countries, scored for fit, with live deadlines.{% endblock %}
 
 {% block body_class %}has-sticky-cta{% endblock %}
 
@@ -27,10 +27,12 @@
 
       {# Prominent CTA — visible without scrolling on mobile and desktop #}
       <div class="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-        <a href="{% url 'scholarships:directory' %}" class="w-full rounded-xl bg-teal px-8 py-3.5 text-base font-bold text-navy shadow-lg transition hover:bg-teal-light sm:w-auto">
+        <a href="{% url 'scholarships:directory' %}" data-ga-event="cta_click" data-ga-label="hero_browse"
+           class="w-full rounded-xl bg-teal px-8 py-3.5 text-base font-bold text-navy shadow-lg transition hover:bg-teal-light sm:w-auto">
           🎓 Browse 45+ scholarships
         </a>
-        <a href="{% url 'scholarships:by_country' %}" class="w-full rounded-xl border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition hover:bg-white/10 sm:w-auto">
+        <a href="{% url 'scholarships:by_country' %}" data-ga-event="cta_click" data-ga-label="hero_by_country"
+           class="w-full rounded-xl border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition hover:bg-white/10 sm:w-auto">
           Explore by country
         </a>
       </div>
@@ -167,26 +169,5 @@
 
 <!-- Sticky mobile CTA (UX checklist #6) -->
 {% include 'components/sticky_cta.html' %}
-
-{# LocalBusiness / Organization schema (SEO checklist #15) — placeholders for production data #}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "{{ site.name }}",
-  "url": "{{ request.scheme }}://{{ request.get_host }}/",
-  "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.png' %}",
-  "email": "{{ site.email }}",
-  "telephone": "{{ site.phone }}",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "{{ site.address }}",
-    "addressLocality": "Nairobi",
-    "addressCountry": "KE"
-  },
-  "openingHours": "Mo-Fr 09:00-18:00",
-  "sameAs": []
-}
-</script>
 
 {% endblock %}

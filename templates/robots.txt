@@ -1,6 +1,6 @@
 # robots.txt — ScholarHub Africa
-# Allow all major search engines to crawl the public site;
-# keep private/admin and API endpoints out of the index.
+# Allow all major search engines AND AI search crawlers (AEO Track 2.3).
+# Private/admin/API endpoints stay out of the index.
 
 User-agent: *
 Allow: /
@@ -9,4 +9,41 @@ Disallow: /api/
 Disallow: /accounts/
 Disallow: /tracker/
 
+# AI search / answer-engine crawlers (AEO) — explicitly allowed.
+User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /accounts/
+Disallow: /tracker/
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+# Respectful crawling for non-Google bots (Google ignores Crawl-delay).
+Crawl-delay: 1
+
+# Sitemap location
 Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml

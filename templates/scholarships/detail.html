@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load scholarship_tags pages_tags %}
 
-{% block title %}{{ scholarship.name }} — ScholarHub Africa{% endblock %}
+{% block title %}{{ scholarship.short_name|default:scholarship.name|truncatechars:42 }} — ScholarHub Africa{% endblock %}
 
-{% block meta_description %}{{ scholarship.notes|truncatechars:155 }}{% endblock %}
+{% block meta_description %}{{ scholarship.notes|truncatechars:155 }} {% if scholarship.funding_detail %}{{ scholarship.funding_detail|truncatechars:40 }}{% endif %}{% endblock %}
 
 {% block og_tags %}
 <meta property="og:site_name" content="ScholarHub Africa">

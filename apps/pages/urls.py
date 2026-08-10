@@ -12,4 +12,5 @@ urlpatterns = [
     path('case-studies/', views.case_studies, name='case_studies'),
     path('privacy/', views.privacy, name='privacy'),
     path('robots.txt', views.robots_txt, name='robots_txt'),
+    path('llms.txt', views.llms_txt, name='llms_txt'),
 ]

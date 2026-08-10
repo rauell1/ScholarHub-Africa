@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
-{% load pages_tags %}
+{% load static pages_tags %}
 
-{% block title %}{{ study.title }} — ScholarHub Africa{% endblock %}
+{% block title %}Case study — DAAD EPOS scholarship — ScholarHub Africa{% endblock %}
 
-{% block meta_description %}{{ study.summary|truncatechars:155 }}{% endblock %}
+{% block meta_description %}{{ study.summary|truncatechars:158 }}{% endblock %}
 
 {% block content %}
 <article>
@@ -77,4 +77,22 @@
     </section>
   </div>
 </article>
+
+{# Article structured data — accurate to the visible case-study content #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ study.title|escapejs }},
+  "description": {{ study.summary|escapejs }},
+  "author": { "@type": "Person", "name": {{ study.quote.author|escapejs }} },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ site.name }}",
+    "logo": { "@type": "ImageObject", "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.png' %}" }
+  },
+  "mainEntityOfPage": "{{ request.build_absolute_uri }}",
+  "datePublished": "2026-08-10"
+}
+</script>
 {% endblock %}

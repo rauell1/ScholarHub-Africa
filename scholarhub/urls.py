@@ -2,15 +2,10 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 
-from apps.scholarships.sitemaps import (
-    CountrySitemap,
-    ScholarshipSitemap,
-    StaticViewSitemap,
-)
+from apps.scholarships.sitemaps import ScholarshipSitemap, StaticViewSitemap
 
 sitemaps = {
     'scholarships': ScholarshipSitemap,
-    'countries': CountrySitemap,
     'static': StaticViewSitemap,
 }
 

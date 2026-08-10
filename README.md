@@ -47,6 +47,8 @@ Every scholarship record is human-verified against official sources, scored 0–
 
 SEO details (3 meta-description variations, alt-text guidance, GA4 placement, internal-linking review, dynamic title structure): see [`docs/seo-guide.md`](docs/seo-guide.md).
 
+**Web standards enforcement** (SEO/AEO/Security/Performance — thelazydeveloper.org four-track checklist, with acceptance-criteria audit): see [`docs/standards-enforcement.md`](docs/standards-enforcement.md). Highlights: consent-gated GA4 (Reject → nothing loads), canonical + OG/Twitter on every page, Organization/WebSite/FAQPage/Article/MonetaryGrant JSON-LD, AI-crawler robots.txt + `llms.txt`, CSP + Permissions-Policy + rate limiting (fail-closed), WebP images, zero N+1 queries.
+
 ## 🚀 Quickstart (local)
 
 ```bash

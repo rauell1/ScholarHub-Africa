@@ -3,7 +3,7 @@
 
 {% block title %}Contact us — ScholarHub Africa{% endblock %}
 
-{% block meta_description %}Contact ScholarHub Africa. Questions about scholarships, the tracker or partnerships — we reply within 24 hours. Find us in Westlands, Nairobi.{% endblock %}
+{% block meta_description %}Questions about scholarships, tracking or partnerships? Contact ScholarHub Africa — we reply within 24 hours on weekdays. Find us in Westlands, Nairobi, Kenya.{% endblock %}
 
 {% block content %}
 <section class="bg-navy py-10 text-white">
@@ -29,25 +29,44 @@
         </div>
       </div>
 
-      <form method="post" action="{% url 'pages:contact' %}" class="mt-5 space-y-4">
+      {% if form.errors %}
+      <div class="mt-4 rounded-xl bg-crimson-light px-4 py-3 text-sm text-crimson" role="alert">
+        <p class="font-bold">Please fix the following:</p>
+        <ul class="mt-1 list-inside list-disc">
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}<li>{{ field|title }}: {{ error }}</li>{% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'pages:contact' %}" class="mt-5 space-y-4" novalidate>
         {% csrf_token %}
+        {# Honeypot — invisible to humans, catches bots (Security 3.1) #}
+        <div class="hidden" aria-hidden="true">
+          <label for="id_website">Leave this field empty</label>
+          <input type="text" id="id_website" name="website" tabindex="-1" autocomplete="off">
+        </div>
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <label for="id_name" class="mb-1 block text-sm font-semibold text-navy">Your name</label>
-            <input type="text" id="id_name" name="name" required class="input" placeholder="e.g. Achieng Otieno">
+            <input type="text" id="id_name" name="name" value="{{ form.name.value|default:'' }}" maxlength="120" required class="input" placeholder="e.g. Achieng Otieno">
+            {% for error in form.name.errors %}<p class="mt-1 text-xs text-crimson">{{ error }}</p>{% endfor %}
           </div>
           <div>
             <label for="id_email" class="mb-1 block text-sm font-semibold text-navy">Email</label>
-            <input type="email" id="id_email" name="email" required class="input" placeholder="you@example.com">
+            <input type="email" id="id_email" name="email" value="{{ form.email.value|default:'' }}" maxlength="254" required class="input" placeholder="you@example.com">
+            {% for error in form.email.errors %}<p class="mt-1 text-xs text-crimson">{{ error }}</p>{% endfor %}
           </div>
         </div>
         <div>
           <label for="id_subject" class="mb-1 block text-sm font-semibold text-navy">Subject</label>
-          <input type="text" id="id_subject" name="subject" class="input" placeholder="What's this about?">
+          <input type="text" id="id_subject" name="subject" value="{{ form.subject.value|default:'' }}" maxlength="200" class="input" placeholder="What's this about?">
         </div>
         <div>
           <label for="id_message" class="mb-1 block text-sm font-semibold text-navy">Message</label>
-          <textarea id="id_message" name="message" rows="5" required class="input" placeholder="Write your message…"></textarea>
+          <textarea id="id_message" name="message" rows="5" required maxlength="4000" class="input" placeholder="Write your message…">{{ form.message.value|default:'' }}</textarea>
+          {% for error in form.message.errors %}<p class="mt-1 text-xs text-crimson">{{ error }}</p>{% endfor %}
         </div>
         <div class="flex flex-wrap items-center justify-between gap-3">
           <p class="text-xs text-navy/50">We only use your details to reply. See our

@@ -3,7 +3,7 @@
 
 {% block title %}About us — ScholarHub Africa{% endblock %}
 
-{% block meta_description %}Meet the team behind ScholarHub Africa — human-verified, fully-funded master's scholarship discovery and tracking for African students.{% endblock %}
+{% block meta_description %}Meet the team behind ScholarHub Africa — the free platform where African students find human-verified, fully-funded international master's scholarships.{% endblock %}
 
 {% block body_class %}has-sticky-cta{% endblock %}
 
@@ -56,13 +56,18 @@
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {% for member in team %}
       <article class="card flex flex-col items-center text-center">
-        <img
-          src="{% static member.photo %}"
-          alt="{{ member.alt }}"
-          width="240" height="240"
-          loading="lazy"
-          class="h-36 w-36 rounded-full object-cover ring-4 ring-teal-light"
-        >
+        {# Next-gen WebP with JPEG fallback; fixed dimensions reserve space (CLS) #}
+        <picture>
+          <source srcset="{% static member.photo_webp %}" type="image/webp">
+          <img
+            src="{% static member.photo %}"
+            alt="{{ member.alt }}"
+            width="240" height="240"
+            loading="lazy"
+            decoding="async"
+            class="h-36 w-36 rounded-full object-cover ring-4 ring-teal-light"
+          >
+        </picture>
         <h3 class="mt-4 font-bold text-navy">{{ member.name }}</h3>
         <p class="text-xs font-semibold uppercase tracking-wide text-teal">{{ member.role }}</p>
         <p class="mt-2 text-sm leading-relaxed text-navy/60">{{ member.bio }}</p>
