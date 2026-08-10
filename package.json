@@ -6,6 +6,9 @@
     "build:css": "tailwindcss -i ./static/css/main.css -o ./static/css/output.css --minify",
     "watch:css": "tailwindcss -i ./static/css/main.css -o ./static/css/output.css --watch"
   },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.13",
