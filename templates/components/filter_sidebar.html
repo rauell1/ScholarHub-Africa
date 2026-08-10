@@ -1,0 +1,181 @@
+{% comment %}
+Alpine.js filter panel (System Design v1.0 §10).
+Builds a GET URL with the same query params the server-side
+django-filter FilterSet understands.
+{% endcomment %}
+{{ filter_data|json_script:"filter-data" }}
+
+<div x-data="filterPanel()" class="space-y-4">
+  <button @click="open = !open"
+          class="btn-outline w-full md:hidden">
+    <span x-text="open ? 'Hide Filters' : 'Show Filters'"></span>
+    <span x-show="activeCount > 0" class="badge bg-teal text-white" x-text="activeCount + ' active'"></span>
+  </button>
+
+  <div :class="open ? 'block' : 'hidden md:block'" class="space-y-5 rounded-2xl bg-white p-4 ring-1 ring-navy/5">
+
+    <div class="flex items-center justify-between">
+      <h3 class="text-sm font-bold uppercase tracking-wide text-navy">Filters</h3>
+      <button @click="clearAll()" x-show="activeCount > 0" class="btn-ghost px-2 py-1 text-xs">
+        Clear all
+      </button>
+    </div>
+
+    <!-- Country -->
+    <div class="filter-group">
+      <h4 class="mb-2 text-sm font-semibold text-navy/70">Destination Country</h4>
+      <div class="max-h-56 space-y-1.5 overflow-y-auto pr-1">
+        <template x-for="country in countries" :key="country.iso_code">
+          <label class="flex cursor-pointer items-center justify-between gap-2 rounded-lg px-2 py-1 text-sm hover:bg-gray-50">
+            <span class="flex items-center gap-2">
+              <input type="checkbox" :value="country.iso_code"
+                     x-model="selected.countries" @change="applyFilters()"
+                     class="rounded border-navy/30 text-teal focus:ring-teal">
+              <span x-text="country.flag_emoji + ' ' + country.name"></span>
+            </span>
+            <span class="badge bg-navy/5 text-navy/60" x-text="country.count"></span>
+          </label>
+        </template>
+      </div>
+    </div>
+
+    <!-- Field -->
+    <div class="filter-group">
+      <h4 class="mb-2 text-sm font-semibold text-navy/70">Field of Study</h4>
+      <div class="max-h-56 space-y-1.5 overflow-y-auto pr-1">
+        <template x-for="field in fields" :key="field.slug">
+          <label class="flex cursor-pointer items-center justify-between gap-2 rounded-lg px-2 py-1 text-sm hover:bg-gray-50">
+            <span class="flex items-center gap-2">
+              <input type="checkbox" :value="field.slug"
+                     x-model="selected.fields" @change="applyFilters()"
+                     class="rounded border-navy/30 text-teal focus:ring-teal">
+              <span x-text="field.icon + ' ' + field.name"></span>
+            </span>
+            <span class="badge bg-navy/5 text-navy/60" x-text="field.count"></span>
+          </label>
+        </template>
+      </div>
+    </div>
+
+    <!-- Funding -->
+    <div class="filter-group">
+      <h4 class="mb-2 text-sm font-semibold text-navy/70">Funding</h4>
+      <div class="space-y-1.5">
+        <template x-for="f in fundingOptions" :key="f.value">
+          <label class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-gray-50">
+            <input type="checkbox" :value="f.value"
+                   x-model="selected.funding" @change="applyFilters()"
+                   class="rounded border-navy/30 text-teal focus:ring-teal">
+            <span x-text="f.label"></span>
+          </label>
+        </template>
+      </div>
+    </div>
+
+    <!-- Eligibility -->
+    <div class="filter-group">
+      <h4 class="mb-2 text-sm font-semibold text-navy/70">Eligibility</h4>
+      <div class="space-y-1.5">
+        <template x-for="e in eligOptions" :key="e.value">
+          <label class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-gray-50">
+            <input type="checkbox" :value="e.value"
+                   x-model="selected.eligibility" @change="applyFilters()"
+                   class="rounded border-navy/30 text-teal focus:ring-teal">
+            <span x-text="e.label"></span>
+          </label>
+        </template>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="filter-group">
+      <h4 class="mb-2 text-sm font-semibold text-navy/70">Status</h4>
+      <div class="space-y-1.5">
+        <label class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-gray-50">
+          <input type="checkbox" value="open_now" x-model="selected.statuses" @change="applyFilters()"
+                 class="rounded border-navy/30 text-teal focus:ring-teal">
+          Open Now
+        </label>
+        <label class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-gray-50">
+          <input type="checkbox" value="opening_soon" x-model="selected.statuses" @change="applyFilters()"
+                 class="rounded border-navy/30 text-teal focus:ring-teal">
+          Opening Soon
+        </label>
+        <label class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-gray-50">
+          <input type="checkbox" value="upcoming" x-model="selected.statuses" @change="applyFilters()"
+                 class="rounded border-navy/30 text-teal focus:ring-teal">
+          Upcoming
+        </label>
+      </div>
+    </div>
+
+    <!-- Min score slider -->
+    <div class="filter-group">
+      <h4 class="mb-2 text-sm font-semibold text-navy/70">
+        Minimum score: <span class="text-teal" x-text="selected.minScore"></span>
+      </h4>
+      <input type="range" min="0" max="100" step="5"
+             x-model.number="selected.minScore"
+             @input="applyFilters()"
+             class="w-full accent-teal">
+    </div>
+  </div>
+</div>
+
+<script>
+function filterPanel() {
+  const params = new URLSearchParams(window.location.search);
+  const data = JSON.parse(document.getElementById('filter-data').textContent);
+
+  return {
+    open: false,
+    countries: data.countries || [],
+    fields: data.fields || [],
+    fundingOptions: [
+      { value: 'full', label: 'Fully Funded' },
+      { value: 'partial', label: 'Partial' },
+      { value: 'tuition_only', label: 'Tuition Only' },
+      { value: 'living_only', label: 'Living Only' },
+    ],
+    eligOptions: [
+      { value: 'CE', label: 'Confirmed Eligible' },
+      { value: 'LE', label: 'Likely Eligible' },
+      { value: 'PE', label: 'Pending Clarification' },
+    ],
+    selected: {
+      countries: params.getAll('country').flatMap(v => v.split(',')),
+      fields: params.getAll('field').flatMap(v => v.split(',')),
+      funding: params.getAll('funding').flatMap(v => v.split(',')),
+      eligibility: params.getAll('eligibility').flatMap(v => v.split(',')),
+      statuses: params.getAll('status').flatMap(v => v.split(',')),
+      minScore: parseInt(params.get('min_score') || '0', 10),
+    },
+    get activeCount() {
+      const s = this.selected;
+      return s.countries.length + s.fields.length + s.funding.length +
+             s.eligibility.length + s.statuses.length +
+             (s.minScore > 0 ? 1 : 0);
+    },
+    applyFilters() {
+      const p = new URLSearchParams();
+      const s = this.selected;
+      if (s.countries.length) p.set('country', s.countries.join(','));
+      if (s.fields.length) p.set('field', s.fields.join(','));
+      if (s.funding.length) p.set('funding', s.funding.join(','));
+      if (s.eligibility.length) p.set('eligibility', s.eligibility.join(','));
+      if (s.statuses.length) p.set('status', s.statuses.join(','));
+      if (s.minScore > 0) p.set('min_score', s.minScore);
+      const q = params.get('q');
+      if (q) p.set('q', q);
+      window.location.search = p.toString();
+    },
+    clearAll() {
+      this.selected = {
+        countries: [], fields: [], funding: [], eligibility: [],
+        statuses: [], minScore: 0,
+      };
+      this.applyFilters();
+    }
+  };
+}
+</script>

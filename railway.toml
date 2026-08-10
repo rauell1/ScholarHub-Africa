@@ -1,0 +1,21 @@
+# Railway deployment config (System Design v1.0 §16.1)
+
+[build]
+builder = "NIXPACKS"
+buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+
+[deploy]
+startCommand = "gunicorn scholarhub.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+[[services]]
+name = "web"
+
+[[services]]
+name = "worker"
+startCommand = "celery -A scholarhub worker --loglevel=info"
+
+[[services]]
+name = "beat"
+startCommand = "celery -A scholarhub beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler"

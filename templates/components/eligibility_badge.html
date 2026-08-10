@@ -1,0 +1,13 @@
+{% comment %}
+Eligibility badge (System Design v1.0 §11):
+  CE → forest  LE → teal  PE → amber  NE → crimson
+{% endcomment %}
+{% if scholarship.eligibility_label == 'CE' %}
+  <span class="badge bg-forest text-white" title="Confirmed Eligible">CE</span>
+{% elif scholarship.eligibility_label == 'LE' %}
+  <span class="badge bg-teal text-white" title="Likely Eligible">LE</span>
+{% elif scholarship.eligibility_label == 'PE' %}
+  <span class="badge bg-amber text-white" title="Pending Clarification">PE</span>
+{% else %}
+  <span class="badge bg-crimson text-white" title="Not Eligible">NE</span>
+{% endif %}

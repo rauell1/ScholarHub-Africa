@@ -1,0 +1,15 @@
+{
+  "name": "scholarhub-africa",
+  "version": "1.0.0",
+  "description": "ScholarHub Africa — Tailwind CSS build for the Django project",
+  "scripts": {
+    "build:css": "tailwindcss -i ./static/css/main.css -o ./static/css/output.css --minify",
+    "watch:css": "tailwindcss -i ./static/css/main.css -o ./static/css/output.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.13",
+    "alpinejs": "^3.14.1",
+    "tailwindcss": "^3.4.10"
+  }
+}

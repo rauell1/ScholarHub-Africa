@@ -1,0 +1,30 @@
+from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
+from django.urls import include, path
+
+from apps.scholarships.sitemaps import (
+    CountrySitemap,
+    ScholarshipSitemap,
+    StaticViewSitemap,
+)
+
+sitemaps = {
+    'scholarships': ScholarshipSitemap,
+    'countries': CountrySitemap,
+    'static': StaticViewSitemap,
+}
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('apps.scholarships.urls')),
+    path('tracker/', include('apps.tracker.urls')),
+    path('accounts/', include('apps.accounts.urls')),
+    path('api/v1/', include('apps.scholarships.api_urls')),
+    path('api/v1/tracker/', include('apps.tracker.api_urls')),
+    path(
+        'sitemap.xml',
+        sitemap,
+        {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap',
+    ),
+]

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ScholarHub Africa — Weekly Digest</title>
+</head>
+<body style="margin:0;padding:0;background:#f3f4f6;font-family:Inter,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#1F3864;padding:24px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;">
+          <tr>
+            <td style="background:#1F3864;color:#ffffff;padding:32px 32px 24px;">
+              <h1 style="margin:0;font-size:22px;">🎓 ScholarHub <span style="color:#1ABC9C;">Africa</span></h1>
+              <p style="margin:8px 0 0;color:#A3E8DA;font-size:13px;">Weekly scholarship digest — {{ generated_on|date:"d M Y" }}</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px;">
+
+              <h2 style="color:#1F3864;font-size:16px;margin:0 0 12px;">⏰ Closing within {{ lookahead_days }} days</h2>
+              {% if urgent %}
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                {% for s in urgent %}
+                <tr>
+                  <td style="border-bottom:1px solid #eef0f3;padding:10px 0;">
+                    <a href="{{ request.scheme }}://{{ request.get_host }}{{ s.get_absolute_url }}"
+                       style="color:#1F3864;font-weight:700;text-decoration:none;font-size:14px;">{{ s.short_name|default:s.name }}</a>
+                    <p style="margin:2px 0 0;color:#6b7280;font-size:12px;">
+                      {{ s.country.flag_emoji }} {{ s.country.name }} · Score {{ s.score }}/100 ·
+                      Deadline {{ s.deadline_date|date:"d M Y" }}
+                    </p>
+                  </td>
+                </tr>
+                {% endfor %}
+              </table>
+              {% else %}
+              <p style="color:#6b7280;font-size:13px;margin-bottom:28px;">No deadlines within {{ lookahead_days }} days — enjoy the calm! 🎉</p>
+              {% endif %}
+
+              <h2 style="color:#1F3864;font-size:16px;margin:0 0 12px;">✨ Newly open / updated this week</h2>
+              {% if new_this_week %}
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                {% for s in new_this_week %}
+                <tr>
+                  <td style="border-bottom:1px solid #eef0f3;padding:10px 0;">
+                    <a href="{{ request.scheme }}://{{ request.get_host }}{{ s.get_absolute_url }}"
+                       style="color:#1F3864;font-weight:700;text-decoration:none;font-size:14px;">{{ s.short_name|default:s.name }}</a>
+                    <p style="margin:2px 0 0;color:#6b7280;font-size:12px;">
+                      {{ s.country.flag_emoji }} {{ s.country.name }} ·
+                      {{ s.get_funding_type_display }} · {{ s.funding_detail|truncatechars:50 }}
+                    </p>
+                  </td>
+                </tr>
+                {% endfor %}
+              </table>
+              {% else %}
+              <p style="color:#6b7280;font-size:13px;margin-bottom:28px;">Nothing new this week — every listed opportunity is already verified and live on the site.</p>
+              {% endif %}
+
+              <p style="color:#6b7280;font-size:12px;line-height:1.6;">
+                You're receiving this because you subscribed to the ScholarHub Africa weekly digest.
+                Every opportunity is human-verified against its official source.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#1F3864;color:#A3E8DA;padding:16px 32px;font-size:11px;text-align:center;">
+              ScholarHub Africa — scholarship discovery & tracking for African students.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

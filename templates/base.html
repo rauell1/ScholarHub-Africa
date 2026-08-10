@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ScholarHub Africa{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Discover and track fully-funded international master's scholarships for African students. Every record human-verified against official sources.{% endblock %}">
+
+  {% block og_tags %}
+  <meta property="og:site_name" content="ScholarHub Africa">
+  <meta property="og:title" content="ScholarHub Africa">
+  <meta property="og:description" content="Fully-funded international master's scholarships for African students — human-verified, scored for fit.">
+  <meta property="og:type" content="website">
+  {% endblock %}
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+  {% block nav %}
+  <header class="sticky top-0 z-40 bg-navy text-white shadow-md">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6" x-data="{ open: false }">
+      <div class="flex h-16 items-center justify-between">
+        <a href="{% url 'scholarships:home' %}" class="flex items-center gap-2 text-lg font-extrabold tracking-tight">
+          <span class="text-2xl">🎓</span>
+          <span>ScholarHub<span class="text-teal"> Africa</span></span>
+        </a>
+
+        <nav class="hidden items-center gap-1 md:flex" aria-label="Main">
+          <a href="{% url 'scholarships:directory' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">Scholarships</a>
+          <a href="{% url 'scholarships:by_country' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">By Country</a>
+          <a href="{% url 'scholarships:by_field' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">By Field</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'tracker:dashboard' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">My Tracker</a>
+            <a href="{% url 'tracker:checklist' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">Checklist</a>
+            {% if user.is_staff %}
+              <a href="{% url 'admin:index' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">Admin</a>
+            {% endif %}
+            <a href="{% url 'accounts:logout' %}" class="rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy hover:bg-teal-light">Logout</a>
+          {% else %}
+            <a href="{% url 'accounts:login' %}" class="rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy hover:bg-teal-light">Login</a>
+          {% endif %}
+        </nav>
+
+        <button @click="open = !open" class="rounded-lg p-2 hover:bg-white/10 md:hidden" aria-label="Toggle menu">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div x-show="open" x-cloak class="space-y-1 pb-4 md:hidden">
+        <a href="{% url 'scholarships:directory' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">Scholarships</a>
+        <a href="{% url 'scholarships:by_country' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">By Country</a>
+        <a href="{% url 'scholarships:by_field' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">By Field</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'tracker:dashboard' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">My Tracker</a>
+          <a href="{% url 'tracker:checklist' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10">Checklist</a>
+          <a href="{% url 'accounts:logout' %}" class="block rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy text-center">Logout</a>
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="block rounded-lg bg-teal px-3 py-2 text-sm font-semibold text-navy text-center">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+  {% endblock %}
+
+  {% if messages %}
+  <div class="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
+    {% for message in messages %}
+      <div class="{% if message.tags == 'success' %}bg-forest-light text-forest{% elif message.tags == 'error' %}bg-crimson-light text-crimson{% else %}bg-sky-light text-sky{% endif %} rounded-xl px-4 py-3 text-sm font-medium shadow-sm">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="mt-16 border-t border-navy/10 bg-white">
+    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
+      <div>
+        <div class="flex items-center gap-2 text-lg font-extrabold text-navy">
+          <span class="text-2xl">🎓</span>
+          <span>ScholarHub<span class="text-teal"> Africa</span></span>
+        </div>
+        <p class="mt-3 text-sm text-navy/60">
+          Fully-funded international master's scholarships for African students.
+          Every record is human-verified against official sources.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold uppercase tracking-wide text-navy">Explore</h3>
+        <ul class="mt-3 space-y-2 text-sm text-navy/70">
+          <li><a href="{% url 'scholarships:directory' %}" class="hover:text-teal">All scholarships</a></li>
+          <li><a href="{% url 'scholarships:by_country' %}" class="hover:text-teal">Browse by country</a></li>
+          <li><a href="{% url 'scholarships:by_field' %}" class="hover:text-teal">Browse by field</a></li>
+          <li><a href="{% url 'tracker:dashboard' %}" class="hover:text-teal">Application tracker</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold uppercase tracking-wide text-navy">Trust & data</h3>
+        <ul class="mt-3 space-y-2 text-sm text-navy/70">
+          <li>✅ Every entry shows a <span class="font-semibold">verification date</span> and official source link</li>
+          <li>🔄 Deadlines reviewed weekly</li>
+          <li>🔒 Your application data is private (Phase 1)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-navy/10 py-4 text-center text-xs text-navy/50">
+      © {% now "Y" %} ScholarHub Africa — built for Roy, and every African student after him.
+    </div>
+  </footer>
+
+  <script defer src="{% static 'js/alpine.min.js' %}"></script>
+  <script defer src="{% static 'js/countdown.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

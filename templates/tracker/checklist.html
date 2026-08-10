@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Document Checklist — ScholarHub Africa{% endblock %}
+
+{% block content %}
+<section class="bg-navy py-8 text-white">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6">
+    <h1 class="text-2xl font-extrabold sm:text-3xl">📋 Document Checklist</h1>
+    <p class="mt-1 text-sm text-white/60">24 items every strong application needs. Keep them ready before deadlines hit.</p>
+  </div>
+</section>
+
+<section class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+  <div class="card mb-6">
+    <div class="flex items-center justify-between">
+      <p class="font-bold text-navy">Overall readiness</p>
+      <p class="text-2xl font-extrabold text-teal">{{ profile.documents_progress }}%</p>
+    </div>
+    <div class="mt-3 h-3 overflow-hidden rounded-full bg-gray-100">
+      <div class="h-full rounded-full bg-teal transition-all" style="width: {{ profile.documents_progress }}%"></div>
+    </div>
+    <div class="mt-3 grid grid-cols-4 gap-2 text-center text-xs">
+      <div class="rounded-lg bg-forest-light p-2"><span class="font-bold text-forest">{{ counts.ready }}</span> Ready</div>
+      <div class="rounded-lg bg-amber-light p-2"><span class="font-bold text-amber">{{ counts.in_progress }}</span> In progress</div>
+      <div class="rounded-lg bg-gray-100 p-2"><span class="font-bold text-navy/60">{{ counts.not_started }}</span> Not started</div>
+      <div class="rounded-lg bg-navy/5 p-2"><span class="font-bold text-navy/40">{{ counts.not_needed }}</span> Not needed</div>
+    </div>
+  </div>
+
+  <ul class="space-y-2">
+    {% for doc in documents %}
+    <li class="card flex flex-wrap items-center gap-3 !p-3">
+      <span class="text-lg">
+        {% if doc.status == 'ready' %}✅
+        {% elif doc.status == 'in_progress' %}🔄
+        {% elif doc.status == 'not_needed' %}➖
+        {% else %}⬜{% endif %}
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-semibold text-navy {% if doc.status == 'ready' %}line-through opacity-50{% endif %}">{{ doc.name }}</p>
+        {% if doc.notes %}<p class="text-xs text-navy/50">{{ doc.notes }}</p>{% endif %}
+      </div>
+      <form action="{% url 'tracker:checklist' %}" method="post" class="flex items-center gap-2">
+        {% csrf_token %}
+        <input type="hidden" name="document_id" value="{{ doc.id }}">
+        <select name="status" onchange="this.form.submit()" class="input !w-auto py-1 text-xs">
+          {% for value, label in doc.STATUS_CHOICES %}
+            <option value="{{ value }}" {% if doc.status == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </li>
+    {% empty %}
+      <li class="card p-6 text-center text-sm text-navy/50">Checklist will appear once your profile is created.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}
