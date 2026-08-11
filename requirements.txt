@@ -18,6 +18,8 @@ boto3==1.35.0
 Pillow==10.4.0
 django-extensions==3.2.3
 openpyxl==3.1.5               # for import command
+beautifulsoup4==4.12.3
+requests==2.32.3
 # Testing
 pytest==8.3.2
 pytest-django==4.9.0

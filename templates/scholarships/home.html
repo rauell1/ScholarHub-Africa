@@ -3,7 +3,7 @@
 
 {% block title %}ScholarHub Africa - Scholarships for African Students{% endblock %}
 
-{% block meta_description %}Discover fully-funded master's scholarships for African students - 45+ human-verified opportunities across 23 countries, scored for fit, with live deadlines.{% endblock %}
+{% block meta_description %}Discover fully-funded master's scholarships for African students - {{ stats.scholarships }} human-verified opportunities across 23 countries, scored for fit, with live deadlines.{% endblock %}
 
 {% block body_class %}has-sticky-cta{% endblock %}
 
@@ -34,7 +34,7 @@
       <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
         <a href="{% url 'scholarships:directory' %}" data-ga-event="cta_click" data-ga-label="hero_browse"
            class="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-teal to-forest px-8 py-4 text-base font-extrabold text-navy shadow-[0_0_40px_-10px_rgba(20,184,166,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(20,184,166,0.8)] sm:w-auto">
-          <span class="text-xl transition-transform group-hover:-translate-y-1">🎓</span> Browse 45+ scholarships
+          <span class="text-xl transition-transform group-hover:-translate-y-1">🎓</span> Browse {{ stats.scholarships }} scholarships
         </a>
         <a href="{% url 'scholarships:by_country' %}" data-ga-event="cta_click" data-ga-label="hero_by_country"
            class="w-full rounded-2xl border-2 border-white/20 bg-white/5 px-8 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/10 hover:shadow-glass-dark sm:w-auto">
@@ -150,7 +150,7 @@
       <div class="rounded-2xl bg-white/5 p-6 text-center">
         <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-teal text-xl font-extrabold text-navy">1</span>
         <h3 class="mt-4 font-bold">Search</h3>
-        <p class="mt-2 text-sm text-white/70">Search 45+ verified fully-funded opportunities across 23 countries, filtered by field, funding and eligibility.</p>
+        <p class="mt-2 text-sm text-white/70">Search {{ stats.scholarships }} verified fully-funded opportunities across 23 countries, filtered by field, funding and eligibility.</p>
       </div>
       <div class="rounded-2xl bg-white/5 p-6 text-center">
         <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber text-xl font-extrabold text-navy">2</span>

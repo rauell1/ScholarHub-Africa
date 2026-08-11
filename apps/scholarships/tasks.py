@@ -96,3 +96,10 @@ def send_weekly_digest():
     """Celery task - scheduled in CELERY_BEAT_SCHEDULE (settings/base.py)."""
     subject, count = send_digest_emails()
     return f'Sent "{subject}" to {count} recipient(s)'
+
+@shared_task
+def daily_crawl_scholarships():
+    """Run the daily web crawler to fetch new scholarships."""
+    from django.core.management import call_command
+    call_command('crawl_scholarships')
+    return 'Daily crawl completed.'
