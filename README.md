@@ -69,12 +69,14 @@ npm run db:verify            # read-only parity re-check (any time)
 npm run db:test:local        # offline self-test of the data migration (pg-mem)
 ```
 
-Status: **M1–M3 complete** — app skeleton, design-token parity, SEO/AEO
+Status: **M1–M4a complete** — app skeleton, design-token parity, SEO/AEO
 scaffolding, consent engine (banner + GCM v2 + TCF 2.3, Postgres-backed log),
 consent-gated GA4, full Drizzle schema + migration toolkit (locally tested),
-and the Phase 3 query layer + `/api/v1/*` route handlers (DRF parity: filters,
-weighted full-text search, countries/fields counts, search endpoint) with an
-offline test suite (`npm run db:test:local`, `npm run db:test:queries`).
+the Phase 3 query layer + `/api/v1/*` route handlers (DRF parity), and the
+**public pages**: directory (URL-driven filters, sorting, pagination, live
+search suggestions), detail (ISR + MonetaryGrant JSON-LD + change history +
+related + live countdown), by-country/by-field, and the full homepage.
+Offline test suite: `npm run db:test:local`, `npm run db:test:queries`.
 To apply the data migration on Neon run `npm run db:migrate && npm run db:migrate:data`
 from your own machine (see `docs/MIGRATION_PLAN.md` §4 runbook).
 

@@ -82,3 +82,48 @@ export function scoreLabel(score: number): string {
   if (score >= 60) return 'Achievable';
   return 'Stretch';
 }
+
+/**
+ * Server-rendered deadline badge text + classes (port of the Django
+ * deadline_badge.html + countdown.js + deadline_class tag). Text is
+ * rendered server-side so SEO bots see real content without JS.
+ */
+export function deadlineDisplay(
+  deadline: string | Date | null | undefined,
+): { text: string; className: string } {
+  const iso = toDateIso(deadline);
+  if (!iso) return { text: 'No deadline set', className: 'text-sm text-navy/40' };
+  const state = deadlineState(iso);
+  const days = daysBetween(iso, eatToday());
+  if (state === 'closed') {
+    return { text: 'CLOSED', className: 'deadline-badge font-semibold text-crimson font-bold' };
+  }
+  if (state === 'urgent') {
+    return {
+      text: `${days}d left`,
+      className: 'deadline-badge font-semibold text-crimson font-bold animate-pulse',
+    };
+  }
+  if (state === 'soon') {
+    return {
+      text: `${days} days`,
+      className: 'deadline-badge font-semibold text-amber font-semibold',
+    };
+  }
+  return {
+    text: `${days} days`,
+    className: 'deadline-badge font-semibold text-forest font-semibold',
+  };
+}
+
+/** Format a timestamp like Django's `date:'d M Y'` in Africa/Nairobi. */
+export function formatDateEat(value: Date | string | null | undefined): string {
+  if (!value) return '';
+  const date = value instanceof Date ? value : new Date(value);
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: EAT_TIME_ZONE,
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+}

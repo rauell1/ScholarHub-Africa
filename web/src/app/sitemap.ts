@@ -1,15 +1,17 @@
 import type { MetadataRoute } from 'next';
 
+import { getSitemapScholarships } from '@/lib/queries';
 import { site } from '@/lib/site';
 
 /**
  * sitemap.xml - parity with apps/scholarships/sitemaps.py.
  *
- * M1: static, canonical, indexable URLs only (query-string variants excluded,
- * exactly like Django). Phase 4 adds every active scholarship detail page with
- * lastmod=updated_at and the same priority/changefreq as ScholarshipSitemap.
+ * Static canonical URLs plus every active scholarship detail page with
+ * lastmod=updated_at (ScholarshipSitemap parity: weekly, priority 0.8).
+ * Query-string variants are deliberately excluded (not canonical).
+ * Falls back to the static list when the DB is unreachable (preview builds).
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticUrls: MetadataRoute.Sitemap = [
     { url: `${site.url}/`, changeFrequency: 'daily', priority: 1.0 },
     { url: `${site.url}/scholarships/`, changeFrequency: 'daily', priority: 1.0 },
@@ -22,7 +24,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${site.url}/privacy/`, changeFrequency: 'yearly', priority: 0.8 },
   ];
 
-  // TODO(Phase 4): append active scholarship detail pages from the DB
-  // (SELECT slug, updated_at FROM scholarships WHERE is_active)
-  return staticUrls;
+  try {
+    const rows = await getSitemapScholarships();
+    const scholarshipUrls: MetadataRoute.Sitemap = rows.map((row) => ({
+      url: `${site.url}/scholarships/${row.slug}/`,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+      lastModified: row.updatedAt,
+    }));
+    return [...staticUrls, ...scholarshipUrls];
+  } catch {
+    return staticUrls;
+  }
 }

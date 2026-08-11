@@ -33,6 +33,7 @@ import {
 import { addDays, daysUntilDeadline, eatToday, toDateIso } from './dates';
 import { getDb, type Db } from './db';
 import {
+  changeLogs,
   countries,
   fieldsOfStudy,
   scholarshipFields,
@@ -44,6 +45,7 @@ import {
 /** Row shape projected by the shared list/detail selects (before JSON shape). */
 export interface ScholarshipRowShape {
   id: number;
+  eligibilityLabel: string;
   slug: string;
   name: string;
   shortName: string;
@@ -167,6 +169,8 @@ export interface ScholarshipFilters {
   deadlineInNext?: number;
   /** Open window logic (365 days, open statuses). */
   isOpen?: boolean;
+  /** Featured only (homepage featured section). */
+  isFeatured?: boolean;
   /** Full-text search term (Django search_scholarships). */
   q?: string;
   /** score | -score | deadline_date | -deadline_date | name | -name | updated */
@@ -182,6 +186,7 @@ const OPEN_STATUSES = ['open_now', 'opening_soon', 'upcoming', 'not_yet_open'] a
 
 const listColumns = {
   id: scholarships.id,
+  eligibilityLabel: scholarships.eligibilityLabel,
   slug: scholarships.slug,
   name: scholarships.name,
   shortName: scholarships.shortName,
@@ -323,10 +328,10 @@ function buildOrdering(ordering: string | undefined, rank: SQL<number> | null): 
 
 /* ── Main list query (filters + search + ordering + pagination) ─────────── */
 
-export async function queryScholarships(
-  filters: ScholarshipFilters = {},
-  client: Db = getDb(),
-): Promise<ScholarshipListRow[]> {
+export function buildScholarshipConditions(
+  filters: ScholarshipFilters,
+  client: Db,
+): { conditions: SQL[]; rank: SQL<number> | null } {
   const conditions: SQL[] = [eq(scholarships.isActive, true)];
   const today = eatToday();
 
@@ -379,6 +384,10 @@ export async function queryScholarships(
     );
   }
 
+  if (filters.isFeatured === true) {
+    conditions.push(eq(scholarships.isFeatured, true));
+  }
+
   let rank: SQL<number> | null = null;
   const q = filters.q?.trim();
   if (q) {
@@ -388,6 +397,20 @@ export async function queryScholarships(
       gte(rank, 0.001),
     );
   }
+
+  return { conditions, rank };
+}
+
+/** Raw rows + field slugs for pages (cards need eligibility_label). */
+export interface ScholarshipCardRow extends ScholarshipListRow {
+  eligibility_label: string;
+}
+
+export async function queryScholarshipCards(
+  filters: ScholarshipFilters = {},
+  client: Db = getDb(),
+): Promise<ScholarshipCardRow[]> {
+  const { conditions, rank } = buildScholarshipConditions(filters, client);
 
   const query = client
     .select(listColumns)
@@ -401,7 +424,161 @@ export async function queryScholarships(
       ? await query.limit(filters.limit ?? 100).offset(filters.offset ?? 0)
       : await query;
   const fieldMap = await fetchFieldSlugs(client, rows.map((r) => r.id));
-  return rows.map((row) => toListRow(row, fieldMap.get(row.id) ?? []));
+  return rows.map((row) => ({
+    ...toListRow(row, fieldMap.get(row.id) ?? []),
+    eligibility_label: row.eligibilityLabel,
+  }));
+}
+
+/** Serialized list rows - DRF ScholarshipListSerializer parity (API). */
+export async function queryScholarships(
+  filters: ScholarshipFilters = {},
+  client: Db = getDb(),
+): Promise<ScholarshipListRow[]> {
+  const cards = await queryScholarshipCards(filters, client);
+  return cards.map((card) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- rest-sibling strip of the page-only field
+    const { eligibility_label, ...row } = card;
+    return row;
+  });
+}
+
+/** Total row count for the same filters - directory pagination (Django Paginator.count). */
+export async function countScholarships(
+  filters: ScholarshipFilters = {},
+  client: Db = getDb(),
+): Promise<number> {
+  const { conditions } = buildScholarshipConditions(filters, client);
+  const rows = await client
+    .select({ n: count() })
+    .from(scholarships)
+    .innerJoin(countries, eq(scholarships.countryId, countries.id))
+    .where(and(...conditions));
+  return rows[0]?.n ?? 0;
+}
+
+/** GET /api/v1/scholarships/open_now/ - status=open_now, deadline order. */
+export function getOpenNow(client: Db = getDb()): Promise<ScholarshipListRow[]> {
+  return queryScholarships({ status: ['open_now'], ordering: 'deadline_date' }, client);
+}
+
+/** Homepage featured section - is_featured, score order (Django home()). */
+export function getFeatured(client: Db = getDb()): Promise<ScholarshipListRow[]> {
+  return queryScholarships({ isFeatured: true, ordering: '-score', limit: 4 }, client);
+}
+
+/** GET /api/v1/scholarships/top/ - first 20 by score. */
+export function getTop(client: Db = getDb()): Promise<ScholarshipListRow[]> {
+  return queryScholarships({ ordering: '-score', limit: 20 }, client);
+}
+
+/** GET /api/v1/search/?q= - first 10 ranked results. */
+export function searchScholarships(
+  q: string,
+  client: Db = getDb(),
+): Promise<ScholarshipListRow[]> {
+  const term = (q ?? '').trim();
+  if (!term) return Promise.resolve([]);
+  return queryScholarships({ q: term, limit: 10 }, client);
+}
+
+/* ── Change log (Django detail view change_logs, newest 12) ─────────────── */
+
+export interface ChangeLogRow {
+  fieldChanged: string;
+  oldValue: string;
+  newValue: string;
+  changedAt: Date;
+}
+
+export async function getChangeLogs(
+  scholarshipId: number,
+  limit = 12,
+  client: Db = getDb(),
+): Promise<ChangeLogRow[]> {
+  const rows = await client
+    .select({
+      fieldChanged: changeLogs.fieldChanged,
+      oldValue: changeLogs.oldValue,
+      newValue: changeLogs.newValue,
+      changedAt: changeLogs.changedAt,
+    })
+    .from(changeLogs)
+    .where(eq(changeLogs.scholarshipId, scholarshipId))
+    .orderBy(desc(changeLogs.changedAt))
+    .limit(limit);
+  return rows;
+}
+
+/* ── Sitemap (Phase 4 - active detail URLs with lastmod) ────────────────── */
+
+export async function getSitemapScholarships(
+  client: Db = getDb(),
+): Promise<Array<{ slug: string; updatedAt: Date }>> {
+  const rows = await client
+    .select({ slug: scholarships.slug, updatedAt: scholarships.updatedAt })
+    .from(scholarships)
+    .where(eq(scholarships.isActive, true))
+    .orderBy(asc(scholarships.slug));
+  return rows;
+}
+
+/* ── By-country grouping (Django by_country view: region → countries) ───── */
+
+export interface CountryGroup {
+  region: string;
+  countries: Array<{
+    iso_code: string;
+    name: string;
+    flag_emoji: string;
+    count: number;
+  }>;
+}
+
+const REGION_ORDER = ['Europe', 'Asia', 'Americas', 'Africa', 'Oceania'];
+
+export async function getCountriesByRegion(
+  client: Db = getDb(),
+): Promise<CountryGroup[]> {
+  const rows = await client
+    .select({
+      region: countries.region,
+      isoCode: countries.isoCode,
+      name: countries.name,
+      flagEmoji: countries.flagEmoji,
+      count: count(scholarships.id),
+    })
+    .from(countries)
+    .innerJoin(scholarships, eq(scholarships.countryId, countries.id))
+    .where(eq(scholarships.isActive, true))
+    .groupBy(countries.id, countries.region, countries.isoCode, countries.name, countries.flagEmoji)
+    .orderBy(asc(countries.region), asc(countries.name));
+
+  const grouped = new Map<string, CountryGroup>();
+  for (const row of rows) {
+    const group = grouped.get(row.region) ?? {
+      region: row.region,
+      countries: [],
+    };
+    group.countries.push({
+      iso_code: row.isoCode,
+      name: row.name,
+      flag_emoji: row.flagEmoji,
+      count: row.count,
+    });
+    grouped.set(row.region, group);
+  }
+
+  // Django region order: Europe, Asia, Americas, Africa, Oceania, then any others.
+  const ordered: CountryGroup[] = [];
+  for (const region of REGION_ORDER) {
+    const group = grouped.get(region);
+    if (group) ordered.push(group);
+  }
+  for (const [region, group] of grouped) {
+    if (!REGION_ORDER.includes(region)) ordered.push(group);
+  }
+  return ordered;
 }
 
 /* ── Detail (Django detail view: active-only for anonymous/non-staff) ───── */
@@ -521,28 +698,6 @@ export async function getHomeStats(client: Db = getDb()): Promise<HomeStats> {
     // Build-safe fallback (no DATABASE_URL in previews) - stats stay hidden.
     return { scholarships: 0, countries: 0, open_now: 0, verified: 0 };
   }
-}
-
-/* ── API convenience queries (Django APIView actions) ───────────────────── */
-
-/** GET /api/v1/scholarships/open_now/ - status=open_now, deadline order. */
-export function getOpenNow(client: Db = getDb()): Promise<ScholarshipListRow[]> {
-  return queryScholarships({ status: ['open_now'], ordering: 'deadline_date' }, client);
-}
-
-/** GET /api/v1/scholarships/top/ - first 20 by score. */
-export function getTop(client: Db = getDb()): Promise<ScholarshipListRow[]> {
-  return queryScholarships({ ordering: '-score', limit: 20 }, client);
-}
-
-/** GET /api/v1/search/?q= - first 10 ranked results. */
-export function searchScholarships(
-  q: string,
-  client: Db = getDb(),
-): Promise<ScholarshipListRow[]> {
-  const term = (q ?? '').trim();
-  if (!term) return Promise.resolve([]);
-  return queryScholarships({ q: term, limit: 10 }, client);
 }
 
 /* ── Related scholarships (Django detail view internal linking) ─────────── */

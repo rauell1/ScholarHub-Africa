@@ -26,12 +26,17 @@ import { addDays, eatToday, daysBetween } from '../src/lib/dates';
 import type { Db } from '../src/lib/db';
 import { parseScholarshipFilters } from '../src/lib/filters';
 import {
+  countScholarships,
+  getChangeLogs,
   getCountries,
+  getCountriesByRegion,
   getFields,
   getHomeStats,
   getOpenNow,
   getRelatedScholarships,
   getScholarshipBySlug,
+  getSitemapScholarships,
+  queryScholarshipCards,
   queryScholarships,
 } from '../src/lib/queries';
 
@@ -132,6 +137,12 @@ await pool.query(`
     scholarship_id bigint NOT NULL, field_id bigint NOT NULL,
     PRIMARY KEY (scholarship_id, field_id)
   );
+  CREATE TABLE change_logs (
+    id serial PRIMARY KEY, scholarship_id bigint NOT NULL,
+    change_type varchar(50) DEFAULT 'update', field_changed varchar(100) DEFAULT '',
+    old_value text DEFAULT '', new_value text DEFAULT '', source text DEFAULT '',
+    changed_at timestamptz DEFAULT now(), changed_by varchar(100) DEFAULT 'system'
+  );
 `);
 
 await pool.query(
@@ -161,6 +172,8 @@ await pool.query(
       'No longer accepting.', '', false, false, false);
    INSERT INTO scholarship_fields (scholarship_id, field_id) VALUES
      (1, 1), (1, 2), (2, 1), (3, 2);
+   INSERT INTO change_logs (scholarship_id, change_type, field_changed, old_value, new_value, changed_by)
+     VALUES (1, 'update', 'score', '90', '92', 'roy');
 `,
   [in90, in140, in30, past],
 );
@@ -249,6 +262,29 @@ try {
   threw = true;
 }
 check('parse: invalid date throws (→ 400 in route)', threw);
+
+/* New M4a query functions */
+const cardRows = await queryScholarshipCards({ country: ['DE'] }, client);
+check('cards: include eligibility_label', cardRows[0]?.eligibility_label === 'CE');
+const countAll = await countScholarships({}, client);
+check('count: all active = 3', countAll === 3);
+const countDe = await countScholarships({ country: ['DE'] }, client);
+check('count: country=DE = 1', countDe === 1);
+const paged = await queryScholarshipCards({ limit: 2, offset: 0 }, client);
+check('pagination: limit 2 → 2 rows', paged.length === 2);
+const paged2 = await queryScholarshipCards({ limit: 2, offset: 2 }, client);
+check('pagination: offset 2 → 1 row (chevening)', firstSlugs(paged2).join(',') === 'chevening');
+const byRegion = await getCountriesByRegion(client);
+check('byRegion: only Europe (active scholarships), DE+SE',
+  byRegion.length === 1 && byRegion[0].region === 'Europe' && byRegion[0].countries.length === 2);
+check('byRegion: SE count = 2',
+  byRegion[0]?.countries.find((c) => c.iso_code === 'SE')?.count === 2);
+const changelogs = await getChangeLogs(1, 12, client);
+check('changeLogs: 1 row with field score', changelogs.length === 1 && changelogs[0].fieldChanged === 'score');
+const sitemapRows = await getSitemapScholarships(client);
+check('sitemap: 3 active slugs', sitemapRows.length === 3 && sitemapRows.every((r) => typeof r.updatedAt !== 'undefined'));
+const featured = await queryScholarshipCards({ isFeatured: true }, client);
+check('featured: daad only', firstSlugs(featured).join(',') === 'daad-epos');
 
 console.log(failures === 0 ? '\n✅ QUERY LAYER TEST PASSED' : `\n❌ QUERY LAYER TEST FAILED (${failures})`);
 process.exit(failures === 0 ? 0 : 1);

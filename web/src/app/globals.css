@@ -135,4 +135,43 @@
   .glass-header {
     @apply sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md;
   }
+  /* Ported utility classes from the Django build's compiled CSS */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold;
+  }
+  .input {
+    @apply w-full rounded-xl border border-navy/20 bg-white px-4 py-2.5 text-sm text-navy placeholder:text-navy/40 focus:outline-none focus:ring-2 focus:ring-teal/50;
+  }
+  .section-title {
+    @apply text-xl font-bold text-navy sm:text-2xl;
+  }
+  .filter-group {
+    @apply border-t border-navy/5 pt-4;
+  }
+}
+
+/* Sticky mobile CTA (port of compiled .sticky-cta + body.has-sticky-cta) */
+.sticky-cta {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  gap: 10px;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: rgb(255 255 255 / 0.97);
+  border-top: 1px solid rgb(31 56 100 / 0.12);
+  box-shadow: 0 -6px 20px rgb(31 56 100 / 0.08);
+  backdrop-filter: blur(8px);
+}
+@media (min-width: 768px) {
+  .sticky-cta {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  body.has-sticky-cta {
+    padding-bottom: 76px;
+  }
 }
