@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install Python dependencies
-pip3 install -r requirements.txt
+pip3 install uv && uv pip install --system -r requirements.txt
 
 # Run Vite build
 npm run build
