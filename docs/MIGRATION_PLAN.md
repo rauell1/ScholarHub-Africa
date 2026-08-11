@@ -1,6 +1,6 @@
 # ScholarHub Africa — Django → Next.js (Vercel Serverless) Migration Plan
 
-> **Status:** v0.4 — **M1 complete**. **M2: schema + migration toolkit done & locally tested** — apply on Neon is a 2-command run for the owner (sandbox cannot reach neon.tech, see §4 runbook)
+> **Status:** v0.5 — **M1–M3 complete** (skeleton, consent port, schema+toolkit, query layer + /api/v1/*). M4 (public pages) is next. M2 apply on Neon remains a 2-command run for the owner (sandbox cannot reach neon.tech, see §4 runbook)
 > **Date:** 2026-08-11
 > **Source of truth:** this repository at commit `c473ba2` (Django 5.0.7 · DRF 3.15 · Tailwind 3.4 · Alpine.js · PostgreSQL/Neon · Celery · Railway)
 > **Target:** Next.js App Router · React · TypeScript · Tailwind CSS · Neon PostgreSQL · Vercel
@@ -390,7 +390,7 @@ identically, tracker works end-to-end with the new auth.
 | **M0** | Decisions (ORM=auth=DB=cron=tracker scope) — **locked 2026-08-11** | ✅ done |
 | **M1** | Phase 1 — skeleton, DB connection, consent port, standards scaffolding | ✅ done |
 | **M2** | Phase 2 — schema + migration SQL generated; migration toolkit built & locally tested; **apply on Neon pending owner run** (`npm run db:migrate:all`) | **~done** |
-| **M3** | Phase 3 — queries + route handlers + tests | medium |
+| **M3** | Phase 3 — queries + route handlers + tests | ✅ done |
 | **M4** | Phase 4a — layout, home, directory, detail, by-country/by-field (SEO parity) | large |
 | **M5** | Phase 4b — marketing pages, tracker, checklist, emails | medium |
 | **M6** | Phase 5 — auth, cron jobs, crawler port | medium |

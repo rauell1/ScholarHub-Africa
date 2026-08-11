@@ -69,14 +69,14 @@ npm run db:verify            # read-only parity re-check (any time)
 npm run db:test:local        # offline self-test of the data migration (pg-mem)
 ```
 
-M1 status: app skeleton, design-token parity, SEO/AEO scaffolding (Metadata
-API, JSON-LD, robots/sitemap/llms.txt), consent engine ported from
-`consent-manager/` (banner + GCM v2 + TCF 2.3, Postgres-backed log) and
-consent-gated GA4. M2 status: full Drizzle schema + migration SQL generated;
-the data-migration toolkit (`web/scripts/`) is written and locally tested —
-apply it with `npm run db:migrate && npm run db:migrate:data` from your own
-machine (see `docs/MIGRATION_PLAN.md` §4 runbook; the data copy is read-only
-over the Django tables and rolls back on any parity mismatch).
+Status: **M1–M3 complete** — app skeleton, design-token parity, SEO/AEO
+scaffolding, consent engine (banner + GCM v2 + TCF 2.3, Postgres-backed log),
+consent-gated GA4, full Drizzle schema + migration toolkit (locally tested),
+and the Phase 3 query layer + `/api/v1/*` route handlers (DRF parity: filters,
+weighted full-text search, countries/fields counts, search endpoint) with an
+offline test suite (`npm run db:test:local`, `npm run db:test:queries`).
+To apply the data migration on Neon run `npm run db:migrate && npm run db:migrate:data`
+from your own machine (see `docs/MIGRATION_PLAN.md` §4 runbook).
 
 ---
 

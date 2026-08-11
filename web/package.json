@@ -15,6 +15,7 @@
     "db:migrate:all": "npm run db:migrate && npm run db:migrate:data",
     "db:verify": "node scripts/verify-migration.mjs",
     "db:test:local": "node scripts/test-migrate-local.mjs",
+    "db:test:queries": "tsx scripts/test-queries-local.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.0.0",
+    "@types/pg": "^8.21.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "drizzle-kit": "^0.31.10",
