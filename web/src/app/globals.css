@@ -1,0 +1,137 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/outfit';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+/*
+ * ScholarHub Africa design tokens - Tailwind v4 CSS-first config.
+ * Ported 1:1 from the Django app:
+ *   - colors:       tailwind.config.js theme.extend.colors
+ *   - semantic CSS vars: static/css/main.css (:root / .dark)
+ *   - radii, shadows, animations: tailwind.config.js
+ *   - component classes (.btn*, .card, .glass-header): static/css/main.css
+ */
+
+/* Class-based dark mode (parity with tailwind.config.js darkMode: 'class') */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Semantic tokens driven by CSS variables (main.css) */
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+  --color-card: rgb(var(--card));
+  --color-card-foreground: rgb(var(--card-foreground));
+  --color-border: rgb(var(--border));
+
+  /* Brand palette (tailwind.config.js) */
+  --color-navy: #0f172a;
+  --color-navy-light: #1e293b;
+  --color-navy-dark: #020617;
+  --color-teal: #14b8a6;
+  --color-teal-light: #5eead4;
+  --color-forest: #10b981;
+  --color-forest-light: #6ee7b7;
+  --color-forest-deep: #047857;
+  --color-forest-dark: #064e3b;
+  --color-amber: #f59e0b;
+  --color-amber-light: #fde68a;
+  --color-crimson: #ef4444;
+  --color-crimson-light: #fca5a5;
+  --color-sky: #0ea5e9;
+  --color-sky-light: #7dd3fc;
+
+  /* Typography - self-hosted via Fontsource variable fonts (CSP-safe,
+     no build-time fetch; next/font/google fails in restricted networks) */
+  --font-sans: 'Outfit Variable', 'Inter Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+
+  /* Radii (tailwind.config.js borderRadius override) */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+
+  /* Shadows */
+  --shadow-glass: 0 8px 32px 0 rgb(31 38 135 / 0.07);
+  --shadow-glass-dark: 0 8px 32px 0 rgb(0 0 0 / 0.37);
+  --shadow-neon-teal: 0 0 15px rgb(20 184 166 / 0.5);
+
+  /* Animations */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-fade-in-up: fadeInUp 0.8s ease-out forwards;
+  --animate-glow-pulse: glowPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes glowPulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+}
+
+/* Semantic CSS variables (main.css) */
+:root {
+  --background: 248 250 252;
+  --foreground: 15 23 42;
+  --card: 255 255 255;
+  --card-foreground: 15 23 42;
+  --border: 226 232 240;
+}
+.dark {
+  --background: 2 6 23;
+  --foreground: 248 250 252;
+  --card: 15 23 42;
+  --card-foreground: 248 250 252;
+  --border: 30 41 59;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased transition-colors duration-300;
+  }
+}
+
+@layer components {
+  .btn,
+  .btn-primary,
+  .btn-outline,
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-teal/50 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary {
+    @apply bg-teal text-white hover:bg-teal-light shadow-md hover:shadow-lg dark:bg-teal dark:text-navy-dark;
+  }
+  .btn-outline {
+    @apply border border-border bg-transparent text-foreground hover:bg-gray-100 dark:hover:bg-white/10;
+  }
+  .btn-ghost {
+    @apply text-foreground opacity-70 hover:opacity-100 hover:bg-gray-100 dark:hover:bg-white/10;
+  }
+  .card {
+    @apply rounded-2xl bg-card text-card-foreground p-6 shadow-sm ring-1 ring-border transition-all duration-300 hover:shadow-md dark:shadow-none dark:bg-card;
+  }
+  .glass-header {
+    @apply sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md;
+  }
+}
