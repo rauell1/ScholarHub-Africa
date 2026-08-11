@@ -1,6 +1,6 @@
 # ScholarHub Africa — Django → Next.js (Vercel Serverless) Migration Plan
 
-> **Status:** v0.3 — **M1 complete** (app skeleton + consent engine port). **M2 in progress** — Drizzle schema + migration SQL generated (`web/drizzle/`); data-migration script + Neon-branch apply pending `DATABASE_URL`
+> **Status:** v0.4 — **M1 complete**. **M2: schema + migration toolkit done & locally tested** — apply on Neon is a 2-command run for the owner (sandbox cannot reach neon.tech, see §4 runbook)
 > **Date:** 2026-08-11
 > **Source of truth:** this repository at commit `c473ba2` (Django 5.0.7 · DRF 3.15 · Tailwind 3.4 · Alpine.js · PostgreSQL/Neon · Celery · Railway)
 > **Target:** Next.js App Router · React · TypeScript · Tailwind CSS · Neon PostgreSQL · Vercel
@@ -195,16 +195,50 @@ replay migrations on production. Zero risk to live data; full rollback.
    Postgres `enum` types or `text` + app-level Zod validation (recommended:
    `text` + Zod for serverless simplicity; enums are fine either way).
 
-2. **Data migration** — one-time script (Node + the ORM):
-   - Read from Django tables, write to new tables, mapping FKs (esp. the M2M junction).
-   - Verify with parity queries: counts per table, spot-check slugs/scores, search results.
-   - Admin password: reset for the single user at cutover (one-time step in deploy runbook).
+2. **Data migration — DONE in the repo, locally tested.** `web/scripts/migrate-data.mjs`
+   copies every row from the Django tables into the new tables preserving ids
+   (FKs map 1:1), except:
+   - `auth_user.id` → `users.id` as `user_<id>` (Auth.js text PK)
+   - `applicant_profiles.user_id` → `user_<id>`
+   - duplicate `auth_user` emails are deduped (kept lowest id; `users.email` is UNIQUE)
+   It is read-only over Django tables, runs in one transaction (rollback on any
+   parity mismatch), skips already-populated targets (resume-safe), advances all
+   `bigserial` sequences, and verifies counts + FK orphans + full-text search
+   before committing. `web/scripts/test-migrate-local.mjs` exercises the exact
+   same logic against an in-memory Postgres (pg-mem) — **passing** (including
+   the dedupe, id mapping, idempotent re-run, and zero-orphan assertions).
+   `web/scripts/verify-migration.mjs` re-checks parity read-only at any time.
 3. **Indexes** — port all Django `Meta.indexes` (country, status, -score, deadline_date) plus the tsvector GIN index.
 4. **RLS** — `deploy/rls.sql` and `enable_rls` command exist today; optionally port
    RLS policies so tracker data is tenant-isolated at the DB layer (nice-to-have).
 
-**Exit criteria:** branch DB has all rows, parity queries pass, `next build`
-type-checks against the new schema.
+### M2 runbook (apply on Neon — run from your machine, not this sandbox)
+
+The coding sandbox cannot reach neon.tech (README documents the same block for
+CI), so the apply step is two commands you run locally. The plan's Neon-branch
+strategy was relaxed to **shadow tables in the same database**: the new tables
+are created alongside Django's (no name collisions, Django untouched), the copy
+is read-only over Django data, and rollback = `DROP TABLE` the new tables. If
+you'd rather do a proper branch first, provide a `NEON_API_KEY` and the same
+scripts run unchanged against the branch.
+
+```bash
+cd web
+npm install                     # first time
+npm run db:test:local           # optional: re-run the offline self-test
+# 1) put DATABASE_URL in web/.env.local (Neon POOLED string, see .env.example)
+npm run db:migrate              # creates the 13 new tables (drizzle-kit migrate)
+npm run db:migrate:data         # copies data, verifies parity, commits
+npm run db:verify               # read-only parity re-check any time
+```
+
+Expected output ends with `✅ Parity OK` and a per-table django=… drizzle=…
+report. After the copy: one-time admin password reset at cutover (Django PBKDF2
+hashes don't carry into Auth.js).
+
+**Exit criteria:** `✅ Parity OK` on the live DB (counts match, 0 FK orphans,
+search-vector hits for DAAD/scholarship/Germany), `next build` type-checks
+against the new schema.
 
 ---
 
@@ -355,7 +389,7 @@ identically, tracker works end-to-end with the new auth.
 |---|---|---|
 | **M0** | Decisions (ORM=auth=DB=cron=tracker scope) — **locked 2026-08-11** | ✅ done |
 | **M1** | Phase 1 — skeleton, DB connection, consent port, standards scaffolding | ✅ done |
-| **M2** | Phase 2 — schema + migration SQL generated (`web/drizzle/0000_m2-django-to-drizzle.sql`); data-migration script + Neon-branch apply next (needs `DATABASE_URL`) | **in progress** |
+| **M2** | Phase 2 — schema + migration SQL generated; migration toolkit built & locally tested; **apply on Neon pending owner run** (`npm run db:migrate:all`) | **~done** |
 | **M3** | Phase 3 — queries + route handlers + tests | medium |
 | **M4** | Phase 4a — layout, home, directory, detail, by-country/by-field (SEO parity) | large |
 | **M5** | Phase 4b — marketing pages, tracker, checklist, emails | medium |

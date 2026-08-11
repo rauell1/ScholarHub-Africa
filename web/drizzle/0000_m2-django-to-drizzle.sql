@@ -14,7 +14,7 @@ CREATE TABLE "accounts" (
 );
 --> statement-breakpoint
 CREATE TABLE "applicant_profiles" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"email" varchar(254) NOT NULL,
 	"full_name" varchar(200) DEFAULT '' NOT NULL,
@@ -34,8 +34,8 @@ CREATE TABLE "applicant_profiles" (
 );
 --> statement-breakpoint
 CREATE TABLE "change_logs" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"scholarship_id" integer,
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"scholarship_id" bigint,
 	"change_type" varchar(50) DEFAULT 'update' NOT NULL,
 	"field_changed" varchar(100) DEFAULT '' NOT NULL,
 	"old_value" text DEFAULT '' NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE "consent_config" (
 );
 --> statement-breakpoint
 CREATE TABLE "consent_logs" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"anonymized_ip" varchar(200) DEFAULT '' NOT NULL,
 	"timestamp" timestamp with time zone DEFAULT now() NOT NULL,
 	"country" varchar(10) DEFAULT '' NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE "consent_logs" (
 );
 --> statement-breakpoint
 CREATE TABLE "consent_policies" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"kind" varchar(50) NOT NULL,
 	"content" text DEFAULT '' NOT NULL,
 	"version" integer DEFAULT 1 NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE "consent_policies" (
 );
 --> statement-breakpoint
 CREATE TABLE "countries" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"name" varchar(100) NOT NULL,
 	"iso_code" varchar(2) NOT NULL,
 	"flag_emoji" varchar(10) DEFAULT '' NOT NULL,
@@ -86,8 +86,8 @@ CREATE TABLE "countries" (
 );
 --> statement-breakpoint
 CREATE TABLE "document_items" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"profile_id" integer NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"profile_id" bigint NOT NULL,
 	"name" varchar(200) NOT NULL,
 	"status" varchar(20) DEFAULT 'not_started' NOT NULL,
 	"notes" text DEFAULT '' NOT NULL,
@@ -96,7 +96,7 @@ CREATE TABLE "document_items" (
 );
 --> statement-breakpoint
 CREATE TABLE "fields_of_study" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"name" varchar(100) NOT NULL,
 	"slug" varchar(100) NOT NULL,
 	"icon" varchar(50) DEFAULT '' NOT NULL,
@@ -105,19 +105,19 @@ CREATE TABLE "fields_of_study" (
 );
 --> statement-breakpoint
 CREATE TABLE "scholarship_fields" (
-	"scholarship_id" integer NOT NULL,
-	"field_id" integer NOT NULL,
+	"scholarship_id" bigint NOT NULL,
+	"field_id" bigint NOT NULL,
 	CONSTRAINT "scholarship_fields_scholarship_id_field_id_pk" PRIMARY KEY("scholarship_id","field_id")
 );
 --> statement-breakpoint
 CREATE TABLE "scholarships" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"slug" varchar(200) NOT NULL,
 	"name" varchar(300) NOT NULL,
 	"short_name" varchar(100) DEFAULT '' NOT NULL,
 	"programme" varchar(300) DEFAULT '' NOT NULL,
 	"university" varchar(300) DEFAULT '' NOT NULL,
-	"country_id" integer NOT NULL,
+	"country_id" bigint NOT NULL,
 	"funding_type" varchar(20) NOT NULL,
 	"funding_detail" text DEFAULT '' NOT NULL,
 	"application_fee" numeric(8, 2) DEFAULT '0' NOT NULL,
@@ -163,9 +163,9 @@ CREATE TABLE "sessions" (
 );
 --> statement-breakpoint
 CREATE TABLE "tracked_applications" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"profile_id" integer NOT NULL,
-	"scholarship_id" integer NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"profile_id" bigint NOT NULL,
+	"scholarship_id" bigint NOT NULL,
 	"stage" varchar(30) DEFAULT 'researching' NOT NULL,
 	"priority" varchar(10) DEFAULT 'target' NOT NULL,
 	"notes" text DEFAULT '' NOT NULL,

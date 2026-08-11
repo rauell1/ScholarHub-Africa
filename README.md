@@ -63,13 +63,20 @@ npm install
 npm run dev                  # http://localhost:3000
 npm run build                # production build + lint + typecheck
 npm run db:generate          # regenerate Drizzle migration SQL (web/drizzle/)
-npm run db:migrate           # apply migrations to the DB
+npm run db:migrate           # apply schema migrations to the DB
+npm run db:migrate:data      # copy Django data into the new tables + verify
+npm run db:verify            # read-only parity re-check (any time)
+npm run db:test:local        # offline self-test of the data migration (pg-mem)
 ```
 
 M1 status: app skeleton, design-token parity, SEO/AEO scaffolding (Metadata
 API, JSON-LD, robots/sitemap/llms.txt), consent engine ported from
 `consent-manager/` (banner + GCM v2 + TCF 2.3, Postgres-backed log) and
-consent-gated GA4. M2 status: full Drizzle schema + migration SQL generated.
+consent-gated GA4. M2 status: full Drizzle schema + migration SQL generated;
+the data-migration toolkit (`web/scripts/`) is written and locally tested —
+apply it with `npm run db:migrate && npm run db:migrate:data` from your own
+machine (see `docs/MIGRATION_PLAN.md` §4 runbook; the data copy is read-only
+over the Django tables and rolls back on any parity mismatch).
 
 ---
 

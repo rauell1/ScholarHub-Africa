@@ -18,6 +18,8 @@
  */
 import { relations, sql } from 'drizzle-orm';
 import {
+  bigint,
+  bigserial,
   boolean,
   customType,
   date,
@@ -27,7 +29,6 @@ import {
   numeric,
   pgTable,
   primaryKey,
-  serial,
   smallint,
   text,
   timestamp,
@@ -50,7 +51,7 @@ const tsvector = customType<{ data: string }>({
 export const countries = pgTable(
   'countries',
   {
-    id: serial('id').primaryKey(),
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
     name: varchar('name', { length: 100 }).notNull().unique(),
     isoCode: varchar('iso_code', { length: 2 }).notNull().unique(),
     flagEmoji: varchar('flag_emoji', { length: 10 }).notNull().default(''),
@@ -62,7 +63,7 @@ export const countries = pgTable(
 export const fieldsOfStudy = pgTable(
   'fields_of_study',
   {
-    id: serial('id').primaryKey(),
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
     name: varchar('name', { length: 100 }).notNull().unique(),
     slug: varchar('slug', { length: 100 }).notNull().unique(),
     icon: varchar('icon', { length: 50 }).notNull().default(''),
@@ -75,13 +76,13 @@ export const fieldsOfStudy = pgTable(
 export const scholarships = pgTable(
   'scholarships',
   {
-    id: serial('id').primaryKey(),
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
     slug: varchar('slug', { length: 200 }).notNull().unique(),
     name: varchar('name', { length: 300 }).notNull(),
     shortName: varchar('short_name', { length: 100 }).notNull().default(''),
     programme: varchar('programme', { length: 300 }).notNull().default(''),
     university: varchar('university', { length: 300 }).notNull().default(''),
-    countryId: integer('country_id')
+    countryId: bigint('country_id', { mode: 'number' })
       .notNull()
       .references(() => countries.id, { onDelete: 'restrict' }),
 
@@ -157,10 +158,10 @@ export const scholarships = pgTable(
 export const scholarshipFields = pgTable(
   'scholarship_fields',
   {
-    scholarshipId: integer('scholarship_id')
+    scholarshipId: bigint('scholarship_id', { mode: 'number' })
       .notNull()
       .references(() => scholarships.id, { onDelete: 'cascade' }),
-    fieldId: integer('field_id')
+    fieldId: bigint('field_id', { mode: 'number' })
       .notNull()
       .references(() => fieldsOfStudy.id, { onDelete: 'cascade' }),
   },
@@ -174,8 +175,8 @@ export const scholarshipFields = pgTable(
 export const changeLogs = pgTable(
   'change_logs',
   {
-    id: serial('id').primaryKey(),
-    scholarshipId: integer('scholarship_id').references(() => scholarships.id, {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    scholarshipId: bigint('scholarship_id', { mode: 'number' }).references(() => scholarships.id, {
       onDelete: 'set null',
     }),
     changeType: varchar('change_type', { length: 50 }).notNull().default('update'),
@@ -258,7 +259,7 @@ export const verificationTokens = pgTable(
 export const applicantProfiles = pgTable(
   'applicant_profiles',
   {
-    id: serial('id').primaryKey(),
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
     /** Multi-user (M0 decision #5): required unique FK, not nullable like
      *  Django's (Django allowed an anonymous demo profile). */
     userId: text('user_id')
@@ -285,11 +286,11 @@ export const applicantProfiles = pgTable(
 export const trackedApplications = pgTable(
   'tracked_applications',
   {
-    id: serial('id').primaryKey(),
-    profileId: integer('profile_id')
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    profileId: bigint('profile_id', { mode: 'number' })
       .notNull()
       .references(() => applicantProfiles.id, { onDelete: 'cascade' }),
-    scholarshipId: integer('scholarship_id')
+    scholarshipId: bigint('scholarship_id', { mode: 'number' })
       .notNull()
       .references(() => scholarships.id, { onDelete: 'cascade' }),
     stage: varchar('stage', { length: 30 }).notNull().default('researching'),
@@ -317,8 +318,8 @@ export const trackedApplications = pgTable(
 export const documentItems = pgTable(
   'document_items',
   {
-    id: serial('id').primaryKey(),
-    profileId: integer('profile_id')
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    profileId: bigint('profile_id', { mode: 'number' })
       .notNull()
       .references(() => applicantProfiles.id, { onDelete: 'cascade' }),
     name: varchar('name', { length: 200 }).notNull(),
@@ -335,7 +336,7 @@ export const documentItems = pgTable(
 export const consentLogs = pgTable(
   'consent_logs',
   {
-    id: serial('id').primaryKey(),
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
     anonymizedIp: varchar('anonymized_ip', { length: 200 }).notNull().default(''),
     timestamp: timestamp('timestamp', { withTimezone: true }).notNull().defaultNow(),
     country: varchar('country', { length: 10 }).notNull().default(''),
@@ -359,7 +360,7 @@ export const consentConfig = pgTable('consent_config', {
 export const consentPolicies = pgTable(
   'consent_policies',
   {
-    id: serial('id').primaryKey(),
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
     kind: varchar('kind', { length: 50 }).notNull().unique(),
     content: text('content').notNull().default(''),
     version: integer('version').notNull().default(1),

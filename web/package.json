@@ -11,6 +11,10 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:migrate:data": "node scripts/migrate-data.mjs",
+    "db:migrate:all": "npm run db:migrate && npm run db:migrate:data",
+    "db:verify": "node scripts/verify-migration.mjs",
+    "db:test:local": "node scripts/test-migrate-local.mjs",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
@@ -32,6 +36,8 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.5.23",
+    "pg": "^8.23.0",
+    "pg-mem": "^3.0.14",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.0"
   }
