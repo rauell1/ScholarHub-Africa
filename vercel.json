@@ -22,5 +22,15 @@
       "src": "/(.*)",
       "dest": "scholarhub/wsgi.py"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/weekly-digest/",
+      "schedule": "0 5 * * 1"
+    },
+    {
+      "path": "/api/cron/daily-crawl/",
+      "schedule": "0 0 * * *"
+    }
   ]
 }

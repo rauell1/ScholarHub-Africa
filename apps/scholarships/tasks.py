@@ -7,7 +7,7 @@ email backend (console backend in local development).
 """
 from datetime import timedelta
 
-from celery import shared_task
+
 from decouple import config
 from django.conf import settings
 from django.core.mail import send_mail
@@ -91,13 +91,13 @@ def send_digest_emails():
     return subject, len(recipients)
 
 
-@shared_task
+
 def send_weekly_digest():
     """Celery task - scheduled in CELERY_BEAT_SCHEDULE (settings/base.py)."""
     subject, count = send_digest_emails()
     return f'Sent "{subject}" to {count} recipient(s)'
 
-@shared_task
+
 def daily_crawl_scholarships():
     """Run the daily web crawler to fetch new scholarships."""
     from django.core.management import call_command

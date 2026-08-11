@@ -6,7 +6,7 @@ Settings are split across three modules (System Design v1.0 §5):
   local.py      - local development overrides
   production.py - production overrides (Neon, Cloudflare R2, email, security)
 """
-from datetime import timedelta  # noqa: F401  (used by CELERY_BEAT_SCHEDULE)
+
 from pathlib import Path
 
 import dj_database_url
@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'django_extensions',
-    'django_celery_beat',
 
     # Local apps
     'apps.scholarships',
@@ -184,23 +183,6 @@ CORS_ALLOWED_ORIGINS = config(
     cast=Csv(),
 )
 
-# ---------------------------------------------------------------------------
-# Celery (System Design v1.0 §15)
-# ---------------------------------------------------------------------------
-CELERY_BROKER_URL = config('REDIS_URL', default='redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = config('REDIS_URL', default='redis://localhost:6379/0')
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-
-from celery.schedules import crontab  # noqa: E402
-
-CELERY_BEAT_SCHEDULE = {
-    'weekly-digest': {
-        'task': 'apps.scholarships.tasks.send_weekly_digest',
-        # 05:00 UTC Monday = 08:00 EAT Monday
-        'schedule': crontab(hour=5, minute=0, day_of_week=1),
-    },
-}
 
 # ---------------------------------------------------------------------------
 # Email (System Design v1.0 §15)
