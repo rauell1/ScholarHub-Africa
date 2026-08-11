@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install Python dependencies
-pip3 install uv && uv pip install --system -r requirements.txt
+python3 -m venv venv && source venv/bin/activate && pip install uv && uv pip install -r requirements.txt
 
 # Run Vite build
 npm run build
