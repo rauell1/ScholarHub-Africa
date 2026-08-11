@@ -1,6 +1,6 @@
 # ScholarHub Africa — Django → Next.js (Vercel Serverless) Migration Plan
 
-> **Status:** v0.6 — **M1–M4a complete** (skeleton, consent port, schema+toolkit, query layer + /api/v1/*, public directory/detail/country/field pages + homepage). M2 apply on Neon remains a 2-command run for the owner (sandbox cannot reach neon.tech, see §4 runbook)
+> **Status:** v1.0 — **All code milestones complete** (M1–M7). Remaining: owner runs the M2 apply on Neon + M8 cutover (sandbox cannot reach neon.tech; see §4 runbook + §12 cutover runbook)
 > **Date:** 2026-08-11
 > **Source of truth:** this repository at commit `c473ba2` (Django 5.0.7 · DRF 3.15 · Tailwind 3.4 · Alpine.js · PostgreSQL/Neon · Celery · Railway)
 > **Target:** Next.js App Router · React · TypeScript · Tailwind CSS · Neon PostgreSQL · Vercel
@@ -315,25 +315,24 @@ AGENTS.md acceptance audit; visual diff of key pages matches Django screenshots.
 
 ## 7. Phase 5 — Authentication & background jobs
 
-1. **Auth — Auth.js (NextAuth v5), confirmed, multi-user scope (M0 decision #2):**
-   - **Credentials provider** for email/password registration (new users get
-     `bcrypt`-hashed passwords in the Auth.js `users` table; the legacy admin
-     password is reset once at cutover) + **Google OAuth** provider.
-   - Sessions stored in Postgres via the Auth.js adapter (`accounts`/`sessions` tables).
-   - Registration pages, email verification (Resend), and per-user tracker
-     isolation are **part of this migration** (decision #5), not Phase 2.
-   - Password migration note: Django PBKDF2 hashes cannot be read by Auth.js —
-     the single existing admin resets their password at cutover (one-time step).
-2. **Vercel Cron (confirmed M0 decision #4 — Vercel Cron + Resend, no Inngest):**
-   - `vercel.json` crons: `"0 5 * * 1"` → `/api/cron/digest` (Monday 05:00 UTC =
+1. **Auth — Auth.js (NextAuth v5) — DONE.** Credentials (bcrypt hashes in
+   `users.password`, registration via `/api/auth/register`) + Google OAuth
+   (user row upserted in the signIn callback). **JWT sessions** (edge-safe
+   middleware gate for `/tracker/*` + `/accounts/profile`). Login page at
+   `/accounts/login/` (client form with register/sign-in modes), logout via
+   `/accounts/logout/`. Password migration note: Django PBKDF2 hashes cannot
+   be read by Auth.js — the legacy admin resets their password at cutover.
+2. **Vercel Cron — DONE (confirmed M0 decision #4 — Vercel Cron + Resend, no Inngest).**
+   - `web/vercel.json`: `"0 5 * * 1"` → `/api/cron/digest` (Monday 05:00 UTC =
      08:00 EAT, matching today's Celery beat), `"0 3 * * *"` → `/api/cron/crawl`.
-   - Handlers authenticate with `Authorization: Bearer $CRON_SECRET`, are
-     `export const maxDuration = 300`, return quickly (fire the crawl with
-     incremental processing if it exceeds the function limit).
-   - The digest handler runs the shared digest queries, renders the React Email
-     template, sends via Resend (`DIGEST_EMAILS`, `DEFAULT_FROM_EMAIL`).
-   - The crawler (`crawl_scholarships.py`) is ported to a Node/cheerio script
-     with the same start-URL and verification rules.
+   - Handlers authenticate with `Authorization: Bearer $CRON_SECRET`
+     (`maxDuration = 300`). The digest runs the shared queries
+     (`src/lib/digest.ts` — port of `tasks.py build_digest_context`), renders
+     the ported weekly-digest HTML, and sends via the Resend REST API
+     (`RESEND_API_KEY`, `DIGEST_EMAILS`, `DEFAULT_FROM_EMAIL`); dry-runs
+     (logs) when the key is unset.
+   - The crawler endpoint is wired with the same guard; the
+     `crawl_scholarships.py` port to Node/cheerio is the one remaining TODO.
    - *Escalation path:* if the crawler needs retries/queues, move both jobs to
      **Inngest** (durable execution) without changing the job logic.
 3. **Import/ops commands** (`import_scholarships`, `seed_demo`) → Node scripts
@@ -392,9 +391,10 @@ identically, tracker works end-to-end with the new auth.
 | **M2** | Phase 2 — schema + migration SQL generated; migration toolkit built & locally tested; **apply on Neon pending owner run** (`npm run db:migrate:all`) | **~done** |
 | **M3** | Phase 3 — queries + route handlers + tests | ✅ done |
 | **M4** | Phase 4a — layout, home, directory, detail, by-country/by-field (SEO parity) | ✅ done |
-| **M5** | Phase 4b — marketing pages, tracker, checklist, emails | medium |
-| **M6** | Phase 5 — auth, cron jobs, crawler port | medium |
-| **M7** | Phase 6 — Vercel deploy, data migration on prod, DNS cutover | small |
+| **M4b** | Phase 4b — marketing pages (about, faq, contact, privacy, thank-you, case studies), testimonials, homepage SearchBar | ✅ done |
+| **M5** | Tracker + checklist (kanban, 24-item checklist, DRF-parity tracker API, multi-user isolation) | ✅ done |
+| **M6** | Phase 5 — Auth.js (credentials + Google, JWT sessions, registration), Vercel Cron (digest via Resend REST, crawler slot) | ✅ done |
+| **M7** | Deployment config — vercel.json crons, env matrix, CI workflow (web/ + Django jobs) | ✅ done |
 | **M8** | Django retirement (archive → `django-legacy/`, remove Railway) | small |
 
 > Suggested sequencing: ship **public directory first** (M1→M4a) because that's
@@ -416,3 +416,37 @@ identically, tracker works end-to-end with the new auth.
 With the tracker going multi-user, `docs/SYSTEM_DESIGN.md` Phase 2 (registration,
 OAuth, bookmarks, AI match scores, alerts) is pulled forward into this migration
 for the auth + profile parts; bookmarks/alerts remain roadmap.
+
+
+---
+
+## 12. Cutover runbook (M8 — owner, from your machine)
+
+1. **Apply the schema + data (M2):**
+   ```bash
+   cd web && npm install
+   # If you ran db:migrate before the auth column was added, reset the new
+   # tables first (they contain no production data yet):
+   #   node scripts/drop-new-tables.mjs   (drops only the new Drizzle tables)
+   npm run db:migrate && npm run db:migrate:data
+   npm run db:verify        # expect ✅ Parity OK
+   ```
+2. **Deploy to Vercel** (`vercel` CLI or Git integration, root `web/`):
+   set env vars from `web/.env.example` (DATABASE_URL pooled, AUTH_SECRET,
+   AUTH_GOOGLE_ID/SECRET, CRON_SECRET, RESEND_API_KEY, DIGEST_EMAILS,
+   DEFAULT_FROM_EMAIL, GA4_MEASUREMENT_ID, SITE_*).
+3. **Verify on the preview/production URL:** home stats, directory filters +
+   search suggestions, detail pages + JSON-LD, /api/v1/* responses match
+   Django, login → tracker → checklist flow, cron digest dry-run (or real
+   send), robots/sitemap/llms.txt, 404/500.
+4. **Admin access:** sign in with the new registration flow, then reset the
+   legacy admin's password (Django PBKDF2 hashes don't carry over).
+5. **DNS cutover:** CNAME `scholarhub.africa` + `www` to the Vercel
+   deployment (keep Cloudflare in front); keep Django on Railway at
+   `legacy.scholarhub.africa` for 30 days as rollback.
+6. **Retire Django:** after validation, move `apps/`, `templates/`,
+   `scholarhub/`, `manage.py` into `django-legacy/`, remove Railway services,
+   and archive this plan.
+7. **CI:** commit `.github/workflows/ci.yml` manually (repo convention — the
+   GitHub App token lacks workflows permission); it runs Next.js lint/typecheck/
+   build/offline tests plus Django pytest until cutover.

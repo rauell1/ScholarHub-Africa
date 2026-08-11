@@ -1,5 +1,5 @@
 {
-  "id": "667c5dad-ece7-4f47-9270-09d90f853b19",
+  "id": "6addbfab-4929-4f5a-a2e9-de2c5f4eef71",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1533,6 +1533,12 @@
         },
         "image": {
           "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
           "type": "text",
           "primaryKey": false,
           "notNull": false

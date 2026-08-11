@@ -1,13 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 import { ThemeToggle } from './ThemeToggle';
 
 /**
- * Site header - port of templates/base.html {% block nav %}.
- * Auth-aware links land in Phase 5 (Auth.js); for now the Login link renders.
+ * Site header - port of templates/base.html {% block nav %}, now
+ * session-aware (Phase 5): authenticated users see My Tracker / Checklist /
+ * Logout instead of Login.
  */
 const NAV_LINKS = [
   { href: '/scholarships/', label: 'Scholarships' },
@@ -16,7 +18,13 @@ const NAV_LINKS = [
 ];
 
 export function Navbar() {
+  const { status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isAuthenticated = status === 'authenticated';
+
+  const logout = () => {
+    void signOut({ callbackUrl: '/' });
+  };
 
   return (
     <header className="glass-header text-foreground">
@@ -42,10 +50,29 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            {/* TODO(Phase 5): session-aware Login / My Tracker / Checklist / Logout */}
-            <Link href="/login/" className="btn-primary ml-2">
-              Login
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href="/tracker/"
+                  className="rounded-xl px-3 py-2 text-sm font-medium transition-colors hover:bg-foreground/5"
+                >
+                  My Tracker
+                </Link>
+                <Link
+                  href="/tracker/checklist/"
+                  className="rounded-xl px-3 py-2 text-sm font-medium transition-colors hover:bg-foreground/5"
+                >
+                  Checklist
+                </Link>
+                <button type="button" onClick={logout} className="btn-primary ml-2">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link href="/accounts/login/" className="btn-primary ml-2">
+                Login
+              </Link>
+            )}
             <span className="ml-2">
               <ThemeToggle />
             </span>
@@ -79,10 +106,31 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            {/* TODO(Phase 5): session-aware links */}
-            <Link href="/login/" className="btn-primary mt-4 block text-center">
-              Login
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href="/tracker/"
+                  className="block rounded-xl px-3 py-2 text-sm font-medium transition-colors hover:bg-foreground/5"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  My Tracker
+                </Link>
+                <Link
+                  href="/tracker/checklist/"
+                  className="block rounded-xl px-3 py-2 text-sm font-medium transition-colors hover:bg-foreground/5"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Checklist
+                </Link>
+                <button type="button" onClick={logout} className="btn-primary mt-4 block w-full text-center">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link href="/accounts/login/" className="btn-primary mt-4 block text-center">
+                Login
+              </Link>
+            )}
           </div>
         )}
       </div>

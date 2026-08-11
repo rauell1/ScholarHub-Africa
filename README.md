@@ -69,14 +69,33 @@ npm run db:verify            # read-only parity re-check (any time)
 npm run db:test:local        # offline self-test of the data migration (pg-mem)
 ```
 
-Status: **M1–M4a complete** — app skeleton, design-token parity, SEO/AEO
-scaffolding, consent engine (banner + GCM v2 + TCF 2.3, Postgres-backed log),
-consent-gated GA4, full Drizzle schema + migration toolkit (locally tested),
-the Phase 3 query layer + `/api/v1/*` route handlers (DRF parity), and the
-**public pages**: directory (URL-driven filters, sorting, pagination, live
-search suggestions), detail (ISR + MonetaryGrant JSON-LD + change history +
-related + live countdown), by-country/by-field, and the full homepage.
-Offline test suite: `npm run db:test:local`, `npm run db:test:queries`.
+Status: **all code milestones complete (M1–M7)** — app skeleton,
+design-token parity, SEO/AEO scaffolding, consent engine (banner + GCM v2 +
+TCF 2.3, Postgres-backed log), consent-gated GA4, Drizzle schema + migration
+toolkit (locally tested), Phase 3 query layer + `/api/v1/*` route handlers
+(DRF parity), the full public site (directory with URL-driven filters + live
+search suggestions, detail with MonetaryGrant JSON-LD + countdown,
+by-country/by-field, homepage, About/FAQ/Contact/Privacy/Thank-you/Case
+studies), **Auth.js** (credentials + Google, registration, JWT sessions,
+auth-gated tracker), **tracker + 24-item checklist** with the DRF-parity
+tracker API, and **Vercel Cron** (weekly digest via Resend + crawler slot).
+
+Remaining (owner-run, see `docs/MIGRATION_PLAN.md` §4/§12): apply the data
+migration on Neon (`npm run db:migrate && npm run db:migrate:data` from your
+machine), deploy to Vercel, cut over DNS, retire Django.
+
+## 🚀 Deploy (Vercel)
+
+```bash
+cd web
+npx vercel --prod        # or connect the repo in the Vercel dashboard
+```
+
+Set the env vars from `web/.env.example` (DATABASE_URL pooled, AUTH_SECRET,
+AUTH_GOOGLE_ID/SECRET, CRON_SECRET, RESEND_API_KEY, DIGEST_EMAILS,
+DEFAULT_FROM_EMAIL, GA4_MEASUREMENT_ID, SITE_*). Crons are defined in
+`web/vercel.json` (Monday 05:00 UTC digest + daily 03:00 UTC crawl slot).
+Offline tests: `npm run db:test:local`, `npm run db:test:queries`.
 To apply the data migration on Neon run `npm run db:migrate && npm run db:migrate:data`
 from your own machine (see `docs/MIGRATION_PLAN.md` §4 runbook).
 

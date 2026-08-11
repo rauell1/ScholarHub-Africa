@@ -205,6 +205,9 @@ export const users = pgTable(
     email: text('email').notNull(),
     emailVerified: timestamp('emailVerified', { mode: 'date' }),
     image: text('image'),
+    /** bcrypt hash for the Credentials provider (registration, Phase 5).
+     *  Null for OAuth-only users. */
+    passwordHash: text('password'),
   },
   (t) => [uniqueIndex('users_email_idx').on(t.email)],
 );

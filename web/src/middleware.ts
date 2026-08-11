@@ -1,16 +1,15 @@
 /**
- * Edge middleware - Geolocation / Region detection (GDPR vs CCPA).
+ * Edge middleware - combines two concerns:
  *
- * Runs at the edge (Vercel Edge Functions, Cloudflare via cf-ipcountry, etc.)
- * BEFORE the request reaches the app, and stamps every response with:
- *   • `sh_region`        - readable cookie the client `useConsent` hook reads
- *   • `sh_region_http`   - HTTP-only cookie used by API routes as the authority
- *   • `X-Consent-Region` - response header for debugging / proxies
+ * 1. Consent region detection (GDPR vs CCPA) - ported from consent-manager:
+ *    stamps `sh_region` cookies + X-Consent-Region header on every response.
+ * 2. Auth gate (Auth.js v5) - /tracker/* and /accounts/profile require a
+ *    session; unauthenticated visitors are redirected to the login page
+ *    with a callbackUrl back to where they were going.
  *
- * The region determines the DEFAULT consent posture:
- *   GDPR (EU/EEA/UK) → STRICT OPT-IN  (all non-essential categories OFF)
- *   CCPA (US states) → OPT-OUT        (categories ON unless user opts out)
+ * JWT session strategy keeps this edge bundle DB-free.
  */
+import { auth } from '@/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { resolveRegion } from './lib/consent/regions';
@@ -20,10 +19,7 @@ const REGION_COOKIE = 'sh_region';
 const REGION_COOKIE_HTTP = 'sh_region_http';
 const REGION_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 
-export function middleware(request: NextRequest): NextResponse {
-  // 1) Resolve the country from edge geolocation. On Vercel the country
-  //    arrives via the `x-vercel-ip-country` header; Cloudflare users get
-  //    `cf-ipcountry`; the env fallback lets you simulate a region in dev.
+function stampConsent(request: NextRequest): NextResponse {
   const country =
     request.headers.get('x-vercel-ip-country') ??
     request.headers.get('cf-ipcountry') ??
@@ -32,9 +28,7 @@ export function middleware(request: NextRequest): NextResponse {
 
   const region: ConsentRegion = resolveRegion(country.toUpperCase());
 
-  // 2) Stamp the response with cookies + header.
   const response = NextResponse.next();
-
   response.cookies.set(REGION_COOKIE, region, {
     path: '/',
     sameSite: 'lax',
@@ -49,9 +43,26 @@ export function middleware(request: NextRequest): NextResponse {
     maxAge: REGION_MAX_AGE,
   });
   response.headers.set('X-Consent-Region', region);
-
   return response;
 }
+
+export default auth((request) => {
+  const response = stampConsent(request);
+
+  const { pathname } = request.nextUrl;
+  const isPrivate =
+    pathname.startsWith('/tracker') || pathname.startsWith('/accounts/profile');
+
+  if (isPrivate && !request.auth) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/accounts/login';
+    url.search = '';
+    url.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(url);
+  }
+
+  return response;
+});
 
 export const config = {
   // Run on everything except Next internals and static assets.

@@ -171,6 +171,8 @@ export interface ScholarshipFilters {
   isOpen?: boolean;
   /** Featured only (homepage featured section). */
   isFeatured?: boolean;
+  /** updated_at >= this date (weekly digest "new this week"). */
+  updatedAfter?: string;
   /** Full-text search term (Django search_scholarships). */
   q?: string;
   /** score | -score | deadline_date | -deadline_date | name | -name | updated */
@@ -386,6 +388,9 @@ export function buildScholarshipConditions(
 
   if (filters.isFeatured === true) {
     conditions.push(eq(scholarships.isFeatured, true));
+  }
+  if (filters.updatedAfter) {
+    conditions.push(gte(scholarships.updatedAt, new Date(`${filters.updatedAfter}T00:00:00Z`)));
   }
 
   let rank: SQL<number> | null = null;
@@ -671,23 +676,26 @@ export async function getFields(client: Db = getDb()): Promise<FieldRow[]> {
 
 /* ── Homepage stats (Django home() aggregations, in SQL) ────────────────── */
 
-export async function getHomeStats(client: Db = getDb()): Promise<HomeStats> {
+export async function getHomeStats(client?: Db): Promise<HomeStats> {
+  // Lazy client resolution: getDb() may throw when DATABASE_URL is unset
+  // (preview builds) - resolve INSIDE the try so the fallback applies.
   try {
+    const db = client ?? getDb();
     const [total, openNow, verified] = await Promise.all([
-      client
+      db
         .select({ n: count() })
         .from(scholarships)
         .where(eq(scholarships.isActive, true)),
-      client
+      db
         .select({ n: count() })
         .from(scholarships)
         .where(and(eq(scholarships.isActive, true), eq(scholarships.status, 'open_now'))),
-      client
+      db
         .select({ n: count() })
         .from(scholarships)
         .where(and(eq(scholarships.isActive, true), eq(scholarships.isVerified, true))),
     ]);
-    const countryRows = await getCountries({ activeOnly: true }, client);
+    const countryRows = await getCountries({ activeOnly: true }, db);
     return {
       scholarships: total[0].n,
       countries: countryRows.length,

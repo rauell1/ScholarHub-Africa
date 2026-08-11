@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 
+import { AuthSessionProvider } from '@/components/AuthSessionProvider';
 import { Analytics } from '@/components/consent/Analytics';
 import { ConsentProvider } from '@/components/consent/ConsentProvider';
 import { Footer } from '@/components/Footer';
@@ -100,6 +101,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body>
+        <AuthSessionProvider>
         <ConsentProvider config={config}>
           <Navbar />
           <main>{children}</main>
@@ -111,6 +113,7 @@ export default async function RootLayout({
             dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
           />
         </ConsentProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

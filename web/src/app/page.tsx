@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { ScholarshipCard } from '@/components/scholarships/ScholarshipCard';
+import { SearchBar } from '@/components/scholarships/SearchBar';
 import { StickyCta } from '@/components/scholarships/StickyCta';
+import { Testimonials } from '@/components/Testimonials';
 import { getCountries, getFields, getHomeStats, queryScholarshipCards } from '@/lib/queries';
 import { site } from '@/lib/site';
 
@@ -97,21 +99,7 @@ export default async function HomePage() {
             </p>
 
             <div className="mx-auto mt-10 max-w-2xl rounded-3xl bg-white/10 p-2 shadow-glass-dark backdrop-blur-md">
-              {/* TODO(M5): replace with SearchBar component once homepage data lands */}
-              <form action="/scholarships/" role="search" aria-label="Search scholarships">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="search"
-                    name="q"
-                    placeholder="Search DAAD, Chevening, Germany…"
-                    className="w-full rounded-2xl border-0 bg-white/95 px-4 py-3 text-sm text-navy placeholder:text-navy/40 focus:outline-none focus:ring-2 focus:ring-teal"
-                    aria-label="Search scholarships"
-                  />
-                  <button type="submit" className="btn-primary shrink-0">
-                    Search
-                  </button>
-                </div>
-              </form>
+              <SearchBar id="hero" large placeholder="Search DAAD, Chevening, Germany…" />
             </div>
           </div>
         </div>
@@ -278,6 +266,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <Testimonials />
 
       <StickyCta />
     </>

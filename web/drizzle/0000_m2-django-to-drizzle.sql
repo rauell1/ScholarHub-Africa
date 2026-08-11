@@ -183,7 +183,8 @@ CREATE TABLE "users" (
 	"name" text,
 	"email" text NOT NULL,
 	"emailVerified" timestamp,
-	"image" text
+	"image" text,
+	"password" text
 );
 --> statement-breakpoint
 CREATE TABLE "verificationTokens" (
