@@ -47,7 +47,7 @@ class BaseScraper:
 
 class Scholars4DevScraper(BaseScraper):
     name = "scholars4dev"
-    start_url = "https://www.scholars4dev.com/category/scholarships-for-africans/"
+    start_url = "https://www.scholars4dev.com/"
 
     def scrape(self):
         self.stdout.write(self.style.SUCCESS(f"Scraping {self.name} from {self.start_url}..."))
