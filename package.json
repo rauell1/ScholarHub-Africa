@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "ScholarHub Africa - Tailwind CSS build for the Django project",
   "scripts": {
-    "build": "vite build",
+    "build": "bash build.sh",
     "watch": "vite build --watch"
   },
   "devDependencies": {
