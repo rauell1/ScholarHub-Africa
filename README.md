@@ -49,6 +49,58 @@ SEO details (3 meta-description variations, alt-text guidance, GA4 placement, in
 
 **Web standards enforcement** (SEO/AEO/Security/Performance - thelazydeveloper.org four-track checklist, with acceptance-criteria audit): see [`docs/standards-enforcement.md`](docs/standards-enforcement.md). Highlights: consent-gated GA4 (Reject → nothing loads), canonical + OG/Twitter on every page, Organization/WebSite/FAQPage/Article/MonetaryGrant JSON-LD, AI-crawler robots.txt + `llms.txt`, CSP + Permissions-Policy + rate limiting (fail-closed), WebP images, zero N+1 queries.
 
+## ⚛️ Next.js app (migration target — `web/`)
+
+The Django → serverless migration (see [`docs/MIGRATION_PLAN.md`](docs/MIGRATION_PLAN.md))
+is building the new app in `web/` — **Next.js 15 (App Router) · React 19 ·
+TypeScript · Tailwind v4 · Drizzle ORM · Neon**. The Django app stays live on
+Railway until cutover.
+
+```bash
+cd web
+cp .env.example .env.local   # add DATABASE_URL (Neon POOLED string)
+npm install
+npm run dev                  # http://localhost:3000
+npm run build                # production build + lint + typecheck
+npm run db:generate          # regenerate Drizzle migration SQL (web/drizzle/)
+npm run db:migrate           # apply schema migrations to the DB
+npm run db:migrate:data      # copy Django data into the new tables + verify
+npm run db:verify            # read-only parity re-check (any time)
+npm run db:test:local        # offline self-test of the data migration (pg-mem)
+```
+
+Status: **all code milestones complete (M1–M7)** — app skeleton,
+design-token parity, SEO/AEO scaffolding, consent engine (banner + GCM v2 +
+TCF 2.3, Postgres-backed log), consent-gated GA4, Drizzle schema + migration
+toolkit (locally tested), Phase 3 query layer + `/api/v1/*` route handlers
+(DRF parity), the full public site (directory with URL-driven filters + live
+search suggestions, detail with MonetaryGrant JSON-LD + countdown,
+by-country/by-field, homepage, About/FAQ/Contact/Privacy/Thank-you/Case
+studies), **Auth.js** (credentials + Google, registration, JWT sessions,
+auth-gated tracker), **tracker + 24-item checklist** with the DRF-parity
+tracker API, and **Vercel Cron** (weekly digest via Resend + crawler slot).
+
+Remaining (owner-run, see `docs/MIGRATION_PLAN.md` §4/§12): apply the data
+migration on Neon (`npm run db:migrate && npm run db:migrate:data` from your
+machine), deploy to Vercel, cut over DNS, retire Django.
+
+## 🚀 Deploy (Vercel)
+
+```bash
+cd web
+npx vercel --prod        # or connect the repo in the Vercel dashboard
+```
+
+Set the env vars from `web/.env.example` (DATABASE_URL pooled, AUTH_SECRET,
+AUTH_GOOGLE_ID/SECRET, CRON_SECRET, RESEND_API_KEY, DIGEST_EMAILS,
+DEFAULT_FROM_EMAIL, GA4_MEASUREMENT_ID, SITE_*). Crons are defined in
+`web/vercel.json` (Monday 05:00 UTC digest + daily 03:00 UTC crawl slot).
+Offline tests: `npm run db:test:local`, `npm run db:test:queries`.
+To apply the data migration on Neon run `npm run db:migrate && npm run db:migrate:data`
+from your own machine (see `docs/MIGRATION_PLAN.md` §4 runbook).
+
+---
+
 ## 🛢️ Neon MCP (database tooling)
 
 The repo ships a project-scoped MCP config (`.mcp.json`) pointing at the official

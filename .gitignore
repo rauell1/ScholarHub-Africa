@@ -16,6 +16,10 @@ htmlcov/
 node_modules/
 npm-debug.log*
 
+# Next.js (web/ app - migration target)
+.next/
+*.tsbuildinfo
+
 # Django runtime
 db.sqlite3
 staticfiles/
