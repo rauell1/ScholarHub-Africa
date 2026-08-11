@@ -54,6 +54,7 @@ export default async function HomePage() {
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/scholarships/"
+                data-ga-event="cta_click" data-ga-label="hero_browse"
                 className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-teal to-forest px-8 py-4 text-base font-extrabold text-navy shadow-[0_0_40px_-10px_rgba(20,184,166,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(20,184,166,0.8)] sm:w-auto"
               >
                 <span className="text-xl transition-transform group-hover:-translate-y-1" aria-hidden="true">🎓</span>
@@ -61,6 +62,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="/scholarships/country/"
+                data-ga-event="cta_click" data-ga-label="hero_by_country"
                 className="w-full rounded-2xl border-2 border-white/20 bg-white/5 px-8 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/10 hover:shadow-glass-dark sm:w-auto"
               >
                 Explore by country

@@ -1,6 +1,6 @@
 # ScholarHub Africa — Django → Next.js (Vercel Serverless) Migration Plan
 
-> **Status:** v0.2 — **M0 closed (decisions locked). M1 in progress** — app skeleton being built in `web/`
+> **Status:** v0.3 — **M1 complete** (app skeleton + consent engine port). **M2 in progress** — Drizzle schema + migration SQL generated (`web/drizzle/`); data-migration script + Neon-branch apply pending `DATABASE_URL`
 > **Date:** 2026-08-11
 > **Source of truth:** this repository at commit `c473ba2` (Django 5.0.7 · DRF 3.15 · Tailwind 3.4 · Alpine.js · PostgreSQL/Neon · Celery · Railway)
 > **Target:** Next.js App Router · React · TypeScript · Tailwind CSS · Neon PostgreSQL · Vercel
@@ -32,10 +32,10 @@ until the Next.js app reaches feature parity, then we cut over DNS and retire it
 | Framework | Django 5 + DRF, templates | Next.js App Router + React Server Components |
 | Frontend build | Vite (`package.json` at root) + Alpine.js islands (`frontend/`) | Tailwind via Next.js; React components |
 | Styling | Tailwind 3.4 (`tailwind.config.js`), custom tokens (teal/forest/crimson/navy) | Tailwind (3.4 → 4.x), tokens preserved in `@theme` |
-| DB | PostgreSQL on Neon, `public` schema, Django ORM | Neon, Drizzle ORM (or Prisma — **decision needed**) |
-| Search | Postgres `SearchVector`/`SearchRank` (weighted A–D), SQLite fallback | Postgres FTS via Drizzle raw SQL (same weighting), optional `pg_search` upgrade |
-| Auth | Django session auth, single admin user (`auth_user`) | Auth.js / Clerk (**decision needed**) |
-| Background | Celery beat + worker on Railway (digest Mon 05:00 UTC, daily crawl) | Vercel Cron + secure route handlers (**decision needed**) |
+| DB | PostgreSQL on Neon, `public` schema, Django ORM | Neon, **Drizzle ORM** (decided) |
+| Search | Postgres `SearchVector`/`SearchRank` (weighted A–D), SQLite fallback | Generated `search_vector` column + GIN index (schema done); `ts_rank` queries in Phase 3 |
+| Auth | Django session auth, single admin user (`auth_user`) | **Auth.js v5, multi-user** (decided; tables in schema) |
+| Background | Celery beat + worker on Railway (digest Mon 05:00 UTC, daily crawl) | **Vercel Cron + route handlers + Resend** (decided) |
 | Email | Resend (weekly digest HTML template `templates/emails/weekly_digest.html`) | React Email template → Resend |
 | Consent/GA4 | Separate Next.js 14 app `consent-manager/` (file-based JSONL store, GCM v2 + TCF encoder) | Folded into the main app; store swapped from filesystem → Postgres (Vercel FS is ephemeral) |
 | Hosting | Railway (web/worker/beat via Procfile) + Cloudflare in front | Vercel (functions + cron) + Cloudflare DNS/WAF retained |
@@ -115,11 +115,24 @@ Cloudflare (DNS · WAF · caching) ──► Vercel Edge Network
 2. **URL parity** — Django URLs end in `/`. We enable `trailingSlash: true` so
    every indexed URL (`/scholarships/`, `/scholarships/{slug}/`, `/about/`…)
    keeps its exact form — no 301 chains, zero SEO loss.
-3. **One app, not two** — `consent-manager/` gets folded in; its consent engine
-   (`src/lib/consent/*`) is pure client TS and ports almost unchanged, but its
-   file-based `store.ts` (JSONL) must become Postgres tables because Vercel's
-   filesystem is ephemeral.
-4. **Connection pooling** — `@neondatabase/serverless` driver with the pooled
+3. **One app, not two — consent engine ported (M1).** The end-user consent
+   environment of `consent-manager/` now lives in the main app:
+   `src/lib/consent/*` (GCM v2 + TCF 2.3 encoder + ScriptManager), the
+   `ConsentProvider`/`CookieBanner`/`PreferencesModal`/`FloatingShield`
+   components, the edge `middleware.ts` region detection, and
+   `src/lib/server/store.ts` — **rewritten Postgres-backed**
+   (`consent_logs`/`consent_config`/`consent_policies`, schema in
+   `src/db/schema.ts`) because Vercel's filesystem is ephemeral. The same
+   file store signature is kept so the `/api/consent` routes port unchanged.
+   GA4 is consent-gated via `Analytics.tsx` (port of `static/js/analytics.js`
+   + base.html gtag snippet): scripts are registered with the ScriptManager
+   and injected only after analytics consent; every event is double-gated.
+4. **Database schema (M2)** — the full Drizzle schema (`src/db/schema.ts`, 13
+   tables) and generated migration SQL (`web/drizzle/0000_m2-django-to-drizzle.sql`)
+   are in the repo: scholarships with the weighted A–D generated `search_vector`
+   + GIN index, Auth.js tables (users/accounts/sessions/verificationTokens),
+   tracker tables (multi-user `applicant_profiles`), and the consent tables.
+5. **Connection pooling** — `@neondatabase/serverless` driver with the pooled
    connection string (`-pooler` host); every request uses a single pooled
    connection. No `conn_max_age` gymnastics needed.
 5. **Timezone** — deadline math (`days_until_deadline`, countdown) is computed
@@ -134,8 +147,7 @@ Cloudflare (DNS · WAF · caching) ──► Vercel Edge Network
 1. Scaffold Next.js (App Router, TypeScript, Tailwind) in `web/` — keeps the
    live Django app untouched at the repo root during the transition. At cutover
    the new app is promoted to the root and Django moves to `django-legacy/`.
-2. Decide ORM (**decision needed**): Drizzle (recommended — lightweight, SQL-first,
-   fastest cold starts, first-class Neon support) vs Prisma (mature migrations tooling).
+2. ORM: **Drizzle** (decided M0) — `drizzle-orm` + `drizzle-kit`, `@neondatabase/serverless` driver. ✅ done
 3. Install `@neondatabase/serverless`, wire `DATABASE_URL` (pooled), add
    connection helper `lib/db.ts` with a per-request singleton (RSC-safe).
 4. Tailwind 4 CSS-first config; port the existing design tokens from
@@ -143,7 +155,7 @@ Cloudflare (DNS · WAF · caching) ──► Vercel Edge Network
    design is pixel-identical.
 5. Port the consent engine from `consent-manager/` as `lib/consent/*` +
    `components/consent/*`; replace `store.ts` with Postgres-backed tables
-   (`consent_logs`, `consent_config`, `consent_policies`).
+   (`consent_logs`, `consent_config`, `consent_policies`). ✅ done (M1)
 6. **Standards scaffolding** (AGENTS.md tracks): `next.config` security headers
    (CSP, HSTS, X-Frame-Options, Permissions-Policy — copy from
    `consent-manager/next.config.mjs`), `app/robots.ts`, `app/sitemap.ts`,
@@ -278,7 +290,7 @@ AGENTS.md acceptance audit; visual diff of key pages matches Django screenshots.
      isolation are **part of this migration** (decision #5), not Phase 2.
    - Password migration note: Django PBKDF2 hashes cannot be read by Auth.js —
      the single existing admin resets their password at cutover (one-time step).
-2. **Vercel Cron (decision needed on engine):**
+2. **Vercel Cron (confirmed M0 decision #4 — Vercel Cron + Resend, no Inngest):**
    - `vercel.json` crons: `"0 5 * * 1"` → `/api/cron/digest` (Monday 05:00 UTC =
      08:00 EAT, matching today's Celery beat), `"0 3 * * *"` → `/api/cron/crawl`.
    - Handlers authenticate with `Authorization: Bearer $CRON_SECRET`, are
@@ -342,8 +354,8 @@ identically, tracker works end-to-end with the new auth.
 | Milestone | Deliverable | Effort |
 |---|---|---|
 | **M0** | Decisions (ORM=auth=DB=cron=tracker scope) — **locked 2026-08-11** | ✅ done |
-| **M1** | Phase 1 — skeleton, DB connection, consent port, standards scaffolding | **in progress** |
-| **M2** | Phase 2 — schema + data migration on a Neon branch | small |
+| **M1** | Phase 1 — skeleton, DB connection, consent port, standards scaffolding | ✅ done |
+| **M2** | Phase 2 — schema + migration SQL generated (`web/drizzle/0000_m2-django-to-drizzle.sql`); data-migration script + Neon-branch apply next (needs `DATABASE_URL`) | **in progress** |
 | **M3** | Phase 3 — queries + route handlers + tests | medium |
 | **M4** | Phase 4a — layout, home, directory, detail, by-country/by-field (SEO parity) | large |
 | **M5** | Phase 4b — marketing pages, tracker, checklist, emails | medium |

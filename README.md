@@ -49,6 +49,30 @@ SEO details (3 meta-description variations, alt-text guidance, GA4 placement, in
 
 **Web standards enforcement** (SEO/AEO/Security/Performance - thelazydeveloper.org four-track checklist, with acceptance-criteria audit): see [`docs/standards-enforcement.md`](docs/standards-enforcement.md). Highlights: consent-gated GA4 (Reject → nothing loads), canonical + OG/Twitter on every page, Organization/WebSite/FAQPage/Article/MonetaryGrant JSON-LD, AI-crawler robots.txt + `llms.txt`, CSP + Permissions-Policy + rate limiting (fail-closed), WebP images, zero N+1 queries.
 
+## ⚛️ Next.js app (migration target — `web/`)
+
+The Django → serverless migration (see [`docs/MIGRATION_PLAN.md`](docs/MIGRATION_PLAN.md))
+is building the new app in `web/` — **Next.js 15 (App Router) · React 19 ·
+TypeScript · Tailwind v4 · Drizzle ORM · Neon**. The Django app stays live on
+Railway until cutover.
+
+```bash
+cd web
+cp .env.example .env.local   # add DATABASE_URL (Neon POOLED string)
+npm install
+npm run dev                  # http://localhost:3000
+npm run build                # production build + lint + typecheck
+npm run db:generate          # regenerate Drizzle migration SQL (web/drizzle/)
+npm run db:migrate           # apply migrations to the DB
+```
+
+M1 status: app skeleton, design-token parity, SEO/AEO scaffolding (Metadata
+API, JSON-LD, robots/sitemap/llms.txt), consent engine ported from
+`consent-manager/` (banner + GCM v2 + TCF 2.3, Postgres-backed log) and
+consent-gated GA4. M2 status: full Drizzle schema + migration SQL generated.
+
+---
+
 ## 🛢️ Neon MCP (database tooling)
 
 The repo ships a project-scoped MCP config (`.mcp.json`) pointing at the official

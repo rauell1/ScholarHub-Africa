@@ -12,6 +12,14 @@
 > TanStack Query, next/head) map to their Django/vanilla equivalents - the mapping
 > is documented in `docs/standards-enforcement.md`.
 >
+> Migration note (docs/MIGRATION_PLAN.md): the app is being migrated to
+> **Next.js 15 App Router + React + TypeScript + Tailwind v4 in `web/`**
+> (Vercel target). All four tracks below apply to every page, route, component,
+> handler, or config created or modified in `web/` (and in `consent-manager/`)
+> exactly as they do to Django templates - Metadata API replaces template meta
+> blocks, `next.config` headers replace Django middleware, and the consent-gated
+> GA4 in `web/src/components/consent/Analytics.tsx` replaces the base.html snippet.
+>
 > Status of every criterion: see `docs/standards-enforcement.md` (acceptance audit).
 
 ## ROLE AND GLOBAL DIRECTIVES

@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 
+import { Analytics } from '@/components/consent/Analytics';
+import { ConsentProvider } from '@/components/consent/ConsentProvider';
 import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
+import { getConfig } from '@/lib/server/store';
 import { site } from '@/lib/site';
 import './globals.css';
 
@@ -13,6 +16,8 @@ import './globals.css';
  * - SEO defaults via the Metadata API (title template, description,
  *   canonical, OG/Twitter, en_GB locale)
  * - site-wide Organization + WebSite JSON-LD with SearchAction
+ * - consent layer (consent-manager port): banner/modal/shield + consent-gated
+ *   GA4 (base.html parity - no consent → nothing loads)
  */
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -85,20 +90,27 @@ const siteJsonLd = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Server-side: load the banner config (DB overrides merged over defaults;
+  // returns DEFAULT_CONFIG before the Phase 2 migration).
+  const config = await getConfig();
+
   return (
     <html lang="en" className="scroll-smooth">
       <body>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        {/* Site-wide structured data (SEO track 1.3 - parity with base.html) */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
-        />
+        <ConsentProvider config={config}>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+          <Analytics ga4Id={site.ga4MeasurementId} />
+          {/* Site-wide structured data (SEO track 1.3 - parity with base.html) */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+          />
+        </ConsentProvider>
       </body>
     </html>
   );
