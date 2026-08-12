@@ -43,7 +43,7 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero - Editorial / Grid-based */}
-      <section className="relative overflow-hidden grid-bg border-b border-border bg-background pt-16 pb-24 md:pt-32 md:pb-40">
+      <section className="relative overflow-hidden border-b border-border bg-background pt-16 pb-24 md:pt-32 md:pb-40">
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mx-auto max-w-4xl text-center">
             <p className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground backdrop-blur-md">
@@ -66,7 +66,7 @@ export default async function HomePage() {
                 href="/scholarships/"
                 data-ga-event="cta_click"
                 data-ga-label="hero_browse"
-                className="btn-primary w-full text-base sm:w-auto px-8 py-3.5 rounded-full"
+                className="btn-primary w-full text-base sm:w-auto px-8 py-3.5"
               >
                 {hasStats ? `Browse ${stats.scholarships} scholarships` : 'Browse scholarships'}
               </Link>
@@ -74,7 +74,7 @@ export default async function HomePage() {
                 href="/scholarships/country/"
                 data-ga-event="cta_click"
                 data-ga-label="hero_by_country"
-                className="btn-outline w-full text-base sm:w-auto px-8 py-3.5 rounded-full"
+                className="btn-outline w-full text-base sm:w-auto px-8 py-3.5"
               >
                 Explore by country
               </Link>

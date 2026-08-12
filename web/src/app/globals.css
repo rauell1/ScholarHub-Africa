@@ -132,12 +132,6 @@
     @apply border-t border-border pt-4;
   }
   
-  /* Grid Background Utility */
-  .grid-bg {
-    background-size: 40px 40px;
-    background-image: linear-gradient(to right, rgb(var(--border)) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(var(--border)) 1px, transparent 1px);
-  }
 }
 
 /* Sticky mobile CTA (port of compiled .sticky-cta + body.has-sticky-cta) */

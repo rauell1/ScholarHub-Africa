@@ -66,12 +66,12 @@ export function Navbar() {
               >
                 Checklist
               </Link>
-              <button type="button" onClick={logout} className="ml-2 btn-outline text-xs h-8 px-3 rounded-full">
+              <button type="button" onClick={logout} className="ml-2 btn-outline text-xs h-8 px-3">
                 Logout
               </button>
             </>
           ) : (
-            <Link href="/accounts/login/" className="ml-2 btn-primary text-xs h-8 px-4 rounded-full">
+            <Link href="/accounts/login/" className="ml-2 btn-primary text-xs h-8 px-4">
               Login
             </Link>
           )}
