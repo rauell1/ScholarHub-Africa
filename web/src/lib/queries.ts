@@ -21,6 +21,7 @@ import {
   count,
   desc,
   eq,
+  gt,
   gte,
   inArray,
   lte,
@@ -638,11 +639,11 @@ export async function getCountries(
     .from(countries)
     .leftJoin(scholarships, joinOn)
     .groupBy(countries.id, countries.isoCode, countries.name, countries.flagEmoji, countries.region)
+    .having(gt(count(scholarships.id), 0))
     .orderBy(asc(countries.name));
   // Django filters scholarship_count > 0; filtering in JS keeps the SQL
   // portable (same result set, trivial cardinality: <100 countries).
   return rows
-    .filter((r) => r.scholarshipCount > 0)
     .map((r) => ({
       iso_code: r.isoCode,
       name: r.name,
@@ -663,9 +664,9 @@ export async function getFields(client: Db = getDb()): Promise<FieldRow[]> {
     .from(fieldsOfStudy)
     .leftJoin(scholarshipFields, eq(scholarshipFields.fieldId, fieldsOfStudy.id))
     .groupBy(fieldsOfStudy.id, fieldsOfStudy.slug, fieldsOfStudy.name, fieldsOfStudy.icon)
+    .having(gt(count(scholarshipFields.scholarshipId), 0))
     .orderBy(asc(fieldsOfStudy.name));
   return rows
-    .filter((r) => r.scholarshipCount > 0)
     .map((r) => ({
       slug: r.slug,
       name: r.name,
@@ -681,26 +682,21 @@ export async function getHomeStats(client?: Db): Promise<HomeStats> {
   // (preview builds) - resolve INSIDE the try so the fallback applies.
   try {
     const db = client ?? getDb();
-    const [total, openNow, verified] = await Promise.all([
-      db
-        .select({ n: count() })
-        .from(scholarships)
-        .where(eq(scholarships.isActive, true)),
-      db
-        .select({ n: count() })
-        .from(scholarships)
-        .where(and(eq(scholarships.isActive, true), eq(scholarships.status, 'open_now'))),
-      db
-        .select({ n: count() })
-        .from(scholarships)
-        .where(and(eq(scholarships.isActive, true), eq(scholarships.isVerified, true))),
-    ]);
+    const statsResult = await db
+      .select({
+        n: count(),
+        openNow: sql<number>`sum(case when status = 'open_now' then 1 else 0 end)::int`,
+        verified: sql<number>`sum(case when is_verified = true then 1 else 0 end)::int`,
+      })
+      .from(scholarships)
+      .where(eq(scholarships.isActive, true));
+
     const countryRows = await getCountries({ activeOnly: true }, db);
     return {
-      scholarships: total[0].n,
+      scholarships: statsResult[0]?.n ?? 0,
       countries: countryRows.length,
-      open_now: openNow[0].n,
-      verified: verified[0].n,
+      open_now: statsResult[0]?.openNow ?? 0,
+      verified: statsResult[0]?.verified ?? 0,
     };
   } catch {
     // Build-safe fallback (no DATABASE_URL in previews) - stats stay hidden.

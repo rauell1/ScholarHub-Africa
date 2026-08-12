@@ -56,11 +56,16 @@ def home(request):
     )
 
     # Aggregations in SQL (Performance 4.5)
+    agg_stats = _visible_scholarships().aggregate(
+        scholarships=Count('id'),
+        open_now=Count('id', filter=Q(status='open_now')),
+        verified=Count('id', filter=Q(is_verified=True))
+    )
     stats = {
-        'scholarships': _visible_scholarships().count(),
+        'scholarships': agg_stats['scholarships'],
         'countries': countries.count(),
-        'open_now': _visible_scholarships().filter(status='open_now').count(),
-        'verified': _visible_scholarships().filter(is_verified=True).count(),
+        'open_now': agg_stats['open_now'],
+        'verified': agg_stats['verified'],
     }
     return render(request, 'scholarships/home.html', {
         'countries': countries,
@@ -103,11 +108,11 @@ def directory(request):
         'countries': [
             {'iso_code': c.iso_code, 'name': c.name, 'flag_emoji': c.flag_emoji,
              'count': c.count}
-            for c in Country.objects.annotate(count=Count('scholarships')).filter(count__gt=0)
+            for c in Country.objects.annotate(count=Count('scholarships', filter=Q(scholarships__is_active=True))).filter(count__gt=0)
         ],
         'fields': [
             {'slug': f.slug, 'name': f.name, 'icon': f.icon, 'count': f.count}
-            for f in FieldOfStudy.objects.annotate(count=Count('scholarships')).filter(count__gt=0)
+            for f in FieldOfStudy.objects.annotate(count=Count('scholarships', filter=Q(scholarships__is_active=True))).filter(count__gt=0)
         ],
     }
 
