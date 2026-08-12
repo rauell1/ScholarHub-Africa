@@ -53,7 +53,7 @@ export default async function HomePage() {
                 : 'Verified opportunities open now'}
             </p>
             <h1 className="animate-rise font-display text-5xl font-semibold tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl" style={{ animationDelay: '100ms' }}>
-              Master's scholarships <br className="hidden sm:block" />
+              Master&apos;s scholarships <br className="hidden sm:block" />
               <span className="italic text-muted-foreground font-serif">for African students</span>
             </h1>
             <p className="animate-fade-in-up mx-auto mt-8 max-w-2xl text-base text-muted-foreground sm:text-lg" style={{ animationDelay: '200ms' }}>
