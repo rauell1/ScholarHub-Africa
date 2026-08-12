@@ -59,8 +59,7 @@ function LoginFormInner() {
         setBusy(false);
         return;
       }
-      router.push(callbackUrl);
-      router.refresh();
+      window.location.href = callbackUrl;
     } catch {
       setError('Something went wrong. Please try again.');
       setBusy(false);

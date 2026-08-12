@@ -52,7 +52,7 @@ export function ResetPasswordForm() {
 
       setStatus('success');
       setTimeout(() => {
-        router.push('/accounts/login');
+        window.location.href = '/accounts/login';
       }, 3000);
     } catch {
       setErrorMsg('Network error. Please check your connection.');
