@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { scholarships, countries, fieldsOfStudy, scholarshipFields } from '@/db/schema';
+import { scholarships, countries } from '@/db/schema';
 import * as cheerio from 'cheerio';
 import OpenAI from 'openai';
 import { eq, inArray } from 'drizzle-orm';
-import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes max on Vercel
@@ -153,7 +152,7 @@ Text: ${textContent}`
       const slug = (data.name || 'Unknown').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
       // Insert scholarship
-      const inserted = await db.insert(scholarships)
+      await db.insert(scholarships)
         .values({
           slug,
           name: data.name || 'Unknown Scholarship',

@@ -55,7 +55,6 @@ export const processCsvUpload = inngest.createFunction(
     }
 
     const BATCH_SIZE = 10;
-    let totalProcessed = 0;
 
     for (let i = 0; i < rawRows.length; i += BATCH_SIZE) {
       const chunk = rawRows.slice(i, i + BATCH_SIZE);
@@ -78,7 +77,7 @@ export const processCsvUpload = inngest.createFunction(
               },
               {
                 role: 'user',
-                content: `Extract the following chunk of CSV data:\n\n\${JSON.stringify(chunk)}`
+                content: `Extract the following chunk of CSV data:\n\n${JSON.stringify(chunk)}`
               }
             ],
             response_format: zodResponseFormat(DataListSchema, "scholarship_list"),

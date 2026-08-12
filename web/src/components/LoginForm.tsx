@@ -1,7 +1,7 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import Link from 'next/link';
 
@@ -11,7 +11,7 @@ import Link from 'next/link';
  */
 
 function LoginFormInner() {
-  const router = useRouter();
+
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/tracker/';
   const urlError = searchParams.get('error');

@@ -8,8 +8,9 @@ import { inngest } from '@/inngest/client';
 import { getDb } from '@/lib/db';
 import { csvUploads } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import type { Session } from 'next-auth';
 
-function requireAdmin(session: any) {
+function requireAdmin(session: Session | null) {
   if (!session?.user?.email || session.user.email !== 'royokola3@gmail.com') {
     throw new Error('Unauthorized');
   }

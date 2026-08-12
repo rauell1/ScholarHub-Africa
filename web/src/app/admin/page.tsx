@@ -89,7 +89,7 @@ export default async function AdminPage() {
                       </span>
                     </td>
                     <td className="py-4 px-4 text-sm text-muted-foreground">
-                       {upload.totalProcessed} {upload.rows ? ` / ${(upload.rows as any[]).length}` : ''}
+                       {upload.totalProcessed} {upload.rows ? ` / ${(upload.rows as Record<string, unknown>[]).length}` : ''}
                     </td>
                     <td className="py-4 pl-4 flex gap-2 justify-end">
                       <form action={resyncUploadAction.bind(null, upload.id)}>
