@@ -4,66 +4,68 @@ import { fundingLabel } from '@/lib/labels';
 import type { ScholarshipCardRow } from '@/lib/queries';
 import { DeadlineBadge } from './DeadlineBadge';
 import { EligibilityBadge } from './EligibilityBadge';
+
 import { FlagChip } from './FlagChip';
 import { ScoreBadge } from './ScoreBadge';
 
 /**
- * Reusable scholarship card (port of components/scholarship_card.html).
+ * Reusable scholarship card featuring editorial typography and minimal layout.
  * Server component - no client JS needed for rendering.
  */
 export function ScholarshipCard({ row }: { row: ScholarshipCardRow }) {
   return (
-    <article className="card group relative flex flex-col gap-4 overflow-hidden bg-card transition-all duration-500 hover:border-accent/40">
-      <div className="relative z-10 flex items-start justify-between gap-2">
-        <FlagChip row={row} />
-        <div className="flex shrink-0 items-center gap-1.5">
-          <EligibilityBadge code={row.eligibility_label} />
-          <ScoreBadge score={row.score} />
-        </div>
-      </div>
-
+    <article className="card group relative flex flex-col gap-4 overflow-hidden bg-card transition-all duration-500 hover:border-border-soft hover:shadow-elevated">
+      
+      {/* Title & Editorial Subtitle */}
       <div className="relative z-10">
-        <h3 className="font-display text-xl font-semibold leading-tight text-foreground transition-colors group-hover:text-accent">
-          <Link href={`/scholarships/${row.slug}/`} className="before:absolute before:inset-0">
-            {row.name}
-          </Link>
+        <h3 className="font-display text-2xl font-bold leading-tight text-foreground">
+          {row.name}
         </h3>
-        <p className="mt-1.5 text-sm text-muted-foreground">{row.university || row.programme}</p>
+        <p className="mt-2 flex flex-wrap items-center gap-1.5 font-serif text-lg italic text-muted-foreground">
+          {row.university || row.programme || null}
+          {(row.university || row.programme) && <span className="not-italic text-border px-1">•</span>}
+          <span className="not-italic inline-flex"><FlagChip row={row} /></span>
+        </p>
       </div>
 
-      <dl className="relative z-10 space-y-2 text-sm border-t border-border-soft pt-4 mt-2">
-        <div className="flex items-center justify-between gap-2">
-          <dt className="text-muted-foreground font-mono text-[10px] uppercase tracking-widest">Funding</dt>
-          <dd className="text-right font-medium text-foreground">
-            {fundingLabel(row.funding_type)}
-            {row.funding_detail ? (
-              <span className="block text-[11px] text-muted-foreground">
-                {row.funding_detail.length > 42
-                  ? `${row.funding_detail.slice(0, 42)}…`
-                  : row.funding_detail}
-              </span>
-            ) : null}
-          </dd>
+      {/* Simplified Metadata */}
+      <div className="relative z-10 mt-2 space-y-1.5 border-l-2 border-border pl-3 text-sm text-foreground">
+        <p>
+          <span className="font-semibold text-muted-foreground">Award:</span> {fundingLabel(row.funding_type)}
+          {row.funding_detail ? (
+            <span className="text-muted-foreground"> ({row.funding_detail.length > 30 ? `${row.funding_detail.slice(0, 30)}…` : row.funding_detail})</span>
+          ) : null}
+        </p>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="font-semibold text-muted-foreground">Deadline:</span>
+          <DeadlineBadge deadline={row.deadline_date} />
         </div>
-        <div className="flex items-center justify-between gap-2">
-          <dt className="text-muted-foreground font-mono text-[10px] uppercase tracking-widest">Deadline</dt>
-          <dd>
-            <DeadlineBadge deadline={row.deadline_date} />
-          </dd>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="font-semibold text-muted-foreground">Eligibility:</span>
+          <EligibilityBadge code={row.eligibility_label} />
+          {row.score !== undefined && (
+            <span className="ml-2 border-l border-border pl-3"><ScoreBadge score={row.score} /></span>
+          )}
         </div>
-      </dl>
+      </div>
 
-      <div className="relative z-10 flex flex-wrap gap-1 mt-2">
-        {row.fields.slice(0, 3).map((slug) => (
+      {/* Fields */}
+      <div className="relative z-10 flex flex-wrap gap-1">
+        {row.fields.slice(0, 2).map((slug) => (
           <span key={slug} className="badge">
             {slug.replace(/-/g, ' ')}
           </span>
         ))}
       </div>
 
-      <div className="relative z-10 mt-auto flex items-center justify-between border-t border-border-soft pt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition-colors group-hover:text-accent">
-        <span>View Details</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+      {/* Primary Action Button (Indigo) */}
+      <div className="relative z-10 mt-auto pt-2">
+        <Link 
+          href={`/scholarships/${row.slug}/`}
+          className="btn-primary w-full py-2.5 shadow-sm"
+        >
+          View details
+        </Link>
       </div>
     </article>
   );
