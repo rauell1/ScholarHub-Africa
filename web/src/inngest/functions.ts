@@ -34,7 +34,7 @@ const DataListSchema = z.object({
 export const processCsvUpload = inngest.createFunction(
   { id: 'process-csv-upload', triggers: [{ event: 'csv.uploaded' }] },
   async ({ event, step }) => {
-    const rawRows = (event.data as any).rows;
+    const rawRows = (event.data as { rows: Record<string, string>[] }).rows;
     if (!rawRows || rawRows.length === 0) return { processed: 0 };
 
     const BATCH_SIZE = 10;
