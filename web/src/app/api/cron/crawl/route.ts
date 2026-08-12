@@ -120,7 +120,7 @@ Text: ${textContent}`
       if (!countryRec) {
         // Create the missing country
         const [newCountry] = await db.insert(countries)
-          .values({ name: data.country_name || 'Various', code: 'UN', continent: 'Unknown' })
+          .values({ name: data.country_name || 'Various', isoCode: 'UN', region: 'Unknown' })
           .returning();
         countryRec = newCountry;
       }
