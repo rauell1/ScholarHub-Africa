@@ -95,7 +95,9 @@ export async function POST(request: NextRequest) {
     if (process.env.RESEND_API_KEY) {
       const { Resend } = await import('resend');
       const resend = new Resend(process.env.RESEND_API_KEY);
-      const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
+      
+      const baseUrl = request.nextUrl.origin;
+      const verifyUrl = `${baseUrl}/api/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
       
       const { error } = await resend.emails.send({
         from: 'ScholarHub <info@rauell.systems>',
