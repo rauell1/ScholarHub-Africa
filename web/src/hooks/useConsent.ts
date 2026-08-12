@@ -136,33 +136,33 @@ export function useConsent(language = 'en'): UseConsentResult {
   const currentRegion = state?.region ?? region;
 
   const acceptAll = useCallback(() => {
-    if (!currentRegion) return;
+    const activeRegion = currentRegion || 'none';
     const categories: CategoryState = {
       necessary: true,
       analytics: true,
       marketing: true,
       preferences: true,
     };
-    settle(buildState(categories, currentRegion, language, true));
+    settle(buildState(categories, activeRegion, language, true));
     setPreferencesOpen(false);
   }, [currentRegion, language, settle]);
 
   const rejectAll = useCallback(() => {
-    if (!currentRegion) return;
-    const categories = defaultCategoriesForRegion(currentRegion);
+    const activeRegion = currentRegion || 'none';
+    const categories = defaultCategoriesForRegion(activeRegion);
     categories.necessary = true;
-    settle(buildState(categories, currentRegion, language, false));
+    settle(buildState(categories, activeRegion, language, false));
     setPreferencesOpen(false);
   }, [currentRegion, language, settle]);
 
   const savePreferences = useCallback(
     (next: CategoryState) => {
-      if (!currentRegion) return;
+      const activeRegion = currentRegion || 'none';
       const nonEssential = Object.values(next).filter((v) => v).length - (next.necessary ? 1 : 0);
       settle(
         buildState(
           { ...next, necessary: true },
-          currentRegion,
+          activeRegion,
           language,
           nonEssential > 0,
         ),

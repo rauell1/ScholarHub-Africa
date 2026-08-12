@@ -14,91 +14,86 @@
 -- is the reviewed starting template - the closest compliant alternative.
 -- ═══════════════════════════════════════════════════════════════════════
 
--- 1) Scholarships: public directory rows are readable by anyone, but
---    writes are denied to the app role unless a separate admin role exists.
-ALTER TABLE scholarships_scholarship ENABLE ROW LEVEL SECURITY;
-ALTER TABLE scholarships_scholarship FORCE ROW LEVEL SECURITY;
+-- 1) Scholarships: public directory rows are readable by anyone.
+ALTER TABLE scholarships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE scholarships FORCE ROW LEVEL SECURITY;
 
-CREATE POLICY scholarships_public_select ON scholarships_scholarship
+CREATE POLICY scholarships_public_select ON scholarships
     FOR SELECT
     USING (is_active = TRUE);
 
--- No INSERT/UPDATE/DELETE policies for the app role → the app role cannot
--- mutate scholarships directly; only the Django admin (superuser role) can,
--- via a separate elevated role that bypasses RLS (BYPASSRLS).
-
 -- 2) Tracker: an applicant may only see/change their OWN rows, resolved
---    through applicant_profiles -> auth_user. Prevents IDOR at the DB layer
---    even if an application bug ever skips the ORM ownership check.
-ALTER TABLE tracker_trackedapplication ENABLE ROW LEVEL SECURITY;
-ALTER TABLE tracker_trackedapplication FORCE ROW LEVEL SECURITY;
+--    through applicant_profiles -> users. Prevents IDOR at the DB layer.
+ALTER TABLE tracked_applications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tracked_applications FORCE ROW LEVEL SECURITY;
 
-CREATE POLICY tracker_own_select ON tracker_trackedapplication
+CREATE POLICY tracker_own_select ON tracked_applications
     FOR SELECT
     USING (
         profile_id IN (
-            SELECT id FROM tracker_applicantprofile
-            WHERE user_id = NULLIF(current_setting('app.user_id', TRUE), '')::int
+            SELECT id FROM applicant_profiles
+            WHERE user_id = current_setting('app.user_id', TRUE)
         )
     );
 
-CREATE POLICY tracker_own_insert ON tracker_trackedapplication
+CREATE POLICY tracker_own_insert ON tracked_applications
     FOR INSERT
     WITH CHECK (
         profile_id IN (
-            SELECT id FROM tracker_applicantprofile
-            WHERE user_id = NULLIF(current_setting('app.user_id', TRUE), '')::int
+            SELECT id FROM applicant_profiles
+            WHERE user_id = current_setting('app.user_id', TRUE)
         )
     );
 
-CREATE POLICY tracker_own_update ON tracker_trackedapplication
+CREATE POLICY tracker_own_update ON tracked_applications
     FOR UPDATE
     USING (
         profile_id IN (
-            SELECT id FROM tracker_applicantprofile
-            WHERE user_id = NULLIF(current_setting('app.user_id', TRUE), '')::int
+            SELECT id FROM applicant_profiles
+            WHERE user_id = current_setting('app.user_id', TRUE)
         )
     )
     WITH CHECK (
         profile_id IN (
-            SELECT id FROM tracker_applicantprofile
-            WHERE user_id = NULLIF(current_setting('app.user_id', TRUE), '')::int
+            SELECT id FROM applicant_profiles
+            WHERE user_id = current_setting('app.user_id', TRUE)
         )
     );
 
-CREATE POLICY tracker_own_delete ON tracker_trackedapplication
+CREATE POLICY tracker_own_delete ON tracked_applications
     FOR DELETE
     USING (
         profile_id IN (
-            SELECT id FROM tracker_applicantprofile
-            WHERE user_id = NULLIF(current_setting('app.user_id', TRUE), '')::int
+            SELECT id FROM applicant_profiles
+            WHERE user_id = current_setting('app.user_id', TRUE)
         )
     );
 
 -- Same ownership scoping for documents (checklist items).
-ALTER TABLE tracker_documentitem ENABLE ROW LEVEL SECURITY;
-ALTER TABLE tracker_documentitem FORCE ROW LEVEL SECURITY;
+ALTER TABLE document_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE document_items FORCE ROW LEVEL SECURITY;
 
-CREATE POLICY document_own_select ON tracker_documentitem
+CREATE POLICY document_own_select ON document_items
     FOR SELECT
     USING (
         profile_id IN (
-            SELECT id FROM tracker_applicantprofile
-            WHERE user_id = NULLIF(current_setting('app.user_id', TRUE), '')::int
+            SELECT id FROM applicant_profiles
+            WHERE user_id = current_setting('app.user_id', TRUE)
         )
     );
 
-CREATE POLICY document_own_update ON tracker_documentitem
+CREATE POLICY document_own_update ON document_items
     FOR UPDATE
     USING (
         profile_id IN (
-            SELECT id FROM tracker_applicantprofile
-            WHERE user_id = NULLIF(current_setting('app.user_id', TRUE), '')::int
+            SELECT id FROM applicant_profiles
+            WHERE user_id = current_setting('app.user_id', TRUE)
         )
     )
     WITH CHECK (
         profile_id IN (
-            SELECT id FROM tracker_applicantprofile
-            WHERE user_id = NULLIF(current_setting('app.user_id', TRUE), '')::int
+            SELECT id FROM applicant_profiles
+            WHERE user_id = current_setting('app.user_id', TRUE)
         )
     );
+

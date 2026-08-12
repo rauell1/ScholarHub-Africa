@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
 import { TrackerBoard } from '@/components/tracker/TrackerBoard';
+import { TrackerSpreadsheet } from '@/components/tracker/TrackerSpreadsheet';
 import { getTrackerDashboard } from '@/lib/tracker-queries';
 
 /**
@@ -15,7 +16,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function TrackerPage() {
+export default async function TrackerPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string }>;
+}) {
+  const sp = await searchParams;
+  const isSpreadsheet = sp.view === 'spreadsheet';
+
   const session = await auth();
   if (!session?.user?.id) redirect('/accounts/login');
 
@@ -56,11 +64,25 @@ export default async function TrackerPage() {
                 {open_count === 1 ? '' : 's'} · {profile.documents_ready}/{profile.documents_total} documents ready
               </p>
             </div>
-            <div className="flex gap-2">
-              <Link href="/tracker/checklist/" className="btn-outline">
+            <div className="flex gap-2 items-center">
+              <div className="flex bg-muted/50 p-1 rounded-lg border border-border mr-2">
+                <Link
+                  href="/tracker/"
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${!isSpreadsheet ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  Kanban
+                </Link>
+                <Link
+                  href="/tracker/?view=spreadsheet"
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${isSpreadsheet ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  Spreadsheet
+                </Link>
+              </div>
+              <Link href="/tracker/checklist/" className="btn-outline text-sm">
                 📋 Checklist
               </Link>
-              <Link href="/scholarships/" className="btn bg-teal text-foreground transition-colors hover:bg-teal-light">
+              <Link href="/scholarships/" className="btn bg-teal text-foreground transition-colors hover:bg-teal-light text-sm">
                 ＋ Add applications
               </Link>
             </div>
@@ -69,7 +91,11 @@ export default async function TrackerPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <TrackerBoard columns={columns} />
+        {isSpreadsheet ? (
+          <TrackerSpreadsheet columns={columns} />
+        ) : (
+          <TrackerBoard columns={columns} />
+        )}
       </section>
     </>
   );

@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import { Pool } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import type { NeonDatabase } from 'drizzle-orm/neon-serverless';
@@ -38,4 +39,19 @@ export function getDb(): Db {
     globalForDb.__scholarhubDb = createClient();
   }
   return globalForDb.__scholarhubDb;
+}
+
+/**
+ * Transaction wrapper that enforces Row-Level Security (RLS) by injecting
+ * the authenticated user's ID into the Postgres session.
+ */
+export async function withUser<T>(
+  userId: string,
+  callback: (tx: Parameters<Parameters<Db['transaction']>[0]>[0]) => Promise<T>,
+): Promise<T> {
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`SET LOCAL app.user_id = ${userId}`);
+    return callback(tx);
+  });
 }
