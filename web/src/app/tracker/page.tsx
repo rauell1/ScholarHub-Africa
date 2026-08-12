@@ -25,7 +25,7 @@ export default async function TrackerPage({
   const isSpreadsheet = sp.view === 'spreadsheet';
 
   const session = await auth();
-  if (!session?.user?.id) redirect('/accounts/login');
+  if (!session?.user?.id) return redirect('/accounts/login');
 
   let data: Awaited<ReturnType<typeof getTrackerDashboard>> = null;
   try {

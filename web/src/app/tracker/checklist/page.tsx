@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function ChecklistPage() {
   const session = await auth();
-  if (!session?.user?.id) redirect('/accounts/login');
+  if (!session?.user?.id) return redirect('/accounts/login');
 
   let profile: Awaited<ReturnType<typeof getOrCreateProfile>> | null = null;
   let documents: Awaited<ReturnType<typeof listDocuments>> = [];

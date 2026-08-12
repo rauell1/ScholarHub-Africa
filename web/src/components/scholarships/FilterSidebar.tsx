@@ -51,7 +51,7 @@ export function FilterSidebar({
 
   const initial = useMemo<Selected>(() => {
     const list = (key: string) =>
-      (searchParams.getAll(key) ?? []).flatMap((v) => v.split(',').filter(Boolean));
+      (searchParams.getAll(key) ?? []).flatMap((v: string) => v.split(',').filter(Boolean));
     return {
       countries: list('country'),
       fields: list('field'),

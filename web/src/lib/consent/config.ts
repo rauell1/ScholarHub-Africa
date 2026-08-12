@@ -35,7 +35,7 @@ export const DEFAULT_CONFIG: ConsentConfig = {
   },
   links: {
     privacyPolicy: '/privacy',
-    cookiePolicy: '/cookies',
+    cookiePolicy: '/privacy',
     terms: '/terms',
   },
   scripts: {

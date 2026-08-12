@@ -46,7 +46,7 @@ function stampConsent(request: NextRequest): NextResponse {
   return response;
 }
 
-export default auth((request) => {
+export default auth((request: NextRequest & { auth?: unknown }) => {
   const response = stampConsent(request);
 
   const { pathname } = request.nextUrl;
