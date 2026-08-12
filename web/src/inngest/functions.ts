@@ -57,11 +57,11 @@ export const processCsvUpload = inngest.createFunction(
             messages: [
               {
                 role: 'system',
-                content: "You are an expert AI scholarship data extractor. Convert the following unstructured CSV rows into strict structured JSON. Format the data to fit the exact JSON schema. Extract implicit meaning where possible (e.g., if it says 'Tuition and living stipend', funding_type is 'full').",
+                content: "You are an expert AI scholarship data extractor. Convert the following unstructured CSV rows into strict structured JSON. Format the data to fit the exact JSON schema. Extract implicit meaning where possible (e.g., if it says 'Tuition and living stipend', funding_type is 'full'). IMPORTANT: Exclude any personal information, private notes, email addresses, or names (like 'Roy' or any user's personal details) that might be in the raw text. This is for a public-facing website, so the output must contain ONLY the factual scholarship details.",
               },
               {
                 role: 'user',
-                content: `Extract the following chunk of CSV data:\n\n${JSON.stringify(chunk)}`
+                content: `Extract the following chunk of CSV data:\n\n\${JSON.stringify(chunk)}`
               }
             ],
             response_format: zodResponseFormat(DataListSchema, "scholarship_list"),
