@@ -100,11 +100,11 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="scroll-smooth">
-      <body>
+      <body className="min-h-screen flex flex-col bg-background text-foreground antialiased selection:bg-accent/30 transition-colors duration-500">
         <AuthSessionProvider>
         <ConsentProvider config={config}>
           <Navbar />
-          <main>{children}</main>
+          <main className="flex-grow">{children}</main>
           <Footer />
           <Analytics ga4Id={site.ga4MeasurementId} />
           {/* Site-wide structured data (SEO track 1.3 - parity with base.html) */}

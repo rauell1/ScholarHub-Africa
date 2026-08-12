@@ -81,9 +81,6 @@
 }
 
 @layer base {
-  body {
-    @apply bg-background text-foreground antialiased transition-colors duration-500 selection:bg-accent/30;
-  }
 }
 
 @layer components {
