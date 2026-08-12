@@ -73,7 +73,7 @@ const articleJsonLd = {
 export default function CaseStudyPage() {
   return (
     <article>
-      <header className="bg-foreground py-10 text-white">
+      <header className="bg-foreground py-10 text-background">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <Breadcrumbs
             items={[
@@ -84,7 +84,7 @@ export default function CaseStudyPage() {
           />
           <p className="mt-4 text-xs font-bold uppercase tracking-widest text-teal">{STUDY.eyebrow}</p>
           <h1 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">{STUDY.title}</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/70">{STUDY.summary}</p>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{STUDY.summary}</p>
         </div>
       </header>
 

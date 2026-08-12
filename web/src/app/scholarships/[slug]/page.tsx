@@ -132,7 +132,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
   return (
     <>
       {/* Hero */}
-      <section className="bg-foreground text-white">
+      <section className="bg-foreground text-background">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
           <Breadcrumbs
             items={[
@@ -145,14 +145,14 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
             <div className="max-w-3xl">
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <span className="text-2xl" aria-hidden="true">{detail.country.flag_emoji}</span>
-                <span className="font-semibold text-white/80">{detail.country.name}</span>
+                <span className="font-semibold text-muted-foreground">{detail.country.name}</span>
                 <EligibilityBadge code={detail.eligibility_label} />
                 <ScoreBadge score={detail.score} />
-                <span className="badge bg-foreground/10 text-white/80">{statusLabel(detail.status)}</span>
+                <span className="badge bg-foreground/10 text-muted-foreground">{statusLabel(detail.status)}</span>
               </div>
               <h1 className="text-2xl font-extrabold leading-tight sm:text-3xl">{detail.name}</h1>
-              {detail.university && <p className="mt-1.5 text-white/70">{detail.university}</p>}
-              {detail.programme && <p className="mt-0.5 text-sm text-white/50">{detail.programme}</p>}
+              {detail.university && <p className="mt-1.5 text-muted-foreground">{detail.university}</p>}
+              {detail.programme && <p className="mt-0.5 text-sm text-muted-foreground">{detail.programme}</p>}
             </div>
           </div>
         </div>
@@ -259,7 +259,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                   <a
                     key={fieldSlug}
                     href={`/scholarships/?field=${fieldSlug}`}
-                    className="badge bg-sky-light text-sky transition-colors hover:bg-sky hover:text-white"
+                    className="badge bg-sky-light text-sky transition-colors hover:bg-sky hover:text-background"
                   >
                     {fieldSlug.replace(/-/g, ' ')}
                   </a>

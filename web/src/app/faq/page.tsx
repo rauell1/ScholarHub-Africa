@@ -56,11 +56,11 @@ const faqJsonLd = {
 export default function FaqPage() {
   return (
     <>
-      <section className="bg-foreground py-10 text-white">
+      <section className="bg-foreground py-10 text-background">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current="FAQ" />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">Frequently asked questions</h1>
-          <p className="mt-2 text-sm text-white/70">Straight answers about how ScholarHub Africa works.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Straight answers about how ScholarHub Africa works.</p>
         </div>
       </section>
 

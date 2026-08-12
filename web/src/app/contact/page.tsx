@@ -19,11 +19,11 @@ export default function ContactPage() {
   const mapsQuery = encodeURIComponent(site.address);
   return (
     <>
-      <section className="bg-foreground py-10 text-white">
+      <section className="bg-foreground py-10 text-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current="Contact" />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">Contact us</h1>
-          <p className="mt-2 max-w-2xl text-sm text-white/70">
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
             Questions, feedback or partnership ideas - we&apos;d love to hear from you.
           </p>
         </div>

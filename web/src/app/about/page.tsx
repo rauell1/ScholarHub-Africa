@@ -51,11 +51,11 @@ const STATS = [
 export default function AboutPage() {
   return (
     <>
-      <section className="bg-foreground py-10 text-white">
+      <section className="bg-foreground py-10 text-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current="About us" />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">About ScholarHub Africa</h1>
-          <p className="mt-2 max-w-2xl text-sm text-white/70">
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
             We exist for one reason: every African student deserves the same shot at a
             fully-funded international master&apos;s - without drowning in spreadsheets.
           </p>

@@ -25,10 +25,10 @@ export default async function ByCountryPage() {
 
   return (
     <>
-      <section className="bg-foreground py-10 text-white">
+      <section className="bg-foreground py-10 text-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <h1 className="text-2xl font-extrabold sm:text-3xl">🌍 Scholarships by Country</h1>
-          <p className="mt-1 text-sm text-white/60">Choose a destination - every opportunity is verified.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Choose a destination - every opportunity is verified.</p>
         </div>
       </section>
 

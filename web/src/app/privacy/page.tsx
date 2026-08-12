@@ -16,11 +16,11 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <>
-      <section className="bg-foreground py-10 text-white">
+      <section className="bg-foreground py-10 text-background">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current="Privacy Policy" />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">Privacy Policy</h1>
-          <p className="mt-2 text-sm text-white/70">Last updated: 10 August 2026 · Applies to {site.domain}</p>
+          <p className="mt-2 text-sm text-muted-foreground">Last updated: 10 August 2026 · Applies to {site.domain}</p>
         </div>
       </section>
 

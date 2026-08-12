@@ -46,18 +46,18 @@ export default async function TrackerPage() {
 
   return (
     <>
-      <section className="bg-foreground py-8 text-white">
+      <section className="bg-foreground py-8 text-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-extrabold sm:text-3xl">🗂 My Application Tracker</h1>
-              <p className="mt-1 text-sm text-white/60">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {profile.full_name || profile.email} · {open_count} active application
                 {open_count === 1 ? '' : 's'} · {profile.documents_ready}/{profile.documents_total} documents ready
               </p>
             </div>
             <div className="flex gap-2">
-              <Link href="/tracker/checklist/" className="btn bg-foreground/10 text-white transition-colors hover:bg-foreground/10">
+              <Link href="/tracker/checklist/" className="btn bg-foreground/10 text-background transition-colors hover:bg-foreground/10">
                 📋 Checklist
               </Link>
               <Link href="/scholarships/" className="btn bg-teal text-foreground transition-colors hover:bg-teal-light">

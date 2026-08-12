@@ -52,10 +52,10 @@ export default async function ChecklistPage() {
 
   return (
     <>
-      <section className="bg-foreground py-8 text-white">
+      <section className="bg-foreground py-8 text-background">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <h1 className="text-2xl font-extrabold sm:text-3xl">📋 Document Checklist</h1>
-          <p className="mt-1 text-sm text-white/60">
+          <p className="mt-1 text-sm text-muted-foreground">
             24 items every strong application needs. Keep them ready before deadlines hit.
           </p>
         </div>
