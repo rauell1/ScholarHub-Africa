@@ -98,8 +98,8 @@ def send_weekly_digest():
     return f'Sent "{subject}" to {count} recipient(s)'
 
 
-def daily_crawl_scholarships():
-    """Run the daily web crawler to fetch new scholarships."""
+def weekly_crawl_scholarships():
+    """Run the weekly AI web crawler to fetch new scholarships."""
     from django.core.management import call_command
-    call_command('crawl_scholarships')
-    return 'Daily crawl completed.'
+    call_command('ai_crawl')
+    return 'Weekly AI crawl completed.'

@@ -3,7 +3,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 
 from apps.scholarships.sitemaps import ScholarshipSitemap, StaticViewSitemap
-from apps.scholarships.views_cron import cron_weekly_digest, cron_daily_crawl
+from apps.scholarships.views_cron import cron_weekly_digest, cron_weekly_crawl
 
 sitemaps = {
     'scholarships': ScholarshipSitemap,
@@ -19,7 +19,7 @@ urlpatterns = [
     path('api/v1/', include('apps.scholarships.api_urls')),
     path('api/v1/tracker/', include('apps.tracker.api_urls')),
     path('api/cron/weekly-digest/', cron_weekly_digest, name='cron_weekly_digest'),
-    path('api/cron/daily-crawl/', cron_daily_crawl, name='cron_daily_crawl'),
+    path('api/cron/weekly-crawl/', cron_weekly_crawl, name='cron_weekly_crawl'),
     path(
         'sitemap.xml',
         sitemap,

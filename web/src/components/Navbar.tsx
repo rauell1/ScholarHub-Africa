@@ -18,9 +18,10 @@ const NAV_LINKS = [
 ];
 
 export function Navbar() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const isAuthenticated = status === 'authenticated';
+  const isAdmin = isAuthenticated && session?.user?.email === 'royokola3@gmail.com';
 
   const logout = () => {
     void signOut({ callbackUrl: '/' });
@@ -54,6 +55,14 @@ export function Navbar() {
           ))}
           {isAuthenticated ? (
             <>
+              {isAdmin && (
+                <Link
+                  href="/admin/"
+                  className="relative rounded-full px-3.5 py-1.5 text-xs font-semibold text-accent transition-all duration-300 hover:bg-accent/10"
+                >
+                  Admin
+                </Link>
+              )}
               <Link
                 href="/tracker/"
                 className="relative rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground transition-all duration-300 hover:bg-muted/50 hover:text-foreground"
@@ -106,6 +115,15 @@ export function Navbar() {
             ))}
             {isAuthenticated ? (
               <>
+                {isAdmin && (
+                  <Link
+                    href="/admin/"
+                    className="block rounded-lg px-3 py-2 text-sm font-medium text-accent transition-colors hover:bg-muted"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                )}
                 <Link
                   href="/tracker/"
                   className="block rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
