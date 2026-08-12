@@ -3,9 +3,7 @@
  *
  * Decisions (M0): self-hosted Auth.js, multi-user from day one.
  *   - Credentials provider (email + password, bcrypt hashes in users.password)
- *   - Google OAuth provider (upserts the user row via the signIn callback -
- *     no adapter needed because sessions use the JWT strategy, which keeps
- *     the edge middleware DB-free)
+ *   - Google OAuth provider (upserts the user row via the signIn callback)
  *   - JWT sessions (edge-safe middleware gate for /tracker/*)
  */
 import NextAuth from 'next-auth';
@@ -17,6 +15,7 @@ import { z } from 'zod';
 
 import { users } from '@/db/schema';
 import { getDb } from '@/lib/db';
+import { authConfig } from './auth.config';
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -24,9 +23,7 @@ const credentialsSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  trustHost: true,
-  session: { strategy: 'jwt' },
-  pages: { signIn: '/accounts/login' },
+  ...authConfig,
   providers: [
     Credentials({
       credentials: { email: {}, password: {} },
@@ -55,6 +52,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    ...authConfig.callbacks,
     async signIn({ user, account }) {
       if (account?.provider === 'google' && user.email) {
         try {
@@ -82,19 +80,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       }
       return true;
-    },
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-      }
-      return session;
     },
   },
 });

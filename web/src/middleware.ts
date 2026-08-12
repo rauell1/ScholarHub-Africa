@@ -9,8 +9,11 @@
  *
  * JWT session strategy keeps this edge bundle DB-free.
  */
-import { auth } from '@/auth';
+import NextAuth from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
+import { authConfig } from './auth.config';
+
+const { auth } = NextAuth(authConfig);
 
 import { resolveRegion } from './lib/consent/regions';
 import type { ConsentRegion } from './lib/consent/types';
