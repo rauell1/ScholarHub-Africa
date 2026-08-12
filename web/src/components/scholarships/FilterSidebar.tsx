@@ -128,7 +128,7 @@ export function FilterSidebar({
       type="checkbox"
       checked={checked}
       onChange={() => toggle(key, value)}
-      className="rounded border-navy/30 text-teal focus:ring-teal"
+      className="h-4 w-4 rounded border-border-soft bg-background text-accent transition-colors focus:ring-accent"
       aria-label={value}
     />
   );
@@ -138,43 +138,43 @@ export function FilterSidebar({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="btn-outline w-full md:hidden"
+        className="btn-outline w-full md:hidden flex justify-between items-center"
         aria-expanded={open}
       >
-        {open ? 'Hide Filters' : 'Show Filters'}
+        <span>{open ? 'Hide Filters' : 'Show Filters'}</span>
         {activeCount > 0 && (
-          <span className="badge bg-teal text-white">{activeCount} active</span>
+          <span className="badge bg-accent text-accent-foreground border-accent">{activeCount}</span>
         )}
       </button>
 
       <div
-        className={`space-y-5 rounded-2xl bg-white p-4 ring-1 ring-navy/5 ${open ? 'block' : 'hidden md:block'}`}
+        className={`card space-y-6 ${open ? 'block' : 'hidden md:block'}`}
       >
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold uppercase tracking-wide text-navy">Filters</h3>
+        <div className="flex items-center justify-between border-b border-border-soft pb-4">
+          <h3 className="font-display font-semibold tracking-tight text-foreground">Filters</h3>
           {activeCount > 0 && (
-            <button type="button" onClick={clearAll} className="btn-ghost px-2 py-1 text-xs">
-              Clear all
+            <button type="button" onClick={clearAll} className="btn-ghost h-6 px-2 text-[10px] uppercase tracking-widest font-mono">
+              Clear
             </button>
           )}
         </div>
 
         {/* Destination Country */}
-        <div className="filter-group">
-          <h4 className="mb-2 text-sm font-semibold text-navy/70">Destination Country</h4>
-          <div className="max-h-56 space-y-1.5 overflow-y-auto pr-1">
+        <div className="space-y-3">
+          <h4 className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Destination Country</h4>
+          <div className="max-h-56 space-y-1 overflow-y-auto pr-2 custom-scrollbar">
             {countries.map((country) => (
               <label
                 key={country.iso_code}
-                className="flex cursor-pointer items-center justify-between gap-2 rounded-lg px-2 py-1 text-sm transition-colors hover:bg-gray-50"
+                className="group flex cursor-pointer items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-muted"
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2.5 text-foreground">
                   {checkbox('countries', country.iso_code, selected.countries.includes(country.iso_code))}
                   <span>
                     {country.flag_emoji} {country.name}
                   </span>
                 </span>
-                <span className="badge bg-navy/5 text-navy/60">{country.scholarship_count}</span>
+                <span className="font-mono text-[10px] text-muted-foreground group-hover:text-foreground">{country.scholarship_count}</span>
               </label>
             ))}
           </div>
@@ -182,20 +182,20 @@ export function FilterSidebar({
 
         {/* Field of Study */}
         <div className="filter-group">
-          <h4 className="mb-2 text-sm font-semibold text-navy/70">Field of Study</h4>
-          <div className="max-h-56 space-y-1.5 overflow-y-auto pr-1">
+          <h4 className="mb-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Field of Study</h4>
+          <div className="max-h-56 space-y-1 overflow-y-auto pr-2 custom-scrollbar">
             {fields.map((field) => (
               <label
                 key={field.slug}
-                className="flex cursor-pointer items-center justify-between gap-2 rounded-lg px-2 py-1 text-sm transition-colors hover:bg-gray-50"
+                className="group flex cursor-pointer items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-muted"
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2.5 text-foreground">
                   {checkbox('fields', field.slug, selected.fields.includes(field.slug))}
                   <span>
                     {field.icon} {field.name}
                   </span>
                 </span>
-                <span className="badge bg-navy/5 text-navy/60">{field.scholarship_count}</span>
+                <span className="font-mono text-[10px] text-muted-foreground group-hover:text-foreground">{field.scholarship_count}</span>
               </label>
             ))}
           </div>
@@ -203,12 +203,12 @@ export function FilterSidebar({
 
         {/* Funding */}
         <div className="filter-group">
-          <h4 className="mb-2 text-sm font-semibold text-navy/70">Funding</h4>
-          <div className="space-y-1.5">
+          <h4 className="mb-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Funding</h4>
+          <div className="space-y-1">
             {FUNDING_OPTIONS.map((option) => (
               <label
                 key={option.value}
-                className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm transition-colors hover:bg-gray-50"
+                className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-muted"
               >
                 {checkbox('funding', option.value, selected.funding.includes(option.value))}
                 {option.label}
@@ -219,12 +219,12 @@ export function FilterSidebar({
 
         {/* Eligibility */}
         <div className="filter-group">
-          <h4 className="mb-2 text-sm font-semibold text-navy/70">Eligibility</h4>
-          <div className="space-y-1.5">
+          <h4 className="mb-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Eligibility</h4>
+          <div className="space-y-1">
             {ELIG_OPTIONS.map((option) => (
               <label
                 key={option.value}
-                className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm transition-colors hover:bg-gray-50"
+                className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-muted"
               >
                 {checkbox('eligibility', option.value, selected.eligibility.includes(option.value))}
                 {option.label}
@@ -235,12 +235,12 @@ export function FilterSidebar({
 
         {/* Status */}
         <div className="filter-group">
-          <h4 className="mb-2 text-sm font-semibold text-navy/70">Status</h4>
-          <div className="space-y-1.5">
+          <h4 className="mb-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Status</h4>
+          <div className="space-y-1">
             {STATUS_OPTIONS.map((option) => (
               <label
                 key={option.value}
-                className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm transition-colors hover:bg-gray-50"
+                className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-muted"
               >
                 {checkbox('statuses', option.value, selected.statuses.includes(option.value))}
                 {option.label}
@@ -251,8 +251,9 @@ export function FilterSidebar({
 
         {/* Minimum score slider */}
         <div className="filter-group">
-          <h4 className="mb-2 text-sm font-semibold text-navy/70">
-            Minimum score: <span className="text-teal">{selected.minScore}</span>
+          <h4 className="mb-3 flex justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            <span>Minimum score</span>
+            <span className="text-accent">{selected.minScore}</span>
           </h4>
           <input
             type="range"
@@ -261,7 +262,7 @@ export function FilterSidebar({
             step={5}
             value={selected.minScore}
             onChange={(e) => setMinScore(parseInt(e.target.value, 10))}
-            className="w-full accent-teal"
+            className="w-full accent-accent transition-all"
             aria-label="Minimum score"
           />
         </div>

@@ -33,14 +33,14 @@ const TESTIMONIALS = [
 
 export function Testimonials() {
   return (
-    <section className="bg-white py-12" aria-labelledby="testimonials-title">
+    <section className="bg-background py-16 md:py-24" aria-labelledby="testimonials-title">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <h2 id="testimonials-title" className="section-title text-center">What applicants say</h2>
-        <p className="mt-2 text-center text-sm text-navy/60">
+        <h2 id="testimonials-title" className="section-title text-center text-foreground">What applicants say</h2>
+        <p className="mt-2 text-center text-sm text-muted-foreground">
           Real words from students who stopped guessing and started tracking.
         </p>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
           {TESTIMONIALS.map((testimonial) => (
             <figure key={testimonial.name} className="card flex flex-col gap-3">
               <div
@@ -53,16 +53,16 @@ export function Testimonials() {
                   </span>
                 ))}
               </div>
-              <blockquote className="text-sm leading-relaxed text-navy/70">
+              <blockquote className="text-sm leading-relaxed text-foreground italic font-serif">
                 &quot;{testimonial.quote}&quot;
               </blockquote>
-              <figcaption className="mt-auto flex items-center gap-3">
-                <span className={`avatar ${testimonial.avatar}`} aria-hidden="true">
+              <figcaption className="mt-auto flex items-center gap-3 border-t border-border-soft pt-4">
+                <span className={`flex h-10 w-10 items-center justify-center rounded-full bg-muted font-mono text-xs font-bold text-foreground`} aria-hidden="true">
                   {testimonial.initials}
                 </span>
                 <div>
-                  <div className="text-sm font-bold text-navy">{testimonial.name}</div>
-                  <div className="text-xs text-navy/50">{testimonial.meta}</div>
+                  <div className="text-sm font-bold text-foreground">{testimonial.name}</div>
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{testimonial.meta}</div>
                 </div>
               </figcaption>
             </figure>

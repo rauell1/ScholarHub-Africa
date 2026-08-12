@@ -42,64 +42,55 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero - CTA above the fold on desktop AND mobile */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-navy via-navy-light to-navy text-white">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-teal/30 blur-[100px] animate-float" aria-hidden="true" />
-        <div
-          className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-amber/30 blur-[100px] animate-float"
-          style={{ animationDelay: '2s' }}
-          aria-hidden="true"
-        />
-        <div className="absolute top-1/4 left-1/4 h-80 w-80 rounded-full bg-sky/20 blur-[120px] animate-pulse" aria-hidden="true" />
-
-        <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 animate-fade-in-up">
+      {/* Hero - Editorial / Grid-based */}
+      <section className="relative overflow-hidden grid-bg border-b border-border bg-background pt-16 pb-24 md:pt-32 md:pb-40">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mx-auto max-w-4xl text-center">
-            <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-teal/40 bg-teal/10 px-5 py-2 text-xs font-bold uppercase tracking-widest text-teal-light shadow-glass-dark backdrop-blur-md animate-glow-pulse">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-teal" aria-hidden="true" />
+            <p className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground backdrop-blur-md">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
               {hasStats
                 ? `${stats.open_now} opportunities open right now`
                 : 'Verified opportunities open now'}
             </p>
-            <h1 className="text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl lg:text-7xl drop-shadow-2xl">
-              Fully-funded master&apos;s scholarships for{' '}
-              <span className="bg-gradient-to-r from-teal-light via-teal to-sky-light bg-clip-text text-transparent">
-                African students
-              </span>
+            <h1 className="animate-rise font-display text-5xl font-semibold tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl" style={{ animationDelay: '100ms' }}>
+              Master's scholarships <br className="hidden sm:block" />
+              <span className="italic text-muted-foreground font-serif">for African students</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-base font-medium text-white/80 sm:text-lg">
+            <p className="animate-fade-in-up mx-auto mt-8 max-w-2xl text-base text-muted-foreground sm:text-lg" style={{ animationDelay: '200ms' }}>
               Every opportunity on ScholarHub is human-verified against official sources,
               scored for your profile fit, and tracked from research to award.
             </p>
 
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="animate-fade-in-up mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row" style={{ animationDelay: '300ms' }}>
               <Link
                 href="/scholarships/"
                 data-ga-event="cta_click"
                 data-ga-label="hero_browse"
-                className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-teal to-forest px-8 py-4 text-base font-extrabold text-navy shadow-[0_0_40px_-10px_rgba(20,184,166,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_60px_-15px_rgba(20,184,166,0.8)] sm:w-auto"
+                className="btn-primary w-full text-base sm:w-auto px-8 py-3.5 rounded-full"
               >
-                <span className="text-xl transition-transform group-hover:-translate-y-1" aria-hidden="true">🎓</span>
                 {hasStats ? `Browse ${stats.scholarships} scholarships` : 'Browse scholarships'}
               </Link>
               <Link
                 href="/scholarships/country/"
                 data-ga-event="cta_click"
                 data-ga-label="hero_by_country"
-                className="w-full rounded-2xl border-2 border-white/20 bg-white/5 px-8 py-4 text-base font-bold text-white backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/10 hover:shadow-glass-dark sm:w-auto"
+                className="btn-outline w-full text-base sm:w-auto px-8 py-3.5 rounded-full"
               >
                 Explore by country
               </Link>
             </div>
-            <p className="mt-3 text-xs text-white/50">
+            <p className="animate-fade-in-up mt-4 font-mono text-[10px] uppercase tracking-widest text-muted-foreground" style={{ animationDelay: '400ms' }}>
               or search -{' '}
-              <Link href="/scholarships/?q=DAAD" className="text-teal-light underline">DAAD</Link>,{' '}
-              <Link href="/scholarships/?country=DE" className="text-teal-light underline">Germany</Link>,{' '}
-              <Link href="/scholarships/field/#water" className="text-teal-light underline">Water</Link>,{' '}
-              <Link href="/scholarships/field/" className="text-teal-light underline">Public Health</Link>
+              <Link href="/scholarships/?q=DAAD" className="text-foreground underline underline-offset-2">DAAD</Link>,{' '}
+              <Link href="/scholarships/?country=DE" className="text-foreground underline underline-offset-2">Germany</Link>,{' '}
+              <Link href="/scholarships/field/#water" className="text-foreground underline underline-offset-2">Water</Link>,{' '}
+              <Link href="/scholarships/field/" className="text-foreground underline underline-offset-2">Public Health</Link>
             </p>
 
-            <div className="mx-auto mt-10 max-w-2xl rounded-3xl bg-white/10 p-2 shadow-glass-dark backdrop-blur-md">
-              <SearchBar id="hero" large placeholder="Search DAAD, Chevening, Germany…" />
+            <div className="animate-fade-in-up mx-auto mt-10 max-w-2xl" style={{ animationDelay: '500ms' }}>
+              <div className="rounded-xl border border-border bg-card p-1 shadow-soft">
+                <SearchBar id="hero" large placeholder="Search DAAD, Chevening, Germany…" />
+              </div>
             </div>
           </div>
         </div>
@@ -108,36 +99,36 @@ export default async function HomePage() {
       {/* Stats strip */}
       {hasStats && (
         <section className="border-b border-border bg-background">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 py-6 sm:px-6 md:grid-cols-4">
-            <div className="flex flex-col items-center justify-center p-4">
-              <p className="bg-gradient-to-r from-navy to-sky bg-clip-text text-4xl font-extrabold text-transparent dark:from-sky-light dark:to-white">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px bg-border sm:grid-cols-4">
+            <div className="flex flex-col items-center justify-center bg-background p-6">
+              <p className="font-display text-4xl font-semibold text-foreground">
                 {stats.scholarships}
               </p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-foreground/50">
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                 Verified scholarships
               </p>
             </div>
-            <div className="flex flex-col items-center justify-center p-4">
-              <p className="bg-gradient-to-r from-teal-light to-teal bg-clip-text text-4xl font-extrabold text-transparent">
+            <div className="flex flex-col items-center justify-center bg-background p-6">
+              <p className="font-display text-4xl font-semibold text-foreground">
                 {stats.countries}
               </p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-foreground/50">
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                 Destination countries
               </p>
             </div>
-            <div className="flex flex-col items-center justify-center p-4">
-              <p className="bg-gradient-to-r from-amber-light to-amber bg-clip-text text-4xl font-extrabold text-transparent">
+            <div className="flex flex-col items-center justify-center bg-background p-6">
+              <p className="font-display text-4xl font-semibold text-foreground">
                 {stats.open_now}
               </p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-foreground/50">
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                 Open now
               </p>
             </div>
-            <div className="flex flex-col items-center justify-center p-4">
-              <p className="bg-gradient-to-r from-forest-light to-forest bg-clip-text text-4xl font-extrabold text-transparent">
+            <div className="flex flex-col items-center justify-center bg-background p-6">
+              <p className="font-display text-4xl font-semibold text-accent">
                 {stats.verified}%
               </p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-foreground/50">
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                 Human-verified data
               </p>
             </div>
@@ -147,17 +138,17 @@ export default async function HomePage() {
 
       {/* Open now */}
       {openNow.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-          <div className="mb-6 flex items-end justify-between">
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 border-b border-border-soft">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="section-title">🔥 Open right now</h2>
-              <p className="mt-1 text-sm text-navy/60">Deadline countdowns update live. Don&apos;t miss these.</p>
+              <h2 className="section-title">Open right now</h2>
+              <p className="mt-2 text-sm text-muted-foreground">Deadline countdowns update live. Don&apos;t miss these.</p>
             </div>
-            <Link href="/scholarships/?status=open_now" className="btn-ghost text-sm font-semibold text-teal transition-colors hover:text-navy">
+            <Link href="/scholarships/?status=open_now" className="btn-ghost text-sm font-semibold transition-colors">
               View all →
             </Link>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {openNow.map((card) => (
               <ScholarshipCard key={card.id} row={card} />
             ))}
@@ -167,14 +158,14 @@ export default async function HomePage() {
 
       {/* Browse by country */}
       {countries.length > 0 && (
-        <section className="bg-white py-12">
+        <section className="bg-background py-16 md:py-24 border-b border-border-soft">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="mb-6 flex items-end justify-between">
+            <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="section-title">🌍 Browse by country</h2>
-                <p className="mt-1 text-sm text-navy/60">Where do you want to study?</p>
+                <h2 className="section-title">Browse by country</h2>
+                <p className="mt-2 text-sm text-muted-foreground">Where do you want to study?</p>
               </div>
-              <Link href="/scholarships/country/" className="btn-ghost text-sm font-semibold text-teal transition-colors hover:text-navy">
+              <Link href="/scholarships/country/" className="btn-ghost text-sm font-semibold transition-colors">
                 All countries →
               </Link>
             </div>
@@ -183,14 +174,14 @@ export default async function HomePage() {
                 <Link
                   key={country.iso_code}
                   href={`/scholarships/?country=${country.iso_code}`}
-                  className="card group flex flex-col items-center justify-center gap-3 !p-6 text-center transition-all hover:-translate-y-1 hover:border-teal hover:shadow-lg dark:hover:shadow-teal/20"
+                  className="card group flex flex-col items-center justify-center gap-3 !p-6 text-center hover:border-accent"
                 >
-                  <span className="text-4xl transition-transform group-hover:scale-110" aria-hidden="true">
+                  <span className="text-4xl transition-transform group-hover:scale-110 group-hover:-rotate-3" aria-hidden="true">
                     {country.flag_emoji}
                   </span>
                   <span className="text-sm font-bold text-foreground">{country.name}</span>
-                  <span className="badge bg-teal/10 text-teal">
-                    {country.scholarship_count} opportunities
+                  <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+                    {country.scholarship_count} opps
                   </span>
                 </Link>
               ))}
@@ -201,13 +192,13 @@ export default async function HomePage() {
 
       {/* Browse by field */}
       {fields.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-          <div className="mb-6 flex items-end justify-between">
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="section-title">📚 Browse by field of study</h2>
-              <p className="mt-1 text-sm text-navy/60">What do you want to study?</p>
+              <h2 className="section-title">Browse by field of study</h2>
+              <p className="mt-2 text-sm text-muted-foreground">What do you want to study?</p>
             </div>
-            <Link href="/scholarships/field/" className="btn-ghost text-sm font-semibold text-teal transition-colors hover:text-navy">
+            <Link href="/scholarships/field/" className="btn-ghost text-sm font-semibold transition-colors">
               All fields →
             </Link>
           </div>
@@ -216,14 +207,14 @@ export default async function HomePage() {
               <Link
                 key={field.slug}
                 href={`/scholarships/?field=${field.slug}`}
-                className="card group flex flex-col items-center justify-center gap-3 !p-6 text-center transition-all hover:-translate-y-1 hover:border-teal hover:shadow-lg dark:hover:shadow-teal/20"
+                className="card group flex flex-col items-center justify-center gap-3 !p-6 text-center hover:border-accent"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-foreground/5 text-2xl transition-all group-hover:scale-110 group-hover:bg-teal/10" aria-hidden="true">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-2xl transition-all group-hover:scale-110 group-hover:bg-accent/10 group-hover:text-accent" aria-hidden="true">
                   {field.icon || '📘'}
                 </span>
                 <span className="text-sm font-bold text-foreground">{field.name}</span>
-                <span className="badge bg-foreground/5 text-foreground/70">
-                  {field.scholarship_count} opportunities
+                <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+                  {field.scholarship_count} opps
                 </span>
               </Link>
             ))}
@@ -232,35 +223,35 @@ export default async function HomePage() {
       )}
 
       {/* How it works */}
-      <section id="how-it-works" className="bg-navy py-12 text-white">
+      <section id="how-it-works" className="border-t border-border bg-muted py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <h2 className="section-title text-center text-white">How it works</h2>
-          <p className="mt-2 text-center text-sm text-white/60">Three steps from dream to application.</p>
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
-            <div className="rounded-2xl bg-white/5 p-6 text-center">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-teal text-xl font-extrabold text-navy" aria-hidden="true">1</span>
-              <h3 className="mt-4 font-bold">Search</h3>
-              <p className="mt-2 text-sm text-white/70">
+          <h2 className="section-title text-center text-foreground">How it works</h2>
+          <p className="mt-2 text-center text-sm text-muted-foreground">Three steps from dream to application.</p>
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <div className="card text-center !p-8">
+              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent/10 font-mono text-xl text-accent" aria-hidden="true">1</span>
+              <h3 className="mt-6 font-display text-lg font-semibold text-foreground">Search</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Search verified fully-funded opportunities across 23 countries, filtered by field, funding and eligibility.
               </p>
             </div>
-            <div className="rounded-2xl bg-white/5 p-6 text-center">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber text-xl font-extrabold text-navy" aria-hidden="true">2</span>
-              <h3 className="mt-4 font-bold">Filter by fit</h3>
-              <p className="mt-2 text-sm text-white/70">
+            <div className="card text-center !p-8">
+              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber/10 font-mono text-xl text-amber" aria-hidden="true">2</span>
+              <h3 className="mt-6 font-display text-lg font-semibold text-foreground">Filter by fit</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Every scholarship carries a 0–100 profile-fit score and an eligibility label, so you focus energy where you&apos;re most competitive.
               </p>
             </div>
-            <div className="rounded-2xl bg-white/5 p-6 text-center">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-forest text-xl font-extrabold text-navy" aria-hidden="true">3</span>
-              <h3 className="mt-4 font-bold">Track</h3>
-              <p className="mt-2 text-sm text-white/70">
+            <div className="card text-center !p-8">
+              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-crimson/10 font-mono text-xl text-crimson" aria-hidden="true">3</span>
+              <h3 className="mt-6 font-display text-lg font-semibold text-foreground">Track</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Move each application through your tracker - planning, drafting, submitted, decision - with a 24-item document checklist.
               </p>
             </div>
           </div>
-          <div className="mt-8 text-center">
-            <Link href="/case-studies/" className="text-sm font-semibold text-teal-light underline transition-colors hover:text-white">
+          <div className="mt-12 text-center">
+            <Link href="/case-studies/" className="text-sm font-semibold text-accent transition-colors hover:text-foreground">
               See how one student used it to land the DAAD EPOS scholarship →
             </Link>
           </div>

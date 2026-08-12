@@ -6,24 +6,17 @@ import { scoreLabel } from '@/lib/dates';
  */
 export function ScoreBadge({ score }: { score: number }) {
   const tone =
-    score >= 90
-      ? 'bg-forest-dark'
-      : score >= 85
-        ? 'bg-forest-deep'
-        : score >= 80
-          ? 'bg-forest'
-          : score >= 74
-            ? 'bg-amber'
-            : score >= 60
-              ? 'bg-sky'
-              : 'bg-crimson';
+    score >= 80
+      ? 'border-accent bg-accent/10 text-accent'
+      : score >= 60
+        ? 'border-amber bg-amber/10 text-amber'
+        : 'border-crimson bg-crimson/10 text-crimson';
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-lg ${tone} px-2 py-1 text-xs font-bold text-white`}
+      className={`badge ${tone}`}
       title={`Profile fit: ${scoreLabel(score)}`}
     >
-      {score}
-      <span className="font-medium opacity-80">/100</span>
+      {score}/100
     </span>
   );
 }

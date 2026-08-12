@@ -112,7 +112,7 @@ export function deadlineDisplay(
   }
   return {
     text: `${days} days`,
-    className: 'deadline-badge font-semibold text-forest font-semibold',
+    className: 'deadline-badge font-semibold text-accent font-semibold',
   };
 }
 

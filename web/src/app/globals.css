@@ -4,149 +4,139 @@
 @import '@fontsource-variable/jetbrains-mono';
 @import './consent.css';
 
-/*
- * ScholarHub Africa design tokens - Tailwind v4 CSS-first config.
- * Ported 1:1 from the Django app:
- *   - colors:       tailwind.config.js theme.extend.colors
- *   - semantic CSS vars: static/css/main.css (:root / .dark)
- *   - radii, shadows, animations: tailwind.config.js
- *   - component classes (.btn*, .card, .glass-header): static/css/main.css
- */
-
-/* Class-based dark mode (parity with tailwind.config.js darkMode: 'class') */
+/* Class-based dark mode */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Semantic tokens driven by CSS variables (main.css) */
   --color-background: rgb(var(--background));
   --color-foreground: rgb(var(--foreground));
   --color-card: rgb(var(--card));
   --color-card-foreground: rgb(var(--card-foreground));
   --color-border: rgb(var(--border));
+  --color-border-soft: rgb(var(--border-soft));
+  --color-muted: rgb(var(--muted));
+  --color-muted-foreground: rgb(var(--muted-foreground));
+  --color-accent: rgb(var(--accent));
 
-  /* Brand palette (tailwind.config.js) */
+  /* Brand palette */
   --color-navy: #0f172a;
-  --color-navy-light: #1e293b;
   --color-navy-dark: #020617;
   --color-teal: #14b8a6;
-  --color-teal-light: #5eead4;
-  --color-forest: #10b981;
-  --color-forest-light: #6ee7b7;
-  --color-forest-deep: #047857;
-  --color-forest-dark: #064e3b;
   --color-amber: #f59e0b;
-  --color-amber-light: #fde68a;
   --color-crimson: #ef4444;
-  --color-crimson-light: #fca5a5;
-  --color-sky: #0ea5e9;
-  --color-sky-light: #7dd3fc;
 
-  /* Typography - self-hosted via Fontsource variable fonts (CSP-safe,
-     no build-time fetch; next/font/google fails in restricted networks) */
   --font-sans: 'Outfit Variable', 'Inter Variable', system-ui, sans-serif;
+  --font-display: 'Outfit Variable', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', monospace;
 
-  /* Radii (tailwind.config.js borderRadius override) */
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-3xl: 2rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
 
-  /* Shadows */
-  --shadow-glass: 0 8px 32px 0 rgb(31 38 135 / 0.07);
-  --shadow-glass-dark: 0 8px 32px 0 rgb(0 0 0 / 0.37);
-  --shadow-neon-teal: 0 0 15px rgb(20 184 166 / 0.5);
+  --shadow-elevated: 0 4px 24px -4px rgb(0 0 0 / 0.1);
+  --shadow-soft: 0 2px 10px -2px rgb(0 0 0 / 0.05);
 
-  /* Animations */
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-fade-in-up: fadeInUp 0.8s ease-out forwards;
-  --animate-glow-pulse: glowPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-fade-in-up: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-rise: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-blink: blink 1s step-end infinite;
 
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-20px);
-    }
-  }
   @keyframes fadeInUp {
-    0% {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
-  @keyframes glowPulse {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.7;
-    }
+  @keyframes rise {
+    0% { opacity: 0; transform: translateY(20px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
   }
 }
 
-/* Semantic CSS variables (main.css) */
 :root {
-  --background: 248 250 252;
-  --foreground: 15 23 42;
+  /* Modern Editorial Light */
+  --background: 252 252 252;
+  --foreground: 10 10 10;
   --card: 255 255 255;
-  --card-foreground: 15 23 42;
-  --border: 226 232 240;
+  --card-foreground: 10 10 10;
+  --border: 229 229 229;
+  --border-soft: 240 240 240;
+  --muted: 245 245 245;
+  --muted-foreground: 115 115 115;
+  --accent: 20 184 166; /* Teal */
 }
+
 .dark {
-  --background: 2 6 23;
-  --foreground: 248 250 252;
-  --card: 15 23 42;
-  --card-foreground: 248 250 252;
-  --border: 30 41 59;
+  /* Modern Editorial Dark (Deep Obsidian) */
+  --background: 10 10 12;
+  --foreground: 250 250 250;
+  --card: 16 16 18;
+  --card-foreground: 250 250 250;
+  --border: 39 39 42;
+  --border-soft: 28 28 30;
+  --muted: 24 24 27;
+  --muted-foreground: 161 161 170;
+  --accent: 94 234 212; /* Teal Light */
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground antialiased transition-colors duration-300;
+    @apply bg-background text-foreground antialiased transition-colors duration-500 selection:bg-accent/30;
   }
 }
 
 @layer components {
+  /* Minimalist Buttons */
   .btn,
   .btn-primary,
   .btn-outline,
   .btn-ghost {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-teal/50 disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-50 disabled:pointer-events-none;
   }
   .btn-primary {
-    @apply bg-teal text-white hover:bg-teal-light shadow-md hover:shadow-lg dark:bg-teal dark:text-navy-dark;
+    @apply bg-foreground text-background hover:opacity-90 shadow-sm dark:bg-foreground dark:text-background;
   }
   .btn-outline {
-    @apply border border-border bg-transparent text-foreground hover:bg-gray-100 dark:hover:bg-white/10;
+    @apply border border-border bg-transparent text-foreground hover:bg-muted;
   }
   .btn-ghost {
-    @apply text-foreground opacity-70 hover:opacity-100 hover:bg-gray-100 dark:hover:bg-white/10;
+    @apply text-muted-foreground hover:text-foreground hover:bg-muted;
   }
+  
+  /* Editorial Cards */
   .card {
-    @apply rounded-2xl bg-card text-card-foreground p-6 shadow-sm ring-1 ring-border transition-all duration-300 hover:shadow-md dark:shadow-none dark:bg-card;
+    @apply rounded-xl border border-border bg-card p-6 shadow-soft transition-all duration-500 hover:border-accent/40 hover:shadow-elevated;
   }
+  
+  /* Glass Nav */
   .glass-header {
-    @apply sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md;
+    @apply sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-md transition-colors duration-500;
   }
-  /* Ported utility classes from the Django build's compiled CSS */
+  
+  /* Editorial Tags */
   .badge {
-    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold;
+    @apply inline-flex items-center rounded-full border border-border bg-muted/50 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground;
   }
+  
+  /* Clean Inputs */
   .input {
-    @apply w-full rounded-xl border border-navy/20 bg-white px-4 py-2.5 text-sm text-navy placeholder:text-navy/40 focus:outline-none focus:ring-2 focus:ring-teal/50;
+    @apply w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground transition-all duration-300 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent;
   }
+  
   .section-title {
-    @apply text-xl font-bold text-navy sm:text-2xl;
+    @apply font-display text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl;
   }
+  
   .filter-group {
-    @apply border-t border-navy/5 pt-4;
+    @apply border-t border-border pt-4;
+  }
+  
+  /* Grid Background Utility */
+  .grid-bg {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, rgb(var(--border)) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--border)) 1px, transparent 1px);
   }
 }
 
@@ -160,10 +150,13 @@
   display: flex;
   gap: 10px;
   padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-  background: rgb(255 255 255 / 0.97);
-  border-top: 1px solid rgb(31 56 100 / 0.12);
-  box-shadow: 0 -6px 20px rgb(31 56 100 / 0.08);
+  background: rgb(var(--background) / 0.95);
+  border-top: 1px solid rgb(var(--border));
+  box-shadow: 0 -4px 20px rgb(0 0 0 / 0.05);
   backdrop-filter: blur(8px);
+}
+.dark .sticky-cta {
+  box-shadow: 0 -4px 20px rgb(0 0 0 / 0.2);
 }
 @media (min-width: 768px) {
   .sticky-cta {

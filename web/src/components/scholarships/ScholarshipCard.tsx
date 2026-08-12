@@ -13,8 +13,7 @@ import { ScoreBadge } from './ScoreBadge';
  */
 export function ScholarshipCard({ row }: { row: ScholarshipCardRow }) {
   return (
-    <article className="card group relative flex flex-col gap-3 overflow-hidden border border-border bg-white/80 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:border-teal/50 hover:shadow-neon-teal dark:bg-navy-light/80">
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-teal/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+    <article className="card group relative flex flex-col gap-4 overflow-hidden bg-card transition-all duration-500 hover:border-accent/40">
       <div className="relative z-10 flex items-start justify-between gap-2">
         <FlagChip row={row} />
         <div className="flex shrink-0 items-center gap-1.5">
@@ -24,21 +23,21 @@ export function ScholarshipCard({ row }: { row: ScholarshipCardRow }) {
       </div>
 
       <div className="relative z-10">
-        <h3 className="font-bold leading-snug text-navy">
-          <Link href={`/scholarships/${row.slug}/`} className="transition-colors hover:text-teal">
+        <h3 className="font-display text-xl font-semibold leading-tight text-foreground transition-colors group-hover:text-accent">
+          <Link href={`/scholarships/${row.slug}/`} className="before:absolute before:inset-0">
             {row.name}
           </Link>
         </h3>
-        <p className="mt-0.5 text-sm text-navy/60">{row.university || row.programme}</p>
+        <p className="mt-1.5 text-sm text-muted-foreground">{row.university || row.programme}</p>
       </div>
 
-      <dl className="relative z-10 space-y-1.5 text-sm">
+      <dl className="relative z-10 space-y-2 text-sm border-t border-border-soft pt-4 mt-2">
         <div className="flex items-center justify-between gap-2">
-          <dt className="text-navy/60">💰 Funding</dt>
-          <dd className="text-right font-medium">
+          <dt className="text-muted-foreground font-mono text-[10px] uppercase tracking-widest">Funding</dt>
+          <dd className="text-right font-medium text-foreground">
             {fundingLabel(row.funding_type)}
             {row.funding_detail ? (
-              <span className="block text-xs text-navy/50">
+              <span className="block text-[11px] text-muted-foreground">
                 {row.funding_detail.length > 42
                   ? `${row.funding_detail.slice(0, 42)}…`
                   : row.funding_detail}
@@ -47,24 +46,25 @@ export function ScholarshipCard({ row }: { row: ScholarshipCardRow }) {
           </dd>
         </div>
         <div className="flex items-center justify-between gap-2">
-          <dt className="text-navy/60">🗓 Deadline</dt>
+          <dt className="text-muted-foreground font-mono text-[10px] uppercase tracking-widest">Deadline</dt>
           <dd>
             <DeadlineBadge deadline={row.deadline_date} />
           </dd>
         </div>
       </dl>
 
-      <div className="relative z-10 flex flex-wrap gap-1">
+      <div className="relative z-10 flex flex-wrap gap-1 mt-2">
         {row.fields.slice(0, 3).map((slug) => (
-          <span key={slug} className="badge bg-sky-light text-sky">
+          <span key={slug} className="badge">
             {slug.replace(/-/g, ' ')}
           </span>
         ))}
       </div>
 
-      <Link href={`/scholarships/${row.slug}/`} className="btn-primary relative z-10 mt-auto w-full">
-        View Details →
-      </Link>
+      <div className="relative z-10 mt-auto flex items-center justify-between border-t border-border-soft pt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition-colors group-hover:text-accent">
+        <span>View Details</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg>
+      </div>
     </article>
   );
 }
