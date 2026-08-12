@@ -383,7 +383,21 @@ export const consentPolicies = pgTable(
   (t) => [index('consent_policies_kind_idx').on(t.kind)],
 );
 
-/* ── Relations (used by Phase 3 query layer) ────────────────────────────── */
+/* 📄 CSV Uploads */
+
+export const csvUploads = pgTable(
+  'csv_uploads',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    filename: text('filename').notNull(),
+    rows: jsonb('rows').notNull(),
+    status: varchar('status', { length: 50 }).notNull().default('processing'),
+    totalProcessed: integer('total_processed').notNull().default(0),
+    uploadedAt: timestamp('uploaded_at', { withTimezone: true }).notNull().defaultNow(),
+  }
+);
+
+/* 🔗 Relations (used by Phase 3 query layer) 🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗🔗 */
 
 export const scholarshipsRelations = relations(scholarships, ({ many, one }) => ({
   country: one(countries, {

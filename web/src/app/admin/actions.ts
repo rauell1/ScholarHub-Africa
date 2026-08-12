@@ -5,12 +5,19 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import Papa from 'papaparse';
 import { inngest } from '@/inngest/client';
+import { getDb } from '@/lib/db';
+import { csvUploads } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
-export async function processUploadAction(formData: FormData) {
-  const session = await auth();
+function requireAdmin(session: any) {
   if (!session?.user?.email || session.user.email !== 'royokola3@gmail.com') {
     throw new Error('Unauthorized');
   }
+}
+
+export async function processUploadAction(formData: FormData) {
+  const session = await auth();
+  requireAdmin(session);
 
   const file = formData.get('file') as File;
   if (!file) {
@@ -25,13 +32,52 @@ export async function processUploadAction(formData: FormData) {
   
   const rawRows = parsed.data;
   
+  const db = getDb();
+  const inserted = await db.insert(csvUploads).values({
+    filename: file.name,
+    rows: rawRows,
+    status: 'processing',
+    totalProcessed: 0,
+  }).returning({ id: csvUploads.id });
+  
+  const uploadId = inserted[0].id;
+
   // Dispatch the event to Inngest to process in the background
   await inngest.send({
     name: 'csv.uploaded',
     data: {
-      rows: rawRows,
+      uploadId,
     },
   });
 
   redirect('/admin?success=1&queued=true');
+}
+
+export async function resyncUploadAction(uploadId: number) {
+  const session = await auth();
+  requireAdmin(session);
+
+  const db = getDb();
+  await db.update(csvUploads)
+    .set({ status: 'processing', totalProcessed: 0 })
+    .where(eq(csvUploads.id, uploadId));
+
+  await inngest.send({
+    name: 'csv.uploaded',
+    data: {
+      uploadId,
+    },
+  });
+
+  revalidatePath('/admin');
+}
+
+export async function deleteUploadAction(uploadId: number) {
+  const session = await auth();
+  requireAdmin(session);
+
+  const db = getDb();
+  await db.delete(csvUploads).where(eq(csvUploads.id, uploadId));
+
+  revalidatePath('/admin');
 }

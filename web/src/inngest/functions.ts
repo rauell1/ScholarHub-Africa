@@ -3,8 +3,8 @@ import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 import { getDb } from '@/lib/db';
-import { scholarships, countries } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { scholarships, countries, csvUploads } from '@/db/schema';
+import { eq, sql } from 'drizzle-orm';
 
 const ScholarshipDataSchema = z.object({
   name: z.string(),
@@ -34,8 +34,25 @@ const DataListSchema = z.object({
 export const processCsvUpload = inngest.createFunction(
   { id: 'process-csv-upload', triggers: [{ event: 'csv.uploaded' }] },
   async ({ event, step }) => {
-    const rawRows = (event.data as { rows: Record<string, string>[] }).rows;
-    if (!rawRows || rawRows.length === 0) return { processed: 0 };
+    const uploadId = (event.data as { uploadId: number }).uploadId;
+    if (!uploadId) return { error: 'No uploadId provided' };
+
+    const uploadRecord = await step.run('fetch-upload', async () => {
+      const db = getDb();
+      const records = await db.select().from(csvUploads).where(eq(csvUploads.id, uploadId));
+      return records[0];
+    });
+
+    if (!uploadRecord) return { error: 'Upload not found' };
+
+    const rawRows = uploadRecord.rows as Record<string, string>[];
+    if (!rawRows || rawRows.length === 0) {
+      await step.run('mark-empty', async () => {
+         const db = getDb();
+         await db.update(csvUploads).set({ status: 'completed' }).where(eq(csvUploads.id, uploadId));
+      });
+      return { processed: 0 };
+    }
 
     const BATCH_SIZE = 10;
     let totalProcessed = 0;
@@ -127,11 +144,20 @@ export const processCsvUpload = inngest.createFunction(
                 mbaImpact: item.mba_impact,
               }
             });
-          totalProcessed++;
         }
+
+        // Update progress in the csvUploads table
+        await db.update(csvUploads)
+          .set({ totalProcessed: sql`total_processed + ${batchResult.scholarships.length}` })
+          .where(eq(csvUploads.id, uploadId));
       });
     }
 
-    return { message: 'Upload processing complete', totalProcessed };
+    await step.run('mark-completed', async () => {
+      const db = getDb();
+      await db.update(csvUploads).set({ status: 'completed' }).where(eq(csvUploads.id, uploadId));
+    });
+
+    return { message: 'Upload processing complete' };
   }
 );
