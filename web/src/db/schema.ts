@@ -257,6 +257,16 @@ export const verificationTokens = pgTable(
   (t) => [primaryKey({ columns: [t.identifier, t.token] })],
 );
 
+export const passwordResetTokens = pgTable(
+  'passwordResetTokens',
+  {
+    identifier: text('identifier').notNull(),
+    token: text('token').notNull(),
+    expires: timestamp('expires', { mode: 'date' }).notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.identifier, t.token] })],
+);
+
 /* ── Tracker (Django apps/tracker/models.py) ────────────────────────────── */
 
 export const applicantProfiles = pgTable(

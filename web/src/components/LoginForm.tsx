@@ -3,6 +3,7 @@
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
+import Link from 'next/link';
 
 /**
  * Login + registration (Django's built-in auth becomes Auth.js credentials
@@ -137,9 +138,19 @@ function LoginFormInner() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-semibold text-foreground">
-              Password
-            </label>
+            <div className="mb-1 flex items-center justify-between">
+              <label htmlFor="password" className="block text-sm font-semibold text-foreground">
+                Password
+              </label>
+              {mode === 'login' && (
+                <Link
+                  href="/accounts/forgot-password"
+                  className="text-xs font-medium text-teal hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              )}
+            </div>
             <input
               type="password"
               id="password"

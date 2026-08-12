@@ -97,8 +97,8 @@ export async function POST(request: NextRequest) {
       const resend = new Resend(process.env.RESEND_API_KEY);
       const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
       
-      await resend.emails.send({
-        from: 'ScholarHub <noreply@scholarhub-africa.com>',
+      const { error } = await resend.emails.send({
+        from: 'onboarding@resend.dev', // Using Resend sandbox domain for testing
         to: email,
         subject: 'Verify your ScholarHub account',
         html: `<p>Hi ${parsed.data.name.trim()},</p>
@@ -106,6 +106,10 @@ export async function POST(request: NextRequest) {
                <p><a href="${verifyUrl}">${verifyUrl}</a></p>
                <p>If you didn't request this, you can safely ignore this email.</p>`,
       });
+
+      if (error) {
+        console.error('Resend verification email failed:', error);
+      }
     } else {
       console.warn('RESEND_API_KEY is not set. Skipping verification email for', email);
     }
