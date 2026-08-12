@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -97,7 +98,7 @@ export function ContactForm() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-navy/50">
           We only use your details to reply. See our{' '}
-          <a href="/privacy/" className="text-teal underline">Privacy Policy</a>.
+          <Link href="/privacy/" className="text-teal underline">Privacy Policy</Link>.
         </p>
         <button type="submit" disabled={busy} className="btn-primary">
           {busy ? 'Sending…' : 'Send message →'}

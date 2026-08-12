@@ -62,9 +62,9 @@ export default async function ThankYouPage({
             </li>
             <li className="flex gap-2">
               <span aria-hidden="true">❓</span>
-              <a href="/faq/" className="text-teal underline">
+              <Link href="/faq/" className="text-teal underline">
                 Read the FAQ
-              </a>{' '}
+              </Link>{' '}
               - answers to the questions we hear most.
             </li>
           </ul>

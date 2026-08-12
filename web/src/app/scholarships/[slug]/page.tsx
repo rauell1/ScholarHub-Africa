@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { Breadcrumbs } from '@/components/scholarships/Breadcrumbs';
@@ -306,7 +307,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                 </p>
                 <div className="mt-3 space-y-2">
                   {related.map((item) => (
-                    <a
+                    <Link
                       key={item.id}
                       href={`/scholarships/${item.slug}/`}
                       className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-4 py-3 transition-colors hover:bg-teal-light"
@@ -317,7 +318,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                       <span className="shrink-0 text-xs text-navy/50">
                         {item.country.flag_emoji} {item.country.name} · {item.score}/100
                       </span>
-                    </a>
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -344,9 +345,9 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
               </p>
 
               {/* TODO(Phase 5): session-aware tracker CTA */}
-              <a href="/login/" className="btn-primary w-full">
+              <Link href="/login/" className="btn-primary w-full">
                 Login to track this
-              </a>
+              </Link>
 
               {detail.official_link && (
                 <a

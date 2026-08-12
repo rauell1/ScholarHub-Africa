@@ -152,17 +152,17 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
                 {totalPages > 1 && (
                   <nav className="mt-8 flex items-center justify-center gap-2" aria-label="Pagination">
                     {page > 1 && (
-                      <a className="btn-outline px-3 py-1.5" href={pageUrl(page - 1)}>
+                      <Link className="btn-outline px-3 py-1.5" href={pageUrl(page - 1)}>
                         ← Prev
-                      </a>
+                      </Link>
                     )}
                     <span className="text-sm text-navy/60">
                       Page {page} of {totalPages}
                     </span>
                     {page < totalPages && (
-                      <a className="btn-outline px-3 py-1.5" href={pageUrl(page + 1)}>
+                      <Link className="btn-outline px-3 py-1.5" href={pageUrl(page + 1)}>
                         Next →
-                      </a>
+                      </Link>
                     )}
                   </nav>
                 )}

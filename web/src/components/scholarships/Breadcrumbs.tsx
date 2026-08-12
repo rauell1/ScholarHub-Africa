@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { site } from '@/lib/site';
 
 /**
@@ -43,9 +44,9 @@ export function Breadcrumbs({
             return (
               <li key={crumb.name} className="flex items-center gap-x-1.5">
                 {crumb.href ? (
-                  <a href={crumb.href} className="transition-colors hover:text-teal">
+                  <Link href={crumb.href} className="transition-colors hover:text-teal">
                     {crumb.name}
-                  </a>
+                  </Link>
                 ) : (
                   <span className={isLast && current ? 'font-semibold text-navy' : ''} aria-current={isLast && current ? 'page' : undefined}>
                     {crumb.name}
