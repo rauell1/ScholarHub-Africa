@@ -40,6 +40,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           if (!user?.passwordHash) return null;
           const valid = await bcrypt.compare(parsed.data.password, user.passwordHash);
           if (!valid) return null;
+          if (!user.emailVerified) throw new Error('UnverifiedEmail');
           return { id: user.id, email: user.email, name: user.name ?? undefined };
         } catch {
           return null; // DB unavailable - fail closed (never grant)

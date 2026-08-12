@@ -13,6 +13,8 @@ function LoginFormInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/tracker/';
+  const urlError = searchParams.get('error');
+  const urlVerified = searchParams.get('verified');
 
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
@@ -20,11 +22,13 @@ function LoginFormInner() {
   const [password, setPassword] = useState('');
   const [website, setWebsite] = useState(''); // honeypot
   const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(urlVerified ? 'Your email has been verified. You can now sign in.' : null);
   const [busy, setBusy] = useState(false);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+    setSuccessMsg(null);
     setBusy(true);
     try {
       if (mode === 'register') {
@@ -39,10 +43,18 @@ function LoginFormInner() {
           setBusy(false);
           return;
         }
+        setSuccessMsg('Registration successful! Please check your email to verify your account.');
+        setMode('login');
+        setBusy(false);
+        return;
       }
       const result = await signIn('credentials', { email, password, redirect: false });
       if (result?.error) {
-        setError('Invalid email or password.');
+        if (result.error === 'Configuration' || result.error === 'CredentialsSignin') {
+          setError('Invalid email or password.');
+        } else {
+          setError('Please verify your email address before signing in.');
+        }
         setBusy(false);
         return;
       }
@@ -80,9 +92,15 @@ function LoginFormInner() {
           />
         </div>
 
-        {error && (
+        {(error || urlError) && (
           <div className="mt-4 rounded-xl bg-crimson-light px-4 py-3 text-sm text-crimson" role="alert">
-            {error}
+            {error || (urlError === 'VerificationTokenExpired' ? 'The verification link has expired.' : 'Invalid verification link or an error occurred.')}
+          </div>
+        )}
+
+        {successMsg && (
+          <div className="mt-4 rounded-xl bg-teal-50 px-4 py-3 text-sm text-teal" role="alert">
+            {successMsg}
           </div>
         )}
 

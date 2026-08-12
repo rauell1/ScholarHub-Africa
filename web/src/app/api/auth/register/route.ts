@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
-import { users } from '@/db/schema';
+import { users, verificationTokens } from '@/db/schema';
 import { getDb } from '@/lib/db';
 
 /**
@@ -76,14 +76,43 @@ export async function POST(request: NextRequest) {
       );
     }
     const passwordHash = await bcrypt.hash(parsed.data.password, 10);
+    const userId = `user_${crypto.randomUUID()}`;
+    const token = crypto.randomUUID();
+    
     await getDb().insert(users).values({
-      id: `user_${crypto.randomUUID()}`,
+      id: userId,
       name: parsed.data.name.trim(),
       email,
       passwordHash,
     });
+
+    await getDb().insert(verificationTokens).values({
+      identifier: email,
+      token,
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+    });
+
+    if (process.env.RESEND_API_KEY) {
+      const { Resend } = await import('resend');
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
+      
+      await resend.emails.send({
+        from: 'ScholarHub <noreply@scholarhub-africa.com>',
+        to: email,
+        subject: 'Verify your ScholarHub account',
+        html: `<p>Hi ${parsed.data.name.trim()},</p>
+               <p>Thanks for creating an account! Please click the link below to verify your email address and activate your account:</p>
+               <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+               <p>If you didn't request this, you can safely ignore this email.</p>`,
+      });
+    } else {
+      console.warn('RESEND_API_KEY is not set. Skipping verification email for', email);
+    }
+
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (err) {
+    console.error('Registration failed:', err);
     return NextResponse.json(
       { detail: 'Registration is temporarily unavailable. Please try again.' },
       { status: 503 },
