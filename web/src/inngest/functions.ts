@@ -97,13 +97,16 @@ export const processCsvUpload = inngest.createFunction(
         const db = getDb();
         
         for (const item of batchResult.scholarships) {
-          let countryRec = await db.query.countries.findFirst({
-            where: eq(countries.name, item.country)
-          });
-          if (!countryRec) {
-             countryRec = await db.query.countries.findFirst();
-          }
-          const countryId = countryRec ? countryRec.id : 1; 
+          // Race-safe upsert — avoids silent fallback to a wrong country
+          const [countryRec] = await db
+            .insert(countries)
+            .values({ name: item.country || 'Various', isoCode: 'UN', region: 'Unknown' })
+            .onConflictDoUpdate({
+              target: countries.name,
+              set: { name: item.country || 'Various' },
+            })
+            .returning();
+          const countryId = countryRec.id;
           
           const slug = item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
