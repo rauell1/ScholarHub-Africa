@@ -54,7 +54,9 @@ export default auth((request: NextRequest & { auth?: unknown }) => {
 
   const { pathname } = request.nextUrl;
   const isPrivate =
-    pathname.startsWith('/tracker') || pathname.startsWith('/accounts/profile');
+    pathname.startsWith('/tracker') ||
+    pathname.startsWith('/accounts/profile') ||
+    pathname.startsWith('/admin');
 
   if (isPrivate && !request.auth) {
     const url = request.nextUrl.clone();
