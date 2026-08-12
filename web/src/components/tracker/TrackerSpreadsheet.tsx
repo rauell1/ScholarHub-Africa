@@ -35,7 +35,7 @@ function SpreadsheetRow({ app }: { app: DashboardColumn['applications'][number] 
     notes: app.notes || '',
   });
 
-  const saveField = async (field: string, value: any) => {
+  const saveField = async (field: keyof typeof form, value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setBusy(true);
     try {
