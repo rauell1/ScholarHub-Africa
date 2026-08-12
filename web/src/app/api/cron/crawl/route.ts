@@ -33,17 +33,41 @@ export async function GET(request: NextRequest) {
   });
 
   try {
-    // 1. Fetch links from directory
-    const url = 'https://www.scholars4dev.com/category/scholarships-for-africans/';
-    const listResponse = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-    const listHtml = await listResponse.text();
-    const $list = cheerio.load(listHtml);
-    
-    const links: string[] = [];
-    $list('div.post.clearfix').each((_, el) => {
-      const href = $list(el).find('h2 a').attr('href');
-      if (href) links.push(href);
-    });
+    // 1. Direct Links to explicitly crawl
+    const directLinks = [
+      'https://apply.unicaf.org/refer-a-friend/en?refcode=SNDIW465zF',
+      'https://mastercardfdn.org/all/scholars/becoming-a-scholar/apply-to-the-scholars-program/',
+    ];
+
+    // 2. Fetch links from directories
+    const directories = [
+      'https://www.scholars4dev.com/category/scholarships-for-africans/',
+      'https://www.opportunitiesforafricans.com/category/scholarships/',
+    ];
+
+    const links: string[] = [...directLinks];
+
+    for (const url of directories) {
+      try {
+        const listResponse = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        const listHtml = await listResponse.text();
+        const $list = cheerio.load(listHtml);
+        
+        if (url.includes('scholars4dev')) {
+          $list('div.post.clearfix').each((_, el) => {
+            const href = $list(el).find('h2 a').attr('href');
+            if (href) links.push(href);
+          });
+        } else if (url.includes('opportunitiesforafricans')) {
+          $list('article h2 a').each((_, el) => {
+            const href = $list(el).attr('href');
+            if (href) links.push(href);
+          });
+        }
+      } catch (e) {
+        console.error('Failed to fetch directory', url, e);
+      }
+    }
 
     if (links.length === 0) {
       return NextResponse.json({ ok: true, message: 'No links found.' });
@@ -80,7 +104,7 @@ export async function GET(request: NextRequest) {
         messages: [
           {
             role: "system",
-            content: "You are a data extraction assistant. Extract scholarship details from the provided text and output ONLY valid JSON."
+            content: "You are a creative copywriter and data extraction expert for an elite scholarship platform. Extract scholarship details from the provided text and output ONLY valid JSON. Write the 'notes' field as an engaging, persuasive, and beautifully structured Markdown overview designed to excite and inform applicants. Use rich formatting like bold text and bullet points."
           },
           {
             role: "user",
@@ -99,7 +123,8 @@ export async function GET(request: NextRequest) {
   "age_max": null,
   "gpa_minimum": null,
   "mba_impact": "unknown",
-  "score": 70
+  "score": 70,
+  "notes": "A compelling Markdown overview of the scholarship"
 }
 
 Text: ${textContent}`
@@ -145,6 +170,7 @@ Text: ${textContent}`
           gpaMinimum: data.gpa_minimum ? data.gpa_minimum.toString() : null,
           mbaImpact: 'unknown',
           score: data.score || 70,
+          notes: data.notes || '',
           status: 'open',
           isVerified: false,
           verifiedSource: 'NVIDIA AI Crawl'
