@@ -8,6 +8,7 @@ import { Breadcrumbs } from '@/components/scholarships/Breadcrumbs';
 import { Countdown } from '@/components/scholarships/Countdown';
 import { EligibilityBadge } from '@/components/scholarships/EligibilityBadge';
 import { ScoreBadge } from '@/components/scholarships/ScoreBadge';
+import { TrackButton } from '@/components/scholarships/TrackButton';
 import { deadlineDisplay, formatDateEat, scoreLabel } from '@/lib/dates';
 import {
   eligibilityLabel,
@@ -401,15 +402,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                 )}
 
                 <div className="mt-6 space-y-3">
-                  <Link 
-                    href="/login/" 
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-foreground px-4 py-3 text-sm font-semibold text-background transition-transform hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                    </svg>
-                    Track this Scholarship
-                  </Link>
+                  <TrackButton />
 
                   {detail.official_link && (
                     <a
