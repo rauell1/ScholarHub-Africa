@@ -66,17 +66,14 @@ function buildState(
 
 export function useConsent(language = 'en'): UseConsentResult {
   const [region, setRegion] = useState<ConsentRegion | null>(null);
-  const [state, setState] = useState<ConsentState | null>(() => {
-    const stored = loadStoredConsent();
-    // Restore region synchronously from the middleware cookie if we can.
-    if (!stored) return null;
-    return stored;
-  });
+  const [state, setState] = useState<ConsentState | null>(null);
+  const [hydrated, setHydrated] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const manager = useRef<ScriptManager | null>(null);
 
   // ── Boot: resolve region, capture gated scripts, push GCM default ──────
   useEffect(() => {
+    setHydrated(true);
     if (manager.current) return;
     manager.current = ScriptManager.getInstance();
     manager.current.capture();
@@ -186,7 +183,7 @@ export function useConsent(language = 'en'): UseConsentResult {
     region: currentRegion,
     categories: state?.categories ?? null,
     version: STORED_VERSION,
-    bannerVisible: !state,
+    bannerVisible: hydrated ? !state : false,
     preferencesOpen,
     consentString: state?.consentString ?? '',
     tcfString: state?.tcfString ?? '',

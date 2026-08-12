@@ -33,3 +33,5 @@ media/
 
 # CI workflow - commit manually (this GitHub App token lacks workflows permission)
 .github/workflows/
+.vercel
+.env*
