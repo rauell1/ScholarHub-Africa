@@ -82,3 +82,14 @@ export async function deleteUploadAction(uploadId: number) {
 
   revalidatePath('/admin');
 }
+
+export async function syncFromGitHubAction() {
+  const session = await auth();
+  requireAdmin(session);
+
+  const { fetchAndSyncFromGitHub } = await import('@/lib/sync-scholarships');
+  const result = await fetchAndSyncFromGitHub();
+
+  revalidatePath('/admin');
+  return result;
+}

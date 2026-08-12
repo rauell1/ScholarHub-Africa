@@ -5,6 +5,7 @@ import { getDb } from '@/lib/db';
 import { csvUploads } from '@/db/schema';
 import { desc } from 'drizzle-orm';
 import { UploadsTable } from './UploadsTable';
+import { SyncFromGitHubButton } from './SyncFromGitHubButton';
 
 export const metadata = {
   title: 'Admin Dashboard - ScholarHub',
@@ -53,6 +54,16 @@ export default async function AdminPage() {
             Upload &amp; Sync
           </button>
         </form>
+      </div>
+
+      <div className="rounded-xl border border-border bg-card p-6 shadow-soft mb-8">
+        <h2 className="text-xl font-semibold mb-2">Sync from GitHub CSV</h2>
+        <p className="text-sm text-muted-foreground mb-6">
+          Pulls <code className="bg-muted px-1 rounded text-xs">scholarships_data.csv</code> directly
+          from the GitHub repository and upserts all records into the database — no AI, no file upload
+          needed. New scholarships are added; existing ones have their fields updated.
+        </p>
+        <SyncFromGitHubButton />
       </div>
 
       <div className="rounded-xl border border-border bg-card p-6 shadow-soft">
