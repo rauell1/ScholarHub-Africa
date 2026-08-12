@@ -46,7 +46,7 @@ export default async function TrackerPage() {
 
   return (
     <>
-      <section className="bg-foreground py-8 text-background">
+      <section className="bg-background py-8 border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
@@ -57,7 +57,7 @@ export default async function TrackerPage() {
               </p>
             </div>
             <div className="flex gap-2">
-              <Link href="/tracker/checklist/" className="btn bg-foreground/10 text-background transition-colors hover:bg-foreground/10">
+              <Link href="/tracker/checklist/" className="btn-outline">
                 📋 Checklist
               </Link>
               <Link href="/scholarships/" className="btn bg-teal text-foreground transition-colors hover:bg-teal-light">

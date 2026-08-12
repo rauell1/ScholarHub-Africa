@@ -99,7 +99,7 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
 
   return (
     <>
-      <section className="bg-foreground py-10 text-background">
+      <section className="bg-background py-10 border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current={label} />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">Scholarship Directory</h1>

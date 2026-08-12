@@ -132,7 +132,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
   return (
     <>
       {/* Hero */}
-      <section className="bg-foreground text-background">
+      <section className="bg-background border-b border-border">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
           <Breadcrumbs
             items={[

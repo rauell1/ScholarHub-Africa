@@ -56,7 +56,7 @@ const faqJsonLd = {
 export default function FaqPage() {
   return (
     <>
-      <section className="bg-foreground py-10 text-background">
+      <section className="bg-background py-10 border-b border-border">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current="FAQ" />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">Frequently asked questions</h1>

@@ -2,7 +2,7 @@ export default function ScholarshipsLoading() {
   return (
     <>
       {/* Header skeleton */}
-      <section className="bg-foreground py-10 text-background">
+      <section className="bg-background py-10 border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="h-4 w-32 animate-pulse rounded bg-foreground/10" />
           <div className="mt-4 h-8 w-64 animate-pulse rounded bg-foreground/10 sm:w-96" />
