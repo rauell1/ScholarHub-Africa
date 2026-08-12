@@ -1,7 +1,6 @@
 node_modules
 .git
 .env
-tests/
 consent-manager/
 docs/
 *.md
