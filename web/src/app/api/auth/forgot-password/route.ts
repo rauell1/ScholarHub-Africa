@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/accounts/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
       
       const { error } = await resend.emails.send({
-        from: 'onboarding@resend.dev', // Using Resend testing domain
+        from: 'ScholarHub <info@rauell.systems>',
         to: email,
         subject: 'Reset your ScholarHub password',
         html: `<p>Hi ${user.name || 'there'},</p>

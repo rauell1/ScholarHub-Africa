@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
       
       const { error } = await resend.emails.send({
-        from: 'onboarding@resend.dev', // Using Resend sandbox domain for testing
+        from: 'ScholarHub <info@rauell.systems>',
         to: email,
         subject: 'Verify your ScholarHub account',
         html: `<p>Hi ${parsed.data.name.trim()},</p>
