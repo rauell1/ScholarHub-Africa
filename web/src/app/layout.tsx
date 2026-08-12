@@ -99,7 +99,7 @@ export default async function RootLayout({
   const config = await getConfig();
 
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth h-full">
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased selection:bg-accent/30 transition-colors duration-500">
         <AuthSessionProvider>
         <ConsentProvider config={config}>
