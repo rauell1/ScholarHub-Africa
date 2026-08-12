@@ -64,7 +64,7 @@
   --border-soft: 240 240 240;
   --muted: 245 245 245;
   --muted-foreground: 115 115 115;
-  --accent: 20 184 166; /* Teal */
+  --accent: 79 70 229; /* Indigo 600 */
 }
 
 .dark {
@@ -77,7 +77,7 @@
   --border-soft: 28 28 30;
   --muted: 24 24 27;
   --muted-foreground: 161 161 170;
-  --accent: 94 234 212; /* Teal Light */
+  --accent: 99 102 241; /* Indigo 500 */
 }
 
 @layer base {
