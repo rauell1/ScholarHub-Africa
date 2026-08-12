@@ -32,10 +32,9 @@ const DataListSchema = z.object({
 });
 
 export const processCsvUpload = inngest.createFunction(
-  { id: 'process-csv-upload' },
-  { event: 'csv.uploaded' },
+  { id: 'process-csv-upload', triggers: [{ event: 'csv.uploaded' }] },
   async ({ event, step }) => {
-    const rawRows = event.data.rows;
+    const rawRows = (event.data as any).rows;
     if (!rawRows || rawRows.length === 0) return { processed: 0 };
 
     const BATCH_SIZE = 10;
@@ -52,7 +51,8 @@ export const processCsvUpload = inngest.createFunction(
         });
 
         try {
-          const completion = await client.beta.chat.completions.parse({
+          // Use standard parse on chat.completions since beta is likely retired in v7
+          const completion = await client.chat.completions.parse({
             model: 'meta/llama-3.3-70b-instruct',
             messages: [
               {
