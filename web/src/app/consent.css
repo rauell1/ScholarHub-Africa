@@ -5,7 +5,6 @@
    ═══════════════════════════════════════════════════════════════════════ */
 :root {
   --cm-primary: #1f3864;
-
   --cm-accent: #1abc9c;
   --cm-bg: #ffffff;
   --cm-text: #1f2937;
@@ -13,18 +12,23 @@
   --cm-radius: 12px;
   --cm-font: 'Inter', system-ui, sans-serif;
   --cm-base-size: 16px;
-  --cm-shadow: 0 10px 40px rgba(15, 23, 42, 0.18);
+  --cm-shadow: 0 -10px 40px rgba(15, 23, 42, 0.1);
+}
+
+.cm-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
   z-index: 1000;
   background: var(--cm-bg);
   color: var(--cm-text);
   box-shadow: var(--cm-shadow);
-  border-top: 1px solid rgba(15, 23, 42, 0.08);
   padding: 18px 24px;
   font-family: var(--cm-font);
 }
 
 .cm-banner--bottom { bottom: 0; border-top: 1px solid rgba(15, 23, 42, 0.08); }
-.cm-banner--top { top: 0; border-bottom: 1px solid rgba(15, 23, 42, 0.08); }
+.cm-banner--top { top: 0; border-bottom: 1px solid rgba(15, 23, 42, 0.08); box-shadow: 0 10px 40px rgba(15, 23, 42, 0.1); }
 
 .cm-banner__inner {
   max-width: 1100px;
