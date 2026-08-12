@@ -28,17 +28,17 @@ export default async function ThankYouPage({
         >
           ✅
         </div>
-        <h1 className="mt-5 text-2xl font-extrabold text-navy">
+        <h1 className="mt-5 text-2xl font-extrabold text-foreground">
           Thank you{name ? `, ${name}` : ''}!
         </h1>
-        <p className="mt-3 text-sm leading-relaxed text-navy/70">
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Your message is on its way to our team. We reply to every message{' '}
           <strong>within 24 hours</strong> (Mon–Fri, 9:00–18:00 EAT).
         </p>
 
-        <div className="mt-8 rounded-2xl bg-navy/5 p-5 text-left">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-navy">While you wait</h2>
-          <ul className="mt-3 space-y-2.5 text-sm text-navy/70">
+        <div className="mt-8 rounded-2xl bg-muted p-5 text-left">
+          <h2 className="text-sm font-bold uppercase tracking-wide text-foreground">While you wait</h2>
+          <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
             <li className="flex gap-2">
               <span aria-hidden="true">🎓</span>
               <Link href="/scholarships/" className="text-teal underline">

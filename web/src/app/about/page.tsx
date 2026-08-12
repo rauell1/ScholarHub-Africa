@@ -42,7 +42,7 @@ const TEAM = [
 ];
 
 const STATS = [
-  { value: '45+', label: 'Verified scholarships', tone: 'text-navy' },
+  { value: '45+', label: 'Verified scholarships', tone: 'text-foreground' },
   { value: '23', label: 'Countries', tone: 'text-teal' },
   { value: '24', label: 'Document checklist items', tone: 'text-amber' },
   { value: '100%', label: 'Free for students', tone: 'text-forest' },
@@ -51,7 +51,7 @@ const STATS = [
 export default function AboutPage() {
   return (
     <>
-      <section className="bg-navy py-10 text-white">
+      <section className="bg-foreground py-10 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current="About us" />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">About ScholarHub Africa</h1>
@@ -66,12 +66,12 @@ export default function AboutPage() {
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
             <h2 className="section-title">Our story</h2>
-            <p className="mt-4 text-sm leading-relaxed text-navy/70">
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               ScholarHub Africa started as one student&apos;s frustration: Roy kept a dozen
               spreadsheets of scholarships, missed two deadlines in a single cycle, and
               had no way to know which programmes he actually qualified for.
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-navy/70">
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               So he built the tool he needed - a directory where every record is
               human-verified against official sources, scored for profile fit, and
               trackable from research to award. Today it&apos;s growing into a platform for
@@ -86,7 +86,7 @@ export default function AboutPage() {
             {STATS.map((stat) => (
               <div key={stat.label} className="card text-center">
                 <p className={`text-3xl font-extrabold ${stat.tone}`}>{stat.value}</p>
-                <p className="text-xs font-semibold uppercase tracking-wide text-navy/50">{stat.label}</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -94,7 +94,7 @@ export default function AboutPage() {
 
         <div className="mt-16">
           <h2 className="section-title text-center">The team</h2>
-          <p className="mt-2 text-center text-sm text-navy/60">
+          <p className="mt-2 text-center text-sm text-muted-foreground">
             Small team, big verification queue.
           </p>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -107,9 +107,9 @@ export default function AboutPage() {
                 >
                   {member.initials}
                 </span>
-                <h3 className="mt-4 font-bold text-navy">{member.name}</h3>
+                <h3 className="mt-4 font-bold text-foreground">{member.name}</h3>
                 <p className="text-xs font-semibold uppercase tracking-wide text-teal">{member.role}</p>
-                <p className="mt-2 text-sm leading-relaxed text-navy/60">{member.bio}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{member.bio}</p>
               </article>
             ))}
           </div>

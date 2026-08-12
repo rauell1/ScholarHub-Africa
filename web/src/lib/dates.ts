@@ -92,7 +92,7 @@ export function deadlineDisplay(
   deadline: string | Date | null | undefined,
 ): { text: string; className: string } {
   const iso = toDateIso(deadline);
-  if (!iso) return { text: 'No deadline set', className: 'text-sm text-navy/40' };
+  if (!iso) return { text: 'No deadline set', className: 'text-sm text-muted-foreground' };
   const state = deadlineState(iso);
   const days = daysBetween(iso, eatToday());
   if (state === 'closed') {

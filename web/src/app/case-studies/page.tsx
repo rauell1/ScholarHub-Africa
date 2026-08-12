@@ -73,7 +73,7 @@ const articleJsonLd = {
 export default function CaseStudyPage() {
   return (
     <article>
-      <header className="bg-navy py-10 text-white">
+      <header className="bg-foreground py-10 text-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <Breadcrumbs
             items={[
@@ -91,7 +91,7 @@ export default function CaseStudyPage() {
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
         <section className="mb-8">
           <h2 className="section-title"><span className="text-teal">1.</span> Client background</h2>
-          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-navy/70">
+          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
             {STUDY.client_background.map((item) => (
               <li key={item} className="flex gap-2">
                 <span className="mt-1 text-teal" aria-hidden="true">▸</span>
@@ -103,7 +103,7 @@ export default function CaseStudyPage() {
 
         <section className="mb-8">
           <h2 className="section-title"><span className="text-amber">2.</span> The challenge</h2>
-          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-navy/70">
+          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
             {STUDY.challenge.map((item) => (
               <li key={item} className="flex gap-2">
                 <span className="mt-1 text-amber" aria-hidden="true">▸</span>
@@ -115,7 +115,7 @@ export default function CaseStudyPage() {
 
         <section className="mb-8">
           <h2 className="section-title"><span className="text-sky">3.</span> The solution</h2>
-          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-navy/70">
+          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
             {STUDY.solution.map((item) => (
               <li key={item} className="flex gap-2">
                 <span className="mt-1 text-sky" aria-hidden="true">▸</span>
@@ -131,24 +131,24 @@ export default function CaseStudyPage() {
             {STUDY.results.map((result) => (
               <div key={result.label} className="card text-center">
                 <p className="text-3xl font-extrabold text-teal">{result.value}</p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-navy/50">{result.label}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{result.label}</p>
               </div>
             ))}
           </div>
         </section>
 
         <blockquote className="my-8 rounded-2xl bg-teal-light p-6">
-          <p className="text-base font-medium leading-relaxed text-navy">“{STUDY.quote.text}”</p>
-          <footer className="mt-3 text-sm font-bold text-navy">
+          <p className="text-base font-medium leading-relaxed text-foreground">“{STUDY.quote.text}”</p>
+          <footer className="mt-3 text-sm font-bold text-foreground">
             - {STUDY.quote.author},{' '}
-            <span className="font-normal text-navy/60">{STUDY.quote.role}</span>
+            <span className="font-normal text-muted-foreground">{STUDY.quote.role}</span>
           </footer>
         </blockquote>
 
         <section className="card flex flex-col items-center gap-4 py-8 text-center sm:flex-row sm:justify-between sm:text-left">
           <div>
-            <h2 className="text-lg font-bold text-navy">{STUDY.next.title}</h2>
-            <p className="text-sm text-navy/60">{STUDY.next.text}</p>
+            <h2 className="text-lg font-bold text-foreground">{STUDY.next.title}</h2>
+            <p className="text-sm text-muted-foreground">{STUDY.next.text}</p>
           </div>
           <Link href={STUDY.next.url} className="btn-primary shrink-0">
             {STUDY.next.cta} →

@@ -25,7 +25,7 @@ export default async function ByCountryPage() {
 
   return (
     <>
-      <section className="bg-navy py-10 text-white">
+      <section className="bg-foreground py-10 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <h1 className="text-2xl font-extrabold sm:text-3xl">🌍 Scholarships by Country</h1>
           <p className="mt-1 text-sm text-white/60">Choose a destination - every opportunity is verified.</p>
@@ -34,7 +34,7 @@ export default async function ByCountryPage() {
 
       <section className="mx-auto max-w-7xl space-y-10 px-4 py-10 sm:px-6">
         {regions.length === 0 ? (
-          <p className="text-sm text-navy/50">No scholarships yet - check back soon.</p>
+          <p className="text-sm text-muted-foreground">No scholarships yet - check back soon.</p>
         ) : (
           regions.map(({ region, countries }) => (
             <div key={region}>
@@ -47,7 +47,7 @@ export default async function ByCountryPage() {
                     className="card flex flex-col items-center gap-1 py-4 text-center transition hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <span className="text-3xl" aria-hidden="true">{country.flag_emoji}</span>
-                    <span className="text-sm font-semibold text-navy">{country.name}</span>
+                    <span className="text-sm font-semibold text-foreground">{country.name}</span>
                     <span className="badge bg-teal-light text-teal">
                       {country.count} scholarship{country.count === 1 ? '' : 's'}
                     </span>

@@ -132,7 +132,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
   return (
     <>
       {/* Hero */}
-      <section className="bg-navy text-white">
+      <section className="bg-foreground text-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
           <Breadcrumbs
             items={[
@@ -148,7 +148,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                 <span className="font-semibold text-white/80">{detail.country.name}</span>
                 <EligibilityBadge code={detail.eligibility_label} />
                 <ScoreBadge score={detail.score} />
-                <span className="badge bg-white/10 text-white/80">{statusLabel(detail.status)}</span>
+                <span className="badge bg-foreground/10 text-white/80">{statusLabel(detail.status)}</span>
               </div>
               <h1 className="text-2xl font-extrabold leading-tight sm:text-3xl">{detail.name}</h1>
               {detail.university && <p className="mt-1.5 text-white/70">{detail.university}</p>}
@@ -163,80 +163,80 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
           {/* Main column */}
           <div className="space-y-6 lg:col-span-2">
             <div className="card">
-              <h2 className="text-lg font-bold text-navy">Overview</h2>
-              <p className="mt-2 text-sm leading-relaxed text-navy/70">
+              <h2 className="text-lg font-bold text-foreground">Overview</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {detail.notes || 'No notes yet - check the official link below.'}
               </p>
               {detail.action_required && (
                 <div className="mt-4 rounded-xl bg-amber-light p-4">
                   <h3 className="text-sm font-bold text-amber">⚡ Action required</h3>
-                  <p className="mt-1 text-sm text-navy/70">{detail.action_required}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{detail.action_required}</p>
                 </div>
               )}
             </div>
 
             <div className="card">
-              <h2 className="text-lg font-bold text-navy">💰 Funding</h2>
+              <h2 className="text-lg font-bold text-foreground">💰 Funding</h2>
               <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
-                <div className="rounded-xl bg-gray-50 p-3">
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-navy/50">Type</dt>
-                  <dd className="mt-1 font-semibold text-navy">{fundingLabel(detail.funding_type)}</dd>
+                <div className="rounded-xl bg-muted p-3">
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Type</dt>
+                  <dd className="mt-1 font-semibold text-foreground">{fundingLabel(detail.funding_type)}</dd>
                 </div>
                 {detail.funding_detail && (
-                  <div className="rounded-xl bg-gray-50 p-3">
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-navy/50">What&apos;s covered</dt>
-                    <dd className="mt-1 font-semibold text-navy">{detail.funding_detail}</dd>
+                  <div className="rounded-xl bg-muted p-3">
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">What&apos;s covered</dt>
+                    <dd className="mt-1 font-semibold text-foreground">{detail.funding_detail}</dd>
                   </div>
                 )}
                 {detail.application_fee && detail.application_fee !== '0' && (
-                  <div className="rounded-xl bg-gray-50 p-3">
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-navy/50">Application fee</dt>
-                    <dd className="mt-1 font-semibold text-navy">
+                  <div className="rounded-xl bg-muted p-3">
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Application fee</dt>
+                    <dd className="mt-1 font-semibold text-foreground">
                       {detail.application_fee} {detail.currency}
                     </dd>
                   </div>
                 )}
                 {detail.deadline_notes && (
-                  <div className="rounded-xl bg-gray-50 p-3">
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-navy/50">Deadline note</dt>
-                    <dd className="mt-1 font-semibold text-navy">{detail.deadline_notes}</dd>
+                  <div className="rounded-xl bg-muted p-3">
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Deadline note</dt>
+                    <dd className="mt-1 font-semibold text-foreground">{detail.deadline_notes}</dd>
                   </div>
                 )}
               </dl>
             </div>
 
             <div className="card">
-              <h2 className="text-lg font-bold text-navy">🎯 Eligibility</h2>
+              <h2 className="text-lg font-bold text-foreground">🎯 Eligibility</h2>
               <dl className="mt-3 space-y-3 text-sm">
                 <div className="flex flex-wrap gap-2">
-                  <span className="badge bg-navy/5 text-navy">
+                  <span className="badge bg-muted text-foreground">
                     Label: {eligibilityLabel(detail.eligibility_label)}
                   </span>
                   {detail.age_max != null && (
-                    <span className="badge bg-navy/5 text-navy">Max age: {detail.age_max}</span>
+                    <span className="badge bg-muted text-foreground">Max age: {detail.age_max}</span>
                   )}
                   {detail.experience_years_min != null && (
-                    <span className="badge bg-navy/5 text-navy">
+                    <span className="badge bg-muted text-foreground">
                       Min experience: {detail.experience_years_min} yrs
                     </span>
                   )}
                   {detail.gpa_minimum != null && (
-                    <span className="badge bg-navy/5 text-navy">Min GPA: {detail.gpa_minimum}</span>
+                    <span className="badge bg-muted text-foreground">Min GPA: {detail.gpa_minimum}</span>
                   )}
                   {detail.cycle_year != null && (
-                    <span className="badge bg-navy/5 text-navy">Cycle: {detail.cycle_year}</span>
+                    <span className="badge bg-muted text-foreground">Cycle: {detail.cycle_year}</span>
                   )}
                 </div>
                 {detail.nationality_notes && (
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-navy/50">Nationality</dt>
-                    <dd className="mt-0.5 text-navy/70">{detail.nationality_notes}</dd>
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Nationality</dt>
+                    <dd className="mt-0.5 text-muted-foreground">{detail.nationality_notes}</dd>
                   </div>
                 )}
                 {detail.english_requirement && (
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-navy/50">English requirement</dt>
-                    <dd className="mt-0.5 text-navy/70">{detail.english_requirement}</dd>
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">English requirement</dt>
+                    <dd className="mt-0.5 text-muted-foreground">{detail.english_requirement}</dd>
                   </div>
                 )}
                 {detail.mba_impact !== 'none' && (
@@ -244,7 +244,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                     <dt className="text-xs font-semibold uppercase tracking-wide text-crimson">
                       MBA impact: {mbaLabel(detail.mba_impact)}
                     </dt>
-                    <dd className="mt-0.5 text-navy/70">
+                    <dd className="mt-0.5 text-muted-foreground">
                       {detail.mba_notes || 'Confirm with the programme directly.'}
                     </dd>
                   </div>
@@ -253,7 +253,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
             </div>
 
             <div className="card">
-              <h2 className="text-lg font-bold text-navy">📚 Fields of study</h2>
+              <h2 className="text-lg font-bold text-foreground">📚 Fields of study</h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {detail.fields.map((fieldSlug) => (
                   <a
@@ -269,28 +269,28 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
 
             {changeLogs.length > 0 && (
               <div className="card">
-                <h2 className="text-lg font-bold text-navy">🕓 Change history</h2>
-                <p className="mt-1 text-xs text-navy/50">
+                <h2 className="text-lg font-bold text-foreground">🕓 Change history</h2>
+                <p className="mt-1 text-xs text-muted-foreground">
                   Transparency: every edit is logged, so you know the data is current.
                 </p>
                 <ul className="mt-3 space-y-2 text-sm">
                   {changeLogs.map((log) => (
                     <li
                       key={`${log.changedAt.toISOString()}-${log.fieldChanged}`}
-                      className="flex items-start justify-between gap-3 rounded-lg bg-gray-50 px-3 py-2"
+                      className="flex items-start justify-between gap-3 rounded-lg bg-muted px-3 py-2"
                     >
-                      <span className="text-navy/70">
-                        <span className="font-semibold text-navy">
+                      <span className="text-muted-foreground">
+                        <span className="font-semibold text-foreground">
                           {log.fieldChanged ? log.fieldChanged.charAt(0).toUpperCase() + log.fieldChanged.slice(1) : 'Update'}
                         </span>{' '}
                         {log.oldValue && (
                           <>
-                            <span className="text-navy/40 line-through">{log.oldValue.slice(0, 40)}</span> →{' '}
+                            <span className="text-muted-foreground line-through">{log.oldValue.slice(0, 40)}</span> →{' '}
                           </>
                         )}
                         <span className="text-forest">{log.newValue.slice(0, 40)}</span>
                       </span>
-                      <span className="shrink-0 text-xs text-navy/40">
+                      <span className="shrink-0 text-xs text-muted-foreground">
                         {formatDateEat(log.changedAt)}
                       </span>
                     </li>
@@ -301,8 +301,8 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
 
             {related.length > 0 && (
               <div className="card">
-                <h2 className="text-lg font-bold text-navy">🔗 You might also consider</h2>
-                <p className="mt-1 text-xs text-navy/50">
+                <h2 className="text-lg font-bold text-foreground">🔗 You might also consider</h2>
+                <p className="mt-1 text-xs text-muted-foreground">
                   Similar programmes - same field or destination country.
                 </p>
                 <div className="mt-3 space-y-2">
@@ -310,12 +310,12 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                     <Link
                       key={item.id}
                       href={`/scholarships/${item.slug}/`}
-                      className="flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-4 py-3 transition-colors hover:bg-teal-light"
+                      className="flex items-center justify-between gap-3 rounded-xl bg-muted px-4 py-3 transition-colors hover:bg-teal-light"
                     >
-                      <span className="text-sm font-semibold text-navy">
+                      <span className="text-sm font-semibold text-foreground">
                         {item.short_name || item.name}
                       </span>
-                      <span className="shrink-0 text-xs text-navy/50">
+                      <span className="shrink-0 text-xs text-muted-foreground">
                         {item.country.flag_emoji} {item.country.name} · {item.score}/100
                       </span>
                     </Link>
@@ -329,7 +329,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
           <aside className="lg:col-span-1">
             <div className="card sticky top-20 space-y-3">
               <div className="flex items-center justify-between">
-                <h2 className="font-bold text-navy">Application</h2>
+                <h2 className="font-bold text-foreground">Application</h2>
                 <Countdown
                   deadline={detail.deadline_date}
                   initialText={deadline.text}
@@ -337,8 +337,8 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                 />
               </div>
 
-              <p className="text-sm text-navy/60">
-                Status: <span className="font-semibold text-navy">{statusLabel(detail.status)}</span>
+              <p className="text-sm text-muted-foreground">
+                Status: <span className="font-semibold text-foreground">{statusLabel(detail.status)}</span>
                 {detail.days_until_deadline != null && (
                   <> · {detail.days_until_deadline} days to deadline</>
                 )}
@@ -360,7 +360,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                 </a>
               )}
 
-              <div className="rounded-xl bg-gray-50 p-3 text-xs text-navy/60">
+              <div className="rounded-xl bg-muted p-3 text-xs text-muted-foreground">
                 {detail.is_verified ? (
                   <>
                     <p className="font-semibold text-forest">✅ Human-verified</p>
@@ -372,7 +372,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                 )}
               </div>
 
-              <p className="text-xs text-navy/40">
+              <p className="text-xs text-muted-foreground">
                 Score {detail.score}/100 - {scoreLabel(detail.score)} fit.
                 {detail.competitiveness && <> Competitiveness: {detail.competitiveness}.</>}
               </p>

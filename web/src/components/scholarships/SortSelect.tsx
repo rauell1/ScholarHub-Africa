@@ -17,7 +17,7 @@ export function SortSelect({
       {hiddenInputs.map(([key, value]) => (
         <input key={`${key}-${value}`} type="hidden" name={key} value={value} />
       ))}
-      <label htmlFor="ordering" className="text-navy/60">
+      <label htmlFor="ordering" className="text-muted-foreground">
         Sort:
       </label>
       <select

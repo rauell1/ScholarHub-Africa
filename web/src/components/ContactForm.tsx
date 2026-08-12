@@ -64,20 +64,20 @@ export function ContactForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="name" className="mb-1 block text-sm font-semibold text-navy">Your name</label>
+          <label htmlFor="name" className="mb-1 block text-sm font-semibold text-foreground">Your name</label>
           <input type="text" id="name" name="name" maxLength={120} required className="input" placeholder="e.g. Achieng Otieno" />
         </div>
         <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-semibold text-navy">Email</label>
+          <label htmlFor="email" className="mb-1 block text-sm font-semibold text-foreground">Email</label>
           <input type="email" id="email" name="email" maxLength={254} required className="input" placeholder="you@example.com" />
         </div>
       </div>
       <div>
-        <label htmlFor="subject" className="mb-1 block text-sm font-semibold text-navy">Subject</label>
+        <label htmlFor="subject" className="mb-1 block text-sm font-semibold text-foreground">Subject</label>
         <input type="text" id="subject" name="subject" maxLength={200} className="input" placeholder="What's this about?" />
       </div>
       <div>
-        <label htmlFor="hear_about" className="mb-1 block text-sm font-semibold text-navy">
+        <label htmlFor="hear_about" className="mb-1 block text-sm font-semibold text-foreground">
           How did you hear about us?
         </label>
         <select id="hear_about" name="hear_about" className="input">
@@ -87,16 +87,16 @@ export function ContactForm() {
             </option>
           ))}
         </select>
-        <p className="mt-1 text-xs text-navy/50">
+        <p className="mt-1 text-xs text-muted-foreground">
           Helps us understand where students find ScholarHub - including AI assistants.
         </p>
       </div>
       <div>
-        <label htmlFor="message" className="mb-1 block text-sm font-semibold text-navy">Message</label>
+        <label htmlFor="message" className="mb-1 block text-sm font-semibold text-foreground">Message</label>
         <textarea id="message" name="message" rows={5} required maxLength={4000} className="input" placeholder="Write your message…" />
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-navy/50">
+        <p className="text-xs text-muted-foreground">
           We only use your details to reply. See our{' '}
           <Link href="/privacy/" className="text-teal underline">Privacy Policy</Link>.
         </p>

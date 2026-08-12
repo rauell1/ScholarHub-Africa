@@ -38,7 +38,7 @@ export function Breadcrumbs({
   return (
     <>
       <nav aria-label="Breadcrumb">
-        <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-navy/60">
+        <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-muted-foreground">
           {crumbs.map((crumb, index) => {
             const isLast = index === crumbs.length - 1;
             return (
@@ -48,12 +48,12 @@ export function Breadcrumbs({
                     {crumb.name}
                   </Link>
                 ) : (
-                  <span className={isLast && current ? 'font-semibold text-navy' : ''} aria-current={isLast && current ? 'page' : undefined}>
+                  <span className={isLast && current ? 'font-semibold text-foreground' : ''} aria-current={isLast && current ? 'page' : undefined}>
                     {crumb.name}
                   </span>
                 )}
                 {!isLast && (
-                  <span className="text-navy/30" aria-hidden="true">
+                  <span className="text-muted-foreground" aria-hidden="true">
                     /
                   </span>
                 )}

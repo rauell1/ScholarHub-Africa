@@ -35,8 +35,8 @@ export default async function TrackerPage() {
       <section className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6">
         <div className="card mx-auto max-w-md py-10">
           <p className="text-4xl" aria-hidden="true">🛠️</p>
-          <h1 className="mt-3 font-bold text-navy">The tracker is temporarily unavailable</h1>
-          <p className="mt-1 text-sm text-navy/60">Please try again in a moment.</p>
+          <h1 className="mt-3 font-bold text-foreground">The tracker is temporarily unavailable</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Please try again in a moment.</p>
         </div>
       </section>
     );
@@ -46,7 +46,7 @@ export default async function TrackerPage() {
 
   return (
     <>
-      <section className="bg-navy py-8 text-white">
+      <section className="bg-foreground py-8 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
@@ -57,10 +57,10 @@ export default async function TrackerPage() {
               </p>
             </div>
             <div className="flex gap-2">
-              <Link href="/tracker/checklist/" className="btn bg-white/10 text-white transition-colors hover:bg-white/20">
+              <Link href="/tracker/checklist/" className="btn bg-foreground/10 text-white transition-colors hover:bg-foreground/10">
                 📋 Checklist
               </Link>
-              <Link href="/scholarships/" className="btn bg-teal text-navy transition-colors hover:bg-teal-light">
+              <Link href="/scholarships/" className="btn bg-teal text-foreground transition-colors hover:bg-teal-light">
                 ＋ Add applications
               </Link>
             </div>

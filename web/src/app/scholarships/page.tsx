@@ -99,7 +99,7 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
 
   return (
     <>
-      <section className="bg-navy py-10 text-white">
+      <section className="bg-foreground py-10 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current={label} />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">Scholarship Directory</h1>
@@ -118,8 +118,8 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
 
           <div className="lg:col-span-3">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm text-navy/60">
-                <span className="font-bold text-navy">{total}</span> result{total === 1 ? '' : 's'}
+              <p className="text-sm text-muted-foreground">
+                <span className="font-bold text-foreground">{total}</span> result{total === 1 ? '' : 's'}
                 {query && (
                   <>
                     {' '}
@@ -138,8 +138,8 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
             {dbError ? (
               <div className="card py-16 text-center">
                 <p className="text-4xl" aria-hidden="true">🛠️</p>
-                <h2 className="mt-3 font-bold text-navy">The directory is temporarily unavailable</h2>
-                <p className="mt-1 text-sm text-navy/60">Please try again in a moment.</p>
+                <h2 className="mt-3 font-bold text-foreground">The directory is temporarily unavailable</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Please try again in a moment.</p>
               </div>
             ) : cards.length > 0 ? (
               <>
@@ -156,7 +156,7 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
                         ← Prev
                       </Link>
                     )}
-                    <span className="text-sm text-navy/60">
+                    <span className="text-sm text-muted-foreground">
                       Page {page} of {totalPages}
                     </span>
                     {page < totalPages && (
@@ -170,8 +170,8 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
             ) : (
               <div className="card py-16 text-center">
                 <p className="text-4xl" aria-hidden="true">🔍</p>
-                <h2 className="mt-3 font-bold text-navy">No scholarships match those filters</h2>
-                <p className="mt-1 text-sm text-navy/60">Try removing a filter or searching a different term.</p>
+                <h2 className="mt-3 font-bold text-foreground">No scholarships match those filters</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Try removing a filter or searching a different term.</p>
                 <Link href="/scholarships/" className="btn-primary mt-4">
                   Clear all filters
                 </Link>

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <>
-      <section className="bg-navy py-10 text-white">
+      <section className="bg-foreground py-10 text-white">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current="Privacy Policy" />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">Privacy Policy</h1>
@@ -25,9 +25,9 @@ export default function PrivacyPage() {
       </section>
 
       <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-        <div className="space-y-8 text-sm leading-relaxed text-navy/80">
+        <div className="space-y-8 text-sm leading-relaxed text-muted-foreground">
           <div>
-            <h2 className="text-lg font-bold text-navy">1. Who we are</h2>
+            <h2 className="text-lg font-bold text-foreground">1. Who we are</h2>
             <p className="mt-2">
               {site.name} (&quot;we&quot;, &quot;us&quot;) operates the website {site.domain}. We are based in{' '}
               {site.address}. For any privacy question, contact{' '}
@@ -36,7 +36,7 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-navy">2. What we collect</h2>
+            <h2 className="text-lg font-bold text-foreground">2. What we collect</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5">
               <li>
                 <strong>Email address</strong> - when you contact us, sign up for the weekly digest, or create an account.
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-navy">3. How we use your data</h2>
+            <h2 className="text-lg font-bold text-foreground">3. How we use your data</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5">
               <li>To reply to your messages and provide support (legitimate interest).</li>
               <li>To send the weekly scholarship digest if you subscribe (consent).</li>
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-navy">4. Legal bases (GDPR)</h2>
+            <h2 className="text-lg font-bold text-foreground">4. Legal bases (GDPR)</h2>
             <p className="mt-2">
               Where the GDPR applies (EU/EEA/UK visitors), we process personal data on the bases of{' '}
               <strong>consent</strong> (newsletter, analytics cookies), <strong>contract performance</strong>{' '}
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-navy">5. Sharing</h2>
+            <h2 className="text-lg font-bold text-foreground">5. Sharing</h2>
             <p className="mt-2">
               We do <strong>not sell</strong> your personal information. We share data only with service providers
               who help us operate (hosting, email delivery, analytics) under written data-processing agreements,
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-navy">6. Retention</h2>
+            <h2 className="text-lg font-bold text-foreground">6. Retention</h2>
             <p className="mt-2">
               Contact messages are kept for up to 12 months; consent logs for up to 2 years (for compliance audits);
               newsletter subscriptions until you unsubscribe.
@@ -92,7 +92,7 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-navy">7. Your rights</h2>
+            <h2 className="text-lg font-bold text-foreground">7. Your rights</h2>
             <p className="mt-2">
               Depending on where you live, you may have the right to <strong>access, correct, delete, restrict, or
               port</strong> your data, and to <strong>object</strong> to processing. To exercise any right, email{' '}
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-navy">8. Cookies</h2>
+            <h2 className="text-lg font-bold text-foreground">8. Cookies</h2>
             <p className="mt-2">
               We use only necessary cookies (consent preference, region) by default, plus any analytics you opt
               into. Full details are in our Cookie Policy, and you can change your choices anytime via the shield
@@ -112,14 +112,14 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-navy">9. Children</h2>
+            <h2 className="text-lg font-bold text-foreground">9. Children</h2>
             <p className="mt-2">
               The service is not directed at children under 16 and we do not knowingly collect their data.
             </p>
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-navy">10. Changes</h2>
+            <h2 className="text-lg font-bold text-foreground">10. Changes</h2>
             <p className="mt-2">
               We may update this policy; the current version always lives at this URL with a new date. Material
               changes will be announced on the site.

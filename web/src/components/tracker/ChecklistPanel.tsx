@@ -32,7 +32,7 @@ export function ChecklistPanel({ documents }: { documents: DocumentRow[] }) {
 
   if (documents.length === 0) {
     return (
-      <div className="card p-6 text-center text-sm text-navy/50">
+      <div className="card p-6 text-center text-sm text-muted-foreground">
         Checklist will appear once your profile is created.
       </div>
     );
@@ -47,11 +47,11 @@ export function ChecklistPanel({ documents }: { documents: DocumentRow[] }) {
           </span>
           <div className="min-w-0 flex-1">
             <p
-              className={`text-sm font-semibold text-navy ${doc.status === 'ready' ? 'line-through opacity-50' : ''}`}
+              className={`text-sm font-semibold text-foreground ${doc.status === 'ready' ? 'line-through opacity-50' : ''}`}
             >
               {doc.name}
             </p>
-            {doc.notes && <p className="text-xs text-navy/50">{doc.notes}</p>}
+            {doc.notes && <p className="text-xs text-muted-foreground">{doc.notes}</p>}
           </div>
           <select
             value={doc.status}

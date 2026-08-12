@@ -56,7 +56,7 @@ const faqJsonLd = {
 export default function FaqPage() {
   return (
     <>
-      <section className="bg-navy py-10 text-white">
+      <section className="bg-foreground py-10 text-white">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current="FAQ" />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">Frequently asked questions</h1>
@@ -67,9 +67,9 @@ export default function FaqPage() {
       <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
         <FaqAccordion faqs={FAQS} />
 
-        <div className="mt-10 rounded-2xl bg-white p-6 text-center ring-1 ring-navy/5">
-          <h2 className="font-bold text-navy">Still curious?</h2>
-          <p className="mt-1 text-sm text-navy/60">We answer every message within one business day.</p>
+        <div className="mt-10 rounded-2xl bg-background p-6 text-center border border-border">
+          <h2 className="font-bold text-foreground">Still curious?</h2>
+          <p className="mt-1 text-sm text-muted-foreground">We answer every message within one business day.</p>
           <Link href="/contact/" className="btn-primary mt-4">Contact us</Link>
         </div>
       </section>

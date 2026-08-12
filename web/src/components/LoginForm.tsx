@@ -57,10 +57,10 @@ function LoginFormInner() {
   return (
     <section className="mx-auto max-w-md px-4 py-12 sm:px-6">
       <div className="card">
-        <h1 className="text-2xl font-extrabold text-navy">
+        <h1 className="text-2xl font-extrabold text-foreground">
           {mode === 'login' ? 'Welcome back' : 'Create your account'}
         </h1>
-        <p className="mt-1 text-sm text-navy/60">
+        <p className="mt-1 text-sm text-muted-foreground">
           {mode === 'login'
             ? 'Sign in to manage your application tracker.'
             : 'Free forever - your tracker, checklist and digest.'}
@@ -89,7 +89,7 @@ function LoginFormInner() {
         <form onSubmit={submit} className="mt-5 space-y-4" noValidate>
           {mode === 'register' && (
             <div>
-              <label htmlFor="name" className="mb-1 block text-sm font-semibold text-navy">
+              <label htmlFor="name" className="mb-1 block text-sm font-semibold text-foreground">
                 Your name
               </label>
               <input
@@ -105,7 +105,7 @@ function LoginFormInner() {
             </div>
           )}
           <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-semibold text-navy">
+            <label htmlFor="email" className="mb-1 block text-sm font-semibold text-foreground">
               Email
             </label>
             <input
@@ -119,7 +119,7 @@ function LoginFormInner() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-semibold text-navy">
+            <label htmlFor="password" className="mb-1 block text-sm font-semibold text-foreground">
               Password
             </label>
             <input
@@ -140,10 +140,10 @@ function LoginFormInner() {
           </button>
         </form>
 
-        <div className="mt-4 flex items-center gap-3 text-xs text-navy/40">
-          <span className="h-px flex-1 bg-navy/10" />
+        <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
+          <span className="h-px flex-1 bg-muted" />
           or
-          <span className="h-px flex-1 bg-navy/10" />
+          <span className="h-px flex-1 bg-muted" />
         </div>
 
         <button
@@ -155,7 +155,7 @@ function LoginFormInner() {
           Continue with Google
         </button>
 
-        <p className="mt-5 text-center text-sm text-navy/60">
+        <p className="mt-5 text-center text-sm text-muted-foreground">
           {mode === 'login' ? (
             <>
               New to ScholarHub?{' '}

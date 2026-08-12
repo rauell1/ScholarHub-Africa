@@ -91,14 +91,14 @@ function ApplicationCard({
       <div className="flex items-start justify-between gap-2">
         <a
           href={`/scholarships/${app.scholarship_slug}/`}
-          className="text-sm font-bold leading-snug text-navy transition-colors hover:text-teal"
+          className="text-sm font-bold leading-snug text-foreground transition-colors hover:text-teal"
         >
           {app.scholarship_name}
         </a>
         <span className={`badge ${priorityTone}`}>{PRIORITY_LABELS[app.priority] ?? app.priority}</span>
       </div>
 
-      <div className="flex items-center justify-between text-xs text-navy/60">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
           {app.country_flag} {app.country_name}
         </span>
@@ -106,11 +106,11 @@ function ApplicationCard({
       </div>
 
       <div>
-        <div className="mb-1 flex justify-between text-xs text-navy/60">
+        <div className="mb-1 flex justify-between text-xs text-muted-foreground">
           <span>Readiness</span>
-          <span className="font-bold text-navy">{app.completion_percentage}%</span>
+          <span className="font-bold text-foreground">{app.completion_percentage}%</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
+        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
           <div
             className="h-full rounded-full bg-teal transition-all"
             style={{ width: `${app.completion_percentage}%` }}
@@ -119,10 +119,10 @@ function ApplicationCard({
       </div>
 
       {app.next_action && (
-        <p className="rounded-lg bg-amber-light px-2.5 py-1.5 text-xs text-navy/70">
+        <p className="rounded-lg bg-amber-light px-2.5 py-1.5 text-xs text-muted-foreground">
           <span className="font-bold text-amber">Next:</span> {app.next_action}
           {app.next_action_due && (
-            <span className="block text-navy/50">due {app.next_action_due}</span>
+            <span className="block text-muted-foreground">due {app.next_action_due}</span>
           )}
         </p>
       )}
@@ -147,9 +147,9 @@ function ApplicationCard({
       </div>
 
       {editing && (
-        <form onSubmit={save} className="space-y-2 border-t border-navy/10 pt-2">
+        <form onSubmit={save} className="space-y-2 border-t border-border pt-2">
           <div>
-            <label className="mb-1 block text-xs font-semibold text-navy/60">Stage</label>
+            <label className="mb-1 block text-xs font-semibold text-muted-foreground">Stage</label>
             <select
               value={form.stage}
               onChange={(e) => setForm({ ...form, stage: e.target.value })}
@@ -164,7 +164,7 @@ function ApplicationCard({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="mb-1 block text-xs font-semibold text-navy/60">Priority</label>
+              <label className="mb-1 block text-xs font-semibold text-muted-foreground">Priority</label>
               <select
                 value={form.priority}
                 onChange={(e) => setForm({ ...form, priority: e.target.value })}
@@ -178,7 +178,7 @@ function ApplicationCard({
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-semibold text-navy/60">SOP status</label>
+              <label className="mb-1 block text-xs font-semibold text-muted-foreground">SOP status</label>
               <select
                 value={form.sop_status}
                 onChange={(e) => setForm({ ...form, sop_status: e.target.value })}
@@ -194,7 +194,7 @@ function ApplicationCard({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="mb-1 block text-xs font-semibold text-navy/60">Referees</label>
+              <label className="mb-1 block text-xs font-semibold text-muted-foreground">Referees</label>
               <select
                 value={form.refs_status}
                 onChange={(e) => setForm({ ...form, refs_status: e.target.value })}
@@ -208,7 +208,7 @@ function ApplicationCard({
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-semibold text-navy/60">Next action due</label>
+              <label className="mb-1 block text-xs font-semibold text-muted-foreground">Next action due</label>
               <input
                 type="date"
                 value={form.next_action_due}
@@ -218,7 +218,7 @@ function ApplicationCard({
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-xs font-semibold text-navy/60">Next action</label>
+            <label className="mb-1 block text-xs font-semibold text-muted-foreground">Next action</label>
             <input
               type="text"
               value={form.next_action}
@@ -228,7 +228,7 @@ function ApplicationCard({
             />
           </div>
           <div className="flex items-center gap-4 pt-1">
-            <label className="flex items-center gap-1.5 text-xs text-navy/70">
+            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <input
                 type="checkbox"
                 checked={form.transcript_ready}
@@ -237,7 +237,7 @@ function ApplicationCard({
               />
               Transcript
             </label>
-            <label className="flex items-center gap-1.5 text-xs text-navy/70">
+            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <input
                 type="checkbox"
                 checked={form.moi_ready}
@@ -248,7 +248,7 @@ function ApplicationCard({
             </label>
           </div>
           <div>
-            <label className="mb-1 block text-xs font-semibold text-navy/60">Notes</label>
+            <label className="mb-1 block text-xs font-semibold text-muted-foreground">Notes</label>
             <textarea
               rows={2}
               value={form.notes}
@@ -270,10 +270,10 @@ export function TrackerBoard({ columns }: { columns: DashboardColumn[] }) {
   return (
     <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
       {columns.map((column) => (
-        <div key={column.key} className="rounded-2xl bg-navy/5 p-3">
-          <h2 className="mb-3 flex items-center justify-between px-1 text-sm font-bold uppercase tracking-wide text-navy">
+        <div key={column.key} className="rounded-2xl bg-muted p-3">
+          <h2 className="mb-3 flex items-center justify-between px-1 text-sm font-bold uppercase tracking-wide text-foreground">
             {column.label}
-            <span className="badge bg-white text-navy shadow-sm">{column.applications.length}</span>
+            <span className="badge bg-background text-foreground shadow-sm">{column.applications.length}</span>
           </h2>
 
           <div className="space-y-3">
@@ -281,7 +281,7 @@ export function TrackerBoard({ columns }: { columns: DashboardColumn[] }) {
               <ApplicationCard key={app.id} app={app} />
             ))}
             {column.applications.length === 0 && (
-              <p className="rounded-xl border border-dashed border-navy/20 p-4 text-center text-xs text-navy/40">
+              <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
                 {column.key === 'planning'
                   ? 'Nothing here yet - browse the directory and add a scholarship.'
                   : 'No applications in this stage.'}

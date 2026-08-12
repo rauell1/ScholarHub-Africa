@@ -16,8 +16,8 @@ export default function Error({
       <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-amber-light text-4xl" aria-hidden="true">
         🛠️
       </div>
-      <h1 className="mt-5 text-2xl font-extrabold text-navy">Something went wrong on our side</h1>
-      <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-navy/60">
+      <h1 className="mt-5 text-2xl font-extrabold text-foreground">Something went wrong on our side</h1>
+      <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
         An unexpected error occurred. The team has been notified - please try again in a few
         minutes.
       </p>

@@ -36,8 +36,8 @@ export default async function ChecklistPage() {
       <section className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
         <div className="card mx-auto max-w-md py-10">
           <p className="text-4xl" aria-hidden="true">🛠️</p>
-          <h1 className="mt-3 font-bold text-navy">The checklist is temporarily unavailable</h1>
-          <p className="mt-1 text-sm text-navy/60">Please try again in a moment.</p>
+          <h1 className="mt-3 font-bold text-foreground">The checklist is temporarily unavailable</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Please try again in a moment.</p>
         </div>
       </section>
     );
@@ -52,7 +52,7 @@ export default async function ChecklistPage() {
 
   return (
     <>
-      <section className="bg-navy py-8 text-white">
+      <section className="bg-foreground py-8 text-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <h1 className="text-2xl font-extrabold sm:text-3xl">📋 Document Checklist</h1>
           <p className="mt-1 text-sm text-white/60">
@@ -64,10 +64,10 @@ export default async function ChecklistPage() {
       <section className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <div className="card mb-6">
           <div className="flex items-center justify-between">
-            <p className="font-bold text-navy">Overall readiness</p>
+            <p className="font-bold text-foreground">Overall readiness</p>
             <p className="text-2xl font-extrabold text-teal">{profile.documents_progress}%</p>
           </div>
-          <div className="mt-3 h-3 overflow-hidden rounded-full bg-gray-100">
+          <div className="mt-3 h-3 overflow-hidden rounded-full bg-muted">
             <div
               className="h-full rounded-full bg-teal transition-all"
               style={{ width: `${profile.documents_progress}%` }}
@@ -80,11 +80,11 @@ export default async function ChecklistPage() {
             <div className="rounded-lg bg-amber-light p-2">
               <span className="font-bold text-amber">{counts.in_progress}</span> In progress
             </div>
-            <div className="rounded-lg bg-gray-100 p-2">
-              <span className="font-bold text-navy/60">{counts.not_started}</span> Not started
+            <div className="rounded-lg bg-muted p-2">
+              <span className="font-bold text-muted-foreground">{counts.not_started}</span> Not started
             </div>
-            <div className="rounded-lg bg-navy/5 p-2">
-              <span className="font-bold text-navy/40">{counts.not_needed}</span> Not needed
+            <div className="rounded-lg bg-muted p-2">
+              <span className="font-bold text-muted-foreground">{counts.not_needed}</span> Not needed
             </div>
           </div>
         </div>

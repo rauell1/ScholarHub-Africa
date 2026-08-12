@@ -21,8 +21,8 @@ export default function NotFound() {
       </div>
 
       <p className="mt-6 text-sm font-bold uppercase tracking-widest text-teal">Error 404</p>
-      <h1 className="mt-2 text-2xl font-extrabold text-navy sm:text-3xl">Oops - this page wandered off</h1>
-      <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-navy/60">
+      <h1 className="mt-2 text-2xl font-extrabold text-foreground sm:text-3xl">Oops - this page wandered off</h1>
+      <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
         The page you&apos;re looking for doesn&apos;t exist or has moved. Your scholarship is still out
         there, though - let&apos;s find it.
       </p>
@@ -44,7 +44,7 @@ export default function NotFound() {
         </form>
       </div>
 
-      <p className="mt-6 text-xs text-navy/40">
+      <p className="mt-6 text-xs text-muted-foreground">
         Popular shortcuts:{' '}
         <Link href="/scholarships/country/" className="text-teal underline">By country</Link> ·{' '}
         <Link href="/scholarships/field/" className="text-teal underline">By field</Link> ·{' '}
