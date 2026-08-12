@@ -15,6 +15,13 @@
       "when": 1786551991825,
       "tag": "0001_medical_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786566567401,
+      "tag": "0002_glamorous_lifeguard",
+      "breakpoints": true
     }
   ]
 }

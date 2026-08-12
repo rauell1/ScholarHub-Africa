@@ -109,7 +109,7 @@ export const scholarships = pgTable(
 
     // Scoring
     score: smallint('score').notNull().default(0),
-    competitiveness: varchar('competitiveness', { length: 50 }).notNull().default(''),
+    competitiveness: text('competitiveness').notNull().default(''),
 
     // Deadlines & status
     deadlineDate: date('deadline_date'),
