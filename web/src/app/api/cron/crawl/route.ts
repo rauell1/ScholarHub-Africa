@@ -17,7 +17,7 @@ function authorized(request: NextRequest): boolean {
 }
 
 export async function GET(request: NextRequest) {
-  if (!authorized(request) && request.headers.get('authorization') !== 'Bearer test') {
+  if (!authorized(request)) {
     return NextResponse.json({ detail: 'Unauthorized.' }, { status: 401 });
   }
 
