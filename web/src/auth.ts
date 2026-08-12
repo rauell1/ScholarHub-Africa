@@ -66,12 +66,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             .where(eq(users.email, email))
             .limit(1);
           if (existing.length === 0) {
+            const newId = `user_${crypto.randomUUID()}`;
             await db.insert(users).values({
-              id: `user_${crypto.randomUUID()}`,
+              id: newId,
               name: user.name ?? null,
               email,
               image: user.image ?? null,
             });
+            user.id = newId; // Map NextAuth user.id to our Postgres ID
+          } else {
+            user.id = existing[0].id; // Map NextAuth user.id to our Postgres ID
           }
         } catch {
           return false;
