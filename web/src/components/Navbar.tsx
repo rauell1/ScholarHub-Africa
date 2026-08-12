@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 
-import { ThemeToggle } from './ThemeToggle';
+
 
 /**
  * Site header - port of templates/base.html {% block nav %}, now
@@ -75,13 +75,9 @@ export function Navbar() {
               Login
             </Link>
           )}
-          <span className="ml-2 flex items-center border-l border-border pl-4">
-            <ThemeToggle />
-          </span>
         </nav>
 
         <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle />
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
