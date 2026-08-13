@@ -10,7 +10,6 @@ import { useConsent, type UseConsentResult } from '@/hooks/useConsent';
 import { ScriptManager } from '@/lib/consent/script-manager';
 import type { ConsentConfig } from '@/lib/consent/types';
 import { CookieBanner } from './CookieBanner';
-import { FloatingShield } from './FloatingShield';
 import { PreferencesModal } from './PreferencesModal';
 
 interface ConsentContextValue {
@@ -74,7 +73,6 @@ export function ConsentProvider({
       {children}
       <CookieBanner />
       <PreferencesModal />
-      {config.layout.showShield && <FloatingShield />}
     </ConsentContext.Provider>
   );
 }
