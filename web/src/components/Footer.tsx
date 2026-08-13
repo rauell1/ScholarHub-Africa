@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 
 const EXPLORE_LINKS = [
   { href: '/scholarships/', label: 'All scholarships' },
@@ -52,7 +51,7 @@ export function Footer() {
         {/* Brand */}
         <div className="space-y-4">
           <Link href="/" className="inline-flex items-center gap-2.5 text-lg font-extrabold text-white">
-            <Image src="/logo.jpg" alt="ScholarHub Africa Logo" width={32} height={32} className="rounded-full object-contain bg-white p-0.5" />
+            <span className="text-2xl" aria-hidden="true">🎓</span>
             <span>
               ScholarHub<span style={{ color: '#14b8a6' }}> Africa</span>
             </span>

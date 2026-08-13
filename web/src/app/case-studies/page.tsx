@@ -64,7 +64,7 @@ const articleJsonLd = {
   publisher: {
     '@type': 'Organization',
     name: site.name,
-    logo: { '@type': 'ImageObject', url: `${site.url}/logo.jpg` },
+    logo: { '@type': 'ImageObject', url: `${site.url}/og-image.png` },
   },
   mainEntityOfPage: `${site.url}/case-studies/`,
   datePublished: '2026-08-10',

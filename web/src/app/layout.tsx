@@ -36,13 +36,13 @@ export const metadata: Metadata = {
     type: 'website',
     url: site.url,
     locale: 'en_GB',
-    images: [{ url: '/logo.jpg', width: 1200, height: 1200 }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: `${site.name} - ${site.tagline}`,
     description: site.tagline,
-    images: ['/logo.jpg'],
+    images: ['/og-image.png'],
   },
   robots: { index: true, follow: true },
 };
@@ -62,7 +62,7 @@ const siteJsonLd = {
       '@id': `${site.url}/#organization`,
       name: site.name,
       url: `${site.url}/`,
-      logo: `${site.url}/logo.jpg`,
+      logo: `${site.url}/og-image.png`,
       email: site.email,
       telephone: site.phone,
       address: {
