@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 
 import { AuthSessionProvider } from '@/components/AuthSessionProvider';
+import { ChatWidget } from '@/components/ChatWidget';
 import { Analytics } from '@/components/consent/Analytics';
 import { ConsentProvider } from '@/components/consent/ConsentProvider';
 import { Footer } from '@/components/Footer';
@@ -106,6 +107,7 @@ export default async function RootLayout({
           <Navbar />
           <main className="flex-grow">{children}</main>
           <Footer />
+          <ChatWidget />
           <Analytics ga4Id={site.ga4MeasurementId} />
           {/* Site-wide structured data (SEO track 1.3 - parity with base.html) */}
           <script
