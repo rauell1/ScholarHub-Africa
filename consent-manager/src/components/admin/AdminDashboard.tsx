@@ -6,6 +6,7 @@
  * Every tab below talks only to RBAC-protected /api/admin/* routes.
  */
 import { useState } from 'react';
+import Image from 'next/image';
 
 import { AnalyticsCharts } from './AnalyticsCharts';
 import { ConsentLogsTable } from './ConsentLogsTable';
@@ -35,7 +36,7 @@ export function AdminDashboard() {
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <div className="admin-sidebar__brand">
-          <span className="admin-sidebar__logo">🛡️</span>
+          <Image src="/logo.jpg" alt="Consent Manager Logo" width={32} height={32} className="admin-sidebar__logo rounded-full object-contain bg-white" />
           <div>
             <div className="admin-sidebar__title">Consent Manager</div>
             <div className="admin-sidebar__subtitle">Admin Environment</div>
