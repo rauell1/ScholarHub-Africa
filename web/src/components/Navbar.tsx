@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
+import { Logo } from '@/components/Logo';
 
 const NAV_LINKS = [
   { href: '/scholarships/', label: 'Scholarships' },
@@ -33,15 +34,7 @@ export function Navbar() {
       <div className="mx-auto flex h-12 w-full max-w-7xl items-center justify-between px-2 sm:px-4">
 
         {/* Logo */}
-        <Link href="/" className="group flex items-center gap-2 tracking-tight">
-          <span className="text-2xl transition-transform group-hover:scale-105" aria-hidden="true">🎓</span>
-          <span>
-            <span className="font-display text-lg font-semibold">ScholarHub</span>
-            <span className="hidden font-mono text-[10px] uppercase tracking-widest text-muted-foreground sm:inline ml-1 opacity-70">
-              / Africa
-            </span>
-          </span>
-        </Link>
+        <Logo />
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-1 md:flex" aria-label="Main">

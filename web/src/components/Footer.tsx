@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { Logo } from '@/components/Logo';
+
 const EXPLORE_LINKS = [
   { href: '/scholarships/', label: 'All scholarships' },
   { href: '/scholarships/country/', label: 'Browse by country' },
@@ -50,12 +52,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
         {/* Brand */}
         <div className="space-y-4">
-          <Link href="/" className="inline-flex items-center gap-2.5 text-lg font-extrabold text-white">
-            <span className="text-2xl" aria-hidden="true">🎓</span>
-            <span>
-              ScholarHub<span style={{ color: '#14b8a6' }}> Africa</span>
-            </span>
-          </Link>
+          <Logo variant="dark" />
 
           <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
             Fully-funded international master&apos;s scholarships for African students. Every record is human-verified against official sources.
