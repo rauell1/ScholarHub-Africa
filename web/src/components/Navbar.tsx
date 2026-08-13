@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -34,7 +35,7 @@ export function Navbar() {
 
         {/* Logo */}
         <Link href="/" className="group flex items-center gap-2 tracking-tight">
-          <span className="text-2xl transition-transform group-hover:scale-105" aria-hidden="true">🎓</span>
+          <Image src="/logo.jpg" alt="ScholarHub Africa Logo" width={32} height={32} className="transition-transform group-hover:scale-105 rounded-full object-contain bg-white" />
           <span>
             <span className="font-display text-lg font-semibold">ScholarHub</span>
             <span className="hidden font-mono text-[10px] uppercase tracking-widest text-muted-foreground sm:inline ml-1 opacity-70">
