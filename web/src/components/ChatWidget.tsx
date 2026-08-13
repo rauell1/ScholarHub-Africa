@@ -199,6 +199,7 @@ export function ChatWidget() {
       .map(({ role, content }) => ({ role, content }));
 
     abortRef.current = new AbortController();
+    const timeoutId = setTimeout(() => abortRef.current?.abort(), 40_000);
 
     try {
       const res = await fetch('/api/v1/chat', {
@@ -241,16 +242,18 @@ export function ChatWidget() {
         ),
       );
     } catch (err: unknown) {
-      if ((err as Error)?.name !== 'AbortError') {
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === botId
-              ? { ...m, content: 'Sorry, something went wrong. Please try again.', streaming: false }
-              : m,
-          ),
-        );
-      }
+      const errName = (err as Error)?.name;
+      const msg =
+        errName === 'AbortError'
+          ? 'Request timed out. Please try again.'
+          : 'Sorry, something went wrong. Please try again.';
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === botId ? { ...m, content: msg, streaming: false } : m,
+        ),
+      );
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };
