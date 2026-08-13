@@ -685,18 +685,24 @@ export async function getHomeStats(client?: Db): Promise<HomeStats> {
     const statsResult = await db
       .select({
         n: count(),
-        openNow: sql<number>`sum(case when status = 'open_now' then 1 else 0 end)::int`,
-        verified: sql<number>`sum(case when is_verified = true then 1 else 0 end)::int`,
+        // 'open' is the actual stored status value; also catch deadline_date in the future
+        // as a real-time fallback so the count stays accurate as deadlines pass.
+        openNow: sql<number>`sum(case when status = 'open' or (status != 'closed' and deadline_date >= current_date) then 1 else 0 end)::int`,
+        verifiedCount: sql<number>`sum(case when is_verified = true then 1 else 0 end)::int`,
       })
       .from(scholarships)
       .where(eq(scholarships.isActive, true));
 
+    const n = statsResult[0]?.n ?? 0;
+    const verifiedCount = statsResult[0]?.verifiedCount ?? 0;
+    const verifiedPct = n > 0 ? Math.round((verifiedCount / n) * 100) : 0;
+
     const countryRows = await getCountries({ activeOnly: true }, db);
     return {
-      scholarships: statsResult[0]?.n ?? 0,
+      scholarships: n,
       countries: countryRows.length,
       open_now: statsResult[0]?.openNow ?? 0,
-      verified: statsResult[0]?.verified ?? 0,
+      verified: verifiedPct,
     };
   } catch {
     // Build-safe fallback (no DATABASE_URL in previews) - stats stay hidden.
