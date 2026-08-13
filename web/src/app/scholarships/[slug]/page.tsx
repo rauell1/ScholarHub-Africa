@@ -402,7 +402,7 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                 )}
 
                 <div className="mt-6 space-y-3">
-                  <TrackButton />
+                  <TrackButton scholarshipId={detail.id} slug={detail.slug} />
 
                   {detail.official_link && (
                     <a
