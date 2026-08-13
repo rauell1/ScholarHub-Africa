@@ -29,6 +29,19 @@ export function ScholarshipCard({ row }: { row: ScholarshipCardRow }) {
       </div>
 
       {/* Simplified Metadata */}
+      {row.status === 'closed' && (
+        <div className="relative z-10 -mt-1 flex items-center gap-2">
+          <span className="inline-flex items-center gap-1 rounded-full bg-crimson/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-crimson">
+            Closed
+          </span>
+          {row.cycle_year != null && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-amber">
+              Reopens {row.cycle_year}
+            </span>
+          )}
+        </div>
+      )}
+
       <div className="relative z-10 mt-2 space-y-1.5 border-l-2 border-border pl-3 text-sm text-foreground">
         <p>
           <span className="font-semibold text-muted-foreground">Award:</span> {fundingLabel(row.funding_type)}

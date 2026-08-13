@@ -60,6 +60,7 @@ export interface ScholarshipRowShape {
   fundingDetail: string;
   score: number;
   status: string;
+  cycleYear: number | null;
   deadlineDate: string | null;
   officialLink: string;
 }
@@ -102,6 +103,7 @@ export interface ScholarshipListRow {
   funding_detail: string;
   score: number;
   status: string;
+  cycle_year: number | null;
   deadline_date: string | null;
   days_until_deadline: number | null;
   official_link: string;
@@ -203,6 +205,7 @@ const listColumns = {
   fundingDetail: scholarships.fundingDetail,
   score: scholarships.score,
   status: scholarships.status,
+  cycleYear: scholarships.cycleYear,
   deadlineDate: scholarships.deadlineDate,
   officialLink: scholarships.officialLink,
 };
@@ -252,6 +255,7 @@ function toListRow(row: ScholarshipRowShape, fieldSlugs: string[]): ScholarshipL
     funding_detail: row.fundingDetail,
     score: row.score,
     status: row.status,
+    cycle_year: row.cycleYear ?? null,
     deadline_date: toDateIso(row.deadlineDate),
     days_until_deadline: daysUntilDeadline(row.deadlineDate),
     official_link: row.officialLink,
