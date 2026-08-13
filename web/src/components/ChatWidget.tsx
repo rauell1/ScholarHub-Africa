@@ -304,7 +304,7 @@ export function ChatWidget() {
                       Thinking…
                     </span>
                   ) : (
-                    'Powered by Llama 3.3 · NVIDIA NIM'
+                    'Powered by Llama 3.1 · NVIDIA NIM'
                   )}
                 </p>
               </div>

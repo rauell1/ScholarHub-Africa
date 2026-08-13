@@ -2,7 +2,7 @@ import { buildSystemPrompt, fetchRelevantScholarships } from '@/lib/chat-rag';
 import { resolveCountry } from '@/lib/geo';
 
 const NVIDIA_BASE = 'https://integrate.api.nvidia.com/v1';
-const MODEL = 'meta/llama-3.3-70b-instruct';
+const MODEL = 'meta/llama-3.1-8b-instruct';
 const TIMEOUT_MS = 30_000;
 
 export async function POST(req: Request) {
