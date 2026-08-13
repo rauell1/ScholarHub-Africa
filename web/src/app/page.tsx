@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import type { SearchHint } from '@/components/scholarships/SearchBar';
 import { SearchBar } from '@/components/scholarships/SearchBar';
 import { StickyCta } from '@/components/scholarships/StickyCta';
 import { Testimonials } from '@/components/Testimonials';
-import { getHomeStats } from '@/lib/queries';
+import { getCountries, getFields, getHomeStats } from '@/lib/queries';
 import { site } from '@/lib/site';
 
 export const revalidate = 3600;
@@ -17,8 +18,26 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const stats = await getHomeStats();
+  const [stats, countries, fields] = await Promise.all([
+    getHomeStats(),
+    getCountries({ activeOnly: true }).catch(() => [] as Awaited<ReturnType<typeof getCountries>>),
+    getFields().catch(() => [] as Awaited<ReturnType<typeof getFields>>),
+  ]);
   const hasStats = stats.scholarships > 0;
+
+  const searchHints: SearchHint[] = [
+    ...countries.map((c) => ({
+      label: c.name,
+      href: `/scholarships/?country=${c.iso_code}`,
+      type: 'country' as const,
+      emoji: c.flag_emoji,
+    })),
+    ...fields.map((f) => ({
+      label: f.name,
+      href: `/scholarships/?field=${f.slug}`,
+      type: 'field' as const,
+    })),
+  ];
 
   return (
     <>
@@ -87,7 +106,7 @@ export default async function HomePage() {
               style={{ animationDelay: '500ms' }}
             >
               <div className="rounded-xl border border-border bg-card p-1 shadow-soft">
-                <SearchBar id="hero" large placeholder="Search DAAD, Chevening, Germany…" />
+                <SearchBar id="hero" large placeholder="Search DAAD, Chevening, Germany…" hints={searchHints} />
               </div>
             </div>
           </div>
