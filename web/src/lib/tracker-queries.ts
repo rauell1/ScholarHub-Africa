@@ -412,7 +412,7 @@ export async function createApplication(
     .values({
       profileId: profile.id,
       scholarshipId,
-      stage: data.stage ?? 'researching',
+      stage: data.stage ?? 'planning',
       priority: data.priority ?? 'target',
       notes: data.notes ?? '',
       nextAction: data.next_action ?? '',

@@ -55,16 +55,12 @@ export function TrackButton({ scholarshipId, slug }: Props) {
         });
         if (res.status === 201) {
           setAdded(true);
+        } else if (res.status === 200) {
+          // Already tracked — server returned existing row
+          setAlreadyTracked(true);
         } else {
           const data = await res.json().catch(() => ({})) as { detail?: string };
-          // Already tracked = duplicate key constraint or similar
-          if (res.status === 400 && data.detail?.toLowerCase().includes('already')) {
-            setAlreadyTracked(true);
-          } else if (res.status === 409) {
-            setAlreadyTracked(true);
-          } else {
-            setError(data.detail ?? 'Something went wrong. Please try again.');
-          }
+          setError(data.detail ?? 'Something went wrong. Please try again.');
         }
       } catch {
         setError('Network error. Please try again.');

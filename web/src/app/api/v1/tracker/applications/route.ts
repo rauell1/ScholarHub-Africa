@@ -71,6 +71,14 @@ export async function POST(request: NextRequest) {
     if (!row) return apiError('Scholarship not found.', 404);
     return NextResponse.json(row, { status: 201 });
   } catch (err) {
+    const msg = String(err);
+    if (msg.includes('profile_scholarship_uniq') || msg.includes('duplicate key')) {
+      // Already tracked — return the existing row as 200 so the client shows "already tracked"
+      const { listApplications } = await import('@/lib/tracker-queries');
+      const existing = await listApplications(session.user.id);
+      const match = existing.find((r) => r.scholarship === parsed.data.scholarship);
+      return NextResponse.json(match ?? {}, { status: 200 });
+    }
     console.error('[api/v1/tracker/applications POST]', err);
     return apiError(
       isDbUnavailable(err) ? 'Database is not configured.' : 'Internal server error.',
