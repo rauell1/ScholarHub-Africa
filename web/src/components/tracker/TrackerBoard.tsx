@@ -105,6 +105,12 @@ function ApplicationCard({
         <span className={deadline.className}>{deadline.text}</span>
       </div>
 
+      <div className="text-xs text-muted-foreground">
+        <span className="rounded-md bg-muted px-1.5 py-0.5 font-medium text-foreground">
+          {STAGE_LABELS[app.stage] ?? app.stage}
+        </span>
+      </div>
+
       <div>
         <div className="mb-1 flex justify-between text-xs text-muted-foreground">
           <span>Readiness</span>
