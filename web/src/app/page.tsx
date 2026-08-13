@@ -3,12 +3,14 @@ import Link from 'next/link';
 
 import type { SearchHint } from '@/components/scholarships/SearchBar';
 import { SearchBar } from '@/components/scholarships/SearchBar';
+import { ScholarshipCard } from '@/components/scholarships/ScholarshipCard';
 import { StickyCta } from '@/components/scholarships/StickyCta';
 import { Testimonials } from '@/components/Testimonials';
-import { getCountries, getFields, getHomeStats } from '@/lib/queries';
+import { getUserGeo } from '@/lib/geo';
+import { getCountries, getFields, getHomeStats, queryScholarshipCards } from '@/lib/queries';
 import { site } from '@/lib/site';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'ScholarHub Africa - Scholarships for African Students',
@@ -18,12 +20,19 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [stats, countries, fields] = await Promise.all([
+  const [stats, countries, fields, geo] = await Promise.all([
     getHomeStats(),
     getCountries({ activeOnly: true }).catch(() => [] as Awaited<ReturnType<typeof getCountries>>),
     getFields().catch(() => [] as Awaited<ReturnType<typeof getFields>>),
+    getUserGeo(),
   ]);
+
   const hasStats = stats.scholarships > 0;
+
+  // Top picks: top-scored open scholarships for the geo personalisation strip
+  const topPicks = await queryScholarshipCards(
+    { status: ['open'], ordering: '-score', limit: 3 },
+  ).catch(() => []);
 
   const searchHints: SearchHint[] = [
     ...countries.map((c) => ({
@@ -39,6 +48,16 @@ export default async function HomePage() {
     })),
   ];
 
+  const geoLabel = geo?.isAfrican
+    ? `${geo.flag} ${geo.name}`
+    : null;
+
+  const badgeText = hasStats
+    ? geoLabel
+      ? `${stats.open_now} open now · personalised for ${geoLabel} students`
+      : `${stats.open_now} opportunities open right now`
+    : 'Verified opportunities open now';
+
   return (
     <>
       {/* Hero */}
@@ -47,9 +66,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-4xl text-center">
             <p className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground backdrop-blur-md">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
-              {hasStats
-                ? `${stats.open_now} opportunities open right now`
-                : 'Verified opportunities open now'}
+              {badgeText}
             </p>
 
             <h1
@@ -132,6 +149,35 @@ export default async function HomePage() {
             <div className="flex flex-col items-center justify-center bg-background p-8">
               <p className="font-display text-4xl font-semibold text-accent">{stats.verified}%</p>
               <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Human-verified data</p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Top picks for you */}
+      {topPicks.length > 0 && (
+        <section className="border-b border-border bg-muted/30 py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
+                  {geoLabel ? `Picked for ${geoLabel} students` : 'Open now · best fit'}
+                </p>
+                <h2 className="mt-1 font-display text-2xl font-bold text-foreground sm:text-3xl">
+                  Top picks for you
+                </h2>
+              </div>
+              <Link
+                href="/scholarships/?status=open&ordering=-score"
+                className="text-sm font-semibold text-accent transition-colors hover:text-foreground"
+              >
+                See all open scholarships →
+              </Link>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {topPicks.map((card) => (
+                <ScholarshipCard key={card.id} row={card} />
+              ))}
             </div>
           </div>
         </section>

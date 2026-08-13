@@ -147,14 +147,30 @@ function Bubble({ msg }: { msg: Message }) {
 
 /* ── Main widget ─────────────────────────────────────────────────────────── */
 
+function readCountryCookie(): string | null {
+  if (typeof document === 'undefined') return null;
+  return (
+    document.cookie
+      .split('; ')
+      .find((c) => c.startsWith('sh_country='))
+      ?.split('=')[1] ?? null
+  );
+}
+
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([WELCOME]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [userCountryIso, setUserCountryIso] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Read geo cookie once on mount
+  useEffect(() => {
+    setUserCountryIso(readCountryCookie());
+  }, []);
 
   // Auto-scroll to bottom on new content
   useEffect(() => {
@@ -188,7 +204,7 @@ export function ChatWidget() {
       const res = await fetch('/api/v1/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({ messages: history, userCountryIso }),
         signal: abortRef.current.signal,
       });
 

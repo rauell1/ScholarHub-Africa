@@ -2,6 +2,7 @@ import { and, eq, ilike, inArray, or } from 'drizzle-orm';
 
 import { countries, fieldsOfStudy, scholarshipFields, scholarships } from '@/db/schema';
 import { getDb } from '@/lib/db';
+import type { GeoUser } from '@/lib/geo';
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
 
@@ -223,7 +224,10 @@ export async function fetchRelevantScholarships(query: string): Promise<Scholars
 
 /* ── Prompt builder ──────────────────────────────────────────────────────── */
 
-export function buildSystemPrompt(scholarshipList: ScholarshipContext[]): string {
+export function buildSystemPrompt(
+  scholarshipList: ScholarshipContext[],
+  userGeo?: GeoUser,
+): string {
   const contextBlock =
     scholarshipList.length === 0
       ? 'No specific scholarships found for this query. Encourage the user to browse by country or field.'
@@ -247,8 +251,14 @@ export function buildSystemPrompt(scholarshipList: ScholarshipContext[]): string
           })
           .join('\n\n');
 
-  return `You are ScholarHub Africa's scholarship advisor — a knowledgeable, friendly guide helping African students find fully-funded international master's scholarships.
+  const userContext = userGeo?.isAfrican
+    ? `\nUSER CONTEXT: The user is browsing from ${userGeo.flag} ${userGeo.name} (${userGeo.iso}). They are likely a ${userGeo.name} national seeking fully-funded master's scholarships abroad. Tailor advice and eligibility notes to ${userGeo.name} applicants where relevant.\n`
+    : userGeo
+      ? `\nUSER CONTEXT: The user is browsing from ${userGeo.name} (${userGeo.iso}).\n`
+      : '';
 
+  return `You are ScholarHub Africa's scholarship advisor — a knowledgeable, friendly guide helping African students find fully-funded international master's scholarships.
+${userContext}
 ONLY reference scholarships from the verified data below. Do not invent scholarships, deadlines, or details.
 
 RELEVANT SCHOLARSHIPS:

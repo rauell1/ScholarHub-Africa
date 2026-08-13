@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 
 import { buildSystemPrompt, fetchRelevantScholarships } from '@/lib/chat-rag';
+import { resolveCountry } from '@/lib/geo';
 
 const client = new OpenAI({
   baseURL: 'https://integrate.api.nvidia.com/v1',
@@ -11,6 +12,7 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json()) as {
       messages: { role: 'user' | 'assistant'; content: string }[];
+      userCountryIso?: string | null;
     };
 
     const messages = body.messages ?? [];
@@ -20,9 +22,12 @@ export async function POST(req: Request) {
 
     const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')?.content ?? '';
 
+    const userGeo =
+      body.userCountryIso ? resolveCountry(body.userCountryIso.toUpperCase()) : null;
+
     // Retrieve scholarship context from DB
     const scholarshipList = await fetchRelevantScholarships(lastUserMessage);
-    const systemPrompt = buildSystemPrompt(scholarshipList);
+    const systemPrompt = buildSystemPrompt(scholarshipList, userGeo ?? undefined);
 
     // Stream from NVIDIA Llama
     const stream = await client.chat.completions.create({

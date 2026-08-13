@@ -7,6 +7,7 @@ import { ScholarshipCard } from '@/components/scholarships/ScholarshipCard';
 import { SearchBar } from '@/components/scholarships/SearchBar';
 import { SortSelect } from '@/components/scholarships/SortSelect';
 import { StickyCta } from '@/components/scholarships/StickyCta';
+import { getUserGeo } from '@/lib/geo';
 import { parseScholarshipFilters } from '@/lib/filters';
 import {
   countScholarships,
@@ -72,17 +73,23 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
   const page = Number.isInteger(rawPage) && rawPage > 0 ? rawPage : 1;
   const query = (sp.q as string)?.trim() ?? '';
 
+  const isFiltered =
+    params.has('country') || params.has('field') || params.has('funding') ||
+    params.has('eligibility') || params.has('status') || params.has('q');
+
   let cards: ScholarshipCardRow[] = [];
   let total = 0;
   let countries: CountryRow[] = [];
   let fields: FieldRow[] = [];
   let dbError = false;
+  let geo = null;
   try {
-    [cards, total, countries, fields] = await Promise.all([
+    [cards, total, countries, fields, geo] = await Promise.all([
       queryScholarshipCards({ ...filters, limit: PAGE_SIZE, offset: (page - 1) * PAGE_SIZE }, undefined),
       countScholarships(filters, undefined),
       getCountries({ activeOnly: false }, undefined),
       getFields(undefined),
+      getUserGeo(),
     ]);
   } catch {
     dbError = true;
@@ -104,6 +111,23 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current={label} />
           <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">Scholarship Directory</h1>
           <p className="mt-1 text-sm text-muted-foreground">Search, filter and compare verified opportunities.</p>
+
+          {/* Geo personalisation hint — only when unfiltered and geo is known */}
+          {geo?.isAfrican && !isFiltered && (
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-teal/30 bg-teal/5 px-3.5 py-1.5 text-sm text-foreground">
+              <span className="text-base" aria-hidden="true">{geo.flag}</span>
+              <span>
+                Showing results for <strong>{geo.name}</strong> students ·{' '}
+                <Link
+                  href="/scholarships/?eligibility=PE"
+                  className="font-semibold text-teal underline-offset-2 hover:underline"
+                >
+                  Pan-African eligible only
+                </Link>
+              </span>
+            </div>
+          )}
+
           <div className="mt-5 max-w-2xl">
             <SearchBar id="directory" initialValue={query} />
           </div>

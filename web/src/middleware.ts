@@ -46,6 +46,20 @@ function stampConsent(request: NextRequest): NextResponse {
     maxAge: REGION_MAX_AGE,
   });
   response.headers.set('X-Consent-Region', region);
+
+  // Stamp visitor's home country for geo-personalisation (scholarship hints,
+  // chatbot context, homepage Top Picks). Only re-stamps when changed.
+  const existingCountry = request.cookies.get('sh_country')?.value ?? '';
+  const detectedCountry = country.toUpperCase();
+  if (detectedCountry && existingCountry !== detectedCountry) {
+    response.cookies.set('sh_country', detectedCountry, {
+      path: '/',
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
+  }
+
   return response;
 }
 
