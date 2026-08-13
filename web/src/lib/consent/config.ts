@@ -22,7 +22,7 @@ export const DEFAULT_CONFIG: ConsentConfig = {
   },
   layout: {
     position: 'bottom',
-    showShield: true,
+    showShield: false,
   },
   language: 'en',
   texts: {},
