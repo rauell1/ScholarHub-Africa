@@ -40,7 +40,7 @@ export default function GpaPage() {
         <div className="prose prose-invert max-w-none [&>h2]:font-display [&>h2]:text-xl [&>h2]:font-bold [&>h2]:text-foreground [&>h2]:mt-10 [&>h2]:mb-4 [&>p]:text-muted-foreground [&>p]:leading-relaxed [&>p]:mb-4 [&>ul]:text-muted-foreground [&>ul]:leading-relaxed [&>ul]:mb-4 [&>ul]:list-disc [&>ul]:pl-6">
 
           <p>
-            The most common question we get from African students is some version of this: <em>"My GPA is 2.8 — should I even bother applying?"</em> The short answer is yes. The longer answer is: it depends on which scholarship, and how you position yourself.
+            The most common question we get from African students is some version of this: <em>&ldquo;My GPA is 2.8 — should I even bother applying?&rdquo;</em> The short answer is yes. The longer answer is: it depends on which scholarship, and how you position yourself.
           </p>
 
           <p>
@@ -55,7 +55,7 @@ export default function GpaPage() {
             <li><strong>MasterCard Foundation Scholars Program:</strong> Explicitly values potential and leadership over academic scores. Professional experience and community impact carry significant weight.</li>
             <li><strong>AAUW International Fellowships:</strong> No GPA minimum stated. Research proposal quality is the primary filter.</li>
             <li><strong>DAAD Development-Related Postgraduate Courses:</strong> Strong professional background (typically 2+ years) can offset a modest undergraduate result.</li>
-            <li><strong>Commonwealth Shared Scholarship:</strong> Considers the "context" of your degree — quality of your institution, employment since graduation, and references.</li>
+            <li><strong>Commonwealth Shared Scholarship:</strong> Considers the &ldquo;context&rdquo; of your degree — quality of your institution, employment since graduation, and references.</li>
             <li><strong>Fulbright (select African countries):</strong> Holistic review. Leadership and potential are weighted alongside GPA.</li>
           </ul>
 

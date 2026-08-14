@@ -109,7 +109,7 @@ export default function NetherlandsPage() {
         <section>
           <h2 className="font-display text-xl font-bold text-foreground mb-4">Why the Netherlands?</h2>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li className="flex gap-2"><span className="text-teal mt-0.5">✓</span>750+ English-taught master's programmes — no Dutch required for most fields.</li>
+            <li className="flex gap-2"><span className="text-teal mt-0.5">✓</span>750+ English-taught master&apos;s programmes — no Dutch required for most fields.</li>
             <li className="flex gap-2"><span className="text-teal mt-0.5">✓</span>Dutch people are among the most proficient English speakers in Europe.</li>
             <li className="flex gap-2"><span className="text-teal mt-0.5">✓</span>Wageningen (agriculture), TU Delft (engineering), and Erasmus (economics) are world-ranked.</li>
             <li className="flex gap-2"><span className="text-teal mt-0.5">✓</span>Strong tech ecosystem in Amsterdam and Eindhoven.</li>

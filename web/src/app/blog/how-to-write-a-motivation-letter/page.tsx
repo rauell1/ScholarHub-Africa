@@ -40,7 +40,7 @@ export default function MotivationLetterPage() {
         <div className="prose prose-invert max-w-none [&>h2]:font-display [&>h2]:text-xl [&>h2]:font-bold [&>h2]:text-foreground [&>h2]:mt-10 [&>h2]:mb-4 [&>p]:text-muted-foreground [&>p]:leading-relaxed [&>p]:mb-4 [&>ul]:text-muted-foreground [&>ul]:leading-relaxed [&>ul]:mb-4 [&>ul]:list-disc [&>ul]:pl-6 [&>blockquote]:border-l-4 [&>blockquote]:border-teal [&>blockquote]:pl-4 [&>blockquote]:text-muted-foreground [&>blockquote]:italic">
 
           <p>
-            Scholarship committees at DAAD, Chevening, and Erasmus read thousands of motivation letters every cycle. Most say the same things: "I am passionate about development," "I want to contribute to my country," "I believe this scholarship will help me achieve my goals." These phrases are so common they have become invisible.
+            Scholarship committees at DAAD, Chevening, and Erasmus read thousands of motivation letters every cycle. Most say the same things: &ldquo;I am passionate about development,&rdquo; &ldquo;I want to contribute to my country,&rdquo; &ldquo;I believe this scholarship will help me achieve my goals.&rdquo; These phrases are so common they have become invisible.
           </p>
 
           <p>
@@ -56,7 +56,7 @@ export default function MotivationLetterPage() {
             <li><strong>Professional background (1–2 paragraphs):</strong> What you have done, with measurable outcomes where possible.</li>
             <li><strong>Why this programme (1 paragraph):</strong> Name specific modules, faculty, or research clusters. Show you researched the institution.</li>
             <li><strong>Why now, why you (1 paragraph):</strong> The gap between where you are and where you need to be — and how this programme closes it.</li>
-            <li><strong>Impact (1 paragraph):</strong> A concrete, realistic picture of what you will do after. Avoid "I will transform my country."</li>
+            <li><strong>Impact (1 paragraph):</strong> A concrete, realistic picture of what you will do after. Avoid &ldquo;I will transform my country.&rdquo;</li>
             <li><strong>Closing (2–3 sentences):</strong> Short, confident, no summary of what you just wrote.</li>
           </ul>
 
@@ -65,10 +65,10 @@ export default function MotivationLetterPage() {
             Compare these two openers:
           </p>
           <blockquote>
-            "I have always been passionate about renewable energy and its potential to solve Africa&apos;s energy crisis."
+            &ldquo;I have always been passionate about renewable energy and its potential to solve Africa&apos;s energy crisis.&rdquo;
           </blockquote>
           <blockquote>
-            "In 2022, I spent three months working on a mini-grid installation in Rarieda, Kenya. We connected 400 households — but the battery bank we deployed was undersized by 30% because our team lacked the tools to model demand. That gap is what I am applying to this programme to close."
+            &ldquo;In 2022, I spent three months working on a mini-grid installation in Rarieda, Kenya. We connected 400 households — but the battery bank we deployed was undersized by 30% because our team lacked the tools to model demand. That gap is what I am applying to this programme to close.&rdquo;
           </blockquote>
           <p>
             The second opener does four things at once: it establishes field credibility, names a specific problem, shows self-awareness, and gives the committee a clear reason why you need the programme.
@@ -88,8 +88,8 @@ export default function MotivationLetterPage() {
           <h2>Common Mistakes</h2>
           <ul>
             <li>Restating your CV. The letter explains the CV, not repeats it.</li>
-            <li>Generic closing paragraphs. "I look forward to hearing from you" adds nothing.</li>
-            <li>Vague future plans. "I will work in the public sector" is not a plan.</li>
+            <li>Generic closing paragraphs. &ldquo;I look forward to hearing from you&rdquo; adds nothing.</li>
+            <li>Vague future plans. &ldquo;I will work in the public sector&rdquo; is not a plan.</li>
             <li>Over-length. 600–900 words is the sweet spot for most scholarships. Longer is rarely better.</li>
             <li>Ignoring the word limit. Submitting 1,200 words when 800 are allowed signals poor attention to instructions.</li>
           </ul>

@@ -78,7 +78,7 @@ export default function GermanyGuidePage() {
           </p>
           <ol>
             <li><strong>Find temporary accommodation</strong> before arriving — student dormitories (Studentenwerk) often have waiting lists. Book a hostel or short-term Airbnb as a bridge.</li>
-            <li><strong>Register your address (Anmeldung)</strong> at the local Bürgeramt (residents' registration office). This is a legal requirement within 14 days of arrival and is needed for almost everything else.</li>
+            <li><strong>Register your address (Anmeldung)</strong> at the local Bürgeramt (residents&apos; registration office). This is a legal requirement within 14 days of arrival and is needed for almost everything else.</li>
             <li><strong>Enrol at your university</strong> — bring your admission letter, health insurance confirmation, and proof of address (the Anmeldungsbestätigung from step 2).</li>
             <li><strong>Open a German bank account</strong> — Deutsche Bank, Commerzbank, or N26 (fully online) are popular with students. You will need your passport, Anmeldung, and enrolment certificate.</li>
             <li><strong>Apply for a residence permit (Aufenthaltstitel)</strong> if staying more than 90 days. Book the appointment at the Ausländerbehörde (immigration office) immediately — wait times in Berlin, Munich, and Frankfurt can be 6–10 weeks.</li>
