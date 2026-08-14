@@ -185,6 +185,48 @@ export async function getOrCreateProfile(
   };
 }
 
+export type ProfileUpdate = Partial<{
+  full_name: string;
+  nationality: string;
+  degree_field: string;
+  graduation_year: number | null;
+  gpa: string | null;
+  experience_years: string | null;
+  has_ielts: boolean;
+  ielts_score: string | null;
+  has_toefl: boolean;
+  toefl_score: number | null;
+  notes: string;
+}>;
+
+export async function updateProfile(
+  userId: string,
+  data: ProfileUpdate,
+  client: Db = getDb(),
+): Promise<ProfileRow | null> {
+  const patch: Record<string, unknown> = {};
+  if (data.full_name !== undefined) patch.fullName = data.full_name;
+  if (data.nationality !== undefined) patch.nationality = data.nationality;
+  if (data.degree_field !== undefined) patch.degreeField = data.degree_field;
+  if (data.graduation_year !== undefined) patch.graduationYear = data.graduation_year;
+  if (data.gpa !== undefined) patch.gpa = data.gpa;
+  if (data.experience_years !== undefined) patch.experienceYears = data.experience_years;
+  if (data.has_ielts !== undefined) patch.hasIelts = data.has_ielts;
+  if (data.ielts_score !== undefined) patch.ieltsScore = data.ielts_score;
+  if (data.has_toefl !== undefined) patch.hasToefl = data.has_toefl;
+  if (data.toefl_score !== undefined) patch.toeflScore = data.toefl_score;
+  if (data.notes !== undefined) patch.notes = data.notes;
+  if (Object.keys(patch).length === 0) return getProfile(userId, client);
+
+  const updated = await client
+    .update(applicantProfiles)
+    .set(patch)
+    .where(eq(applicantProfiles.userId, userId))
+    .returning({ id: applicantProfiles.id });
+  if (updated.length === 0) return null;
+  return getProfile(userId, client);
+}
+
 export async function getProfile(
   userId: string,
   client: Db = getDb(),

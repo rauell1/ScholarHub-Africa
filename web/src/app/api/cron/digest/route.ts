@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getDigestContext, renderDigestEmail } from '@/lib/digest';
+import { getDb } from '@/lib/db';
+import { newsletterSubscribers } from '@/db/schema';
 
 /**
  * GET /api/cron/digest - weekly Monday digest (Vercel Cron, 05:00 UTC =
@@ -30,7 +32,20 @@ export async function GET(request: NextRequest) {
     const html = renderDigestEmail(context);
 
     const resendKey = process.env.RESEND_API_KEY;
-    const recipients = (process.env.DIGEST_EMAILS ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+    const envRecipients = (process.env.DIGEST_EMAILS ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+
+    // Merge env list with confirmed newsletter subscribers from DB.
+    let dbEmails: string[] = [];
+    try {
+      const rows = await getDb()
+        .select({ email: newsletterSubscribers.email })
+        .from(newsletterSubscribers);
+      dbEmails = rows.map((r) => r.email);
+    } catch {
+      dbEmails = [];
+    }
+    const recipients = [...new Set([...envRecipients, ...dbEmails])];
+
     const from = process.env.DEFAULT_FROM_EMAIL ?? 'ScholarHub Africa <digest@scholarhub.africa>';
     const subject = `📚 Scholarship Digest - Week of ${context.generatedOn}`;
 

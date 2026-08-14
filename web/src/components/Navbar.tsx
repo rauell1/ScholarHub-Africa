@@ -4,11 +4,14 @@ import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { Logo } from '@/components/Logo';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const NAV_LINKS = [
   { href: '/scholarships/', label: 'Scholarships' },
   { href: '/scholarships/country/', label: 'By Country' },
   { href: '/scholarships/field/', label: 'By Field' },
+  { href: '/scholarships/calendar/', label: 'Calendar' },
+  { href: '/blog/', label: 'Blog' },
 ];
 
 function LockIcon({ className }: { className?: string }) {
@@ -48,6 +51,8 @@ export function Navbar() {
             </Link>
           ))}
 
+          <ThemeToggle />
+
           {isAuthenticated ? (
             <div className="ml-3 flex items-center gap-1.5 border-l border-border pl-3">
               <Link
@@ -80,7 +85,9 @@ export function Navbar() {
           )}
         </nav>
 
-        {/* Mobile hamburger */}
+        {/* Mobile: theme toggle + hamburger */}
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
         <button
           type="button"
           onClick={() => setMenuOpen((v) => !v)}
@@ -95,6 +102,7 @@ export function Navbar() {
             }
           </svg>
         </button>
+        </div>
       </div>
 
       {/* Mobile drawer */}

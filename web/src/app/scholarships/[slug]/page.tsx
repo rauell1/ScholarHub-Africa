@@ -9,6 +9,8 @@ import { Countdown } from '@/components/scholarships/Countdown';
 import { EligibilityBadge } from '@/components/scholarships/EligibilityBadge';
 import { ScoreBadge } from '@/components/scholarships/ScoreBadge';
 import { TrackButton } from '@/components/scholarships/TrackButton';
+import { ShareButtons } from '@/components/ShareButtons';
+import { ProfileFitBadge } from '@/components/ProfileFitBadge';
 import { deadlineDisplay, formatDateEat, scoreLabel } from '@/lib/dates';
 import {
   eligibilityLabel,
@@ -460,6 +462,20 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                 </div>
               </div>
 
+              {/* Profile fit */}
+              <ProfileFitBadge scholarship={{
+                gpa_minimum: detail.gpa_minimum,
+                experience_years_min: detail.experience_years_min,
+                english_requirement: detail.english_requirement,
+                eligibility_label: detail.eligibility_label,
+              }} />
+
+              {/* Share */}
+              <ShareButtons
+                url={`${site.url}/scholarships/${detail.slug}/`}
+                title={`${detail.short_name || detail.name} — ScholarHub Africa`}
+              />
+
               {/* Related */}
               {related.length > 0 && (
                 <div className="overflow-hidden rounded-3xl border border-border/50 bg-background/80 p-6 shadow-lg shadow-primary/5 backdrop-blur-xl">
@@ -493,6 +509,20 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(monetaryGrantJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${site.url}/` },
+              { '@type': 'ListItem', position: 2, name: 'Scholarships', item: `${site.url}/scholarships/` },
+              { '@type': 'ListItem', position: 3, name: detail.short_name || detail.name, item: `${site.url}/scholarships/${detail.slug}/` },
+            ],
+          }),
+        }}
       />
     </main>
   );

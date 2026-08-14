@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
+import { PersonalisedMatches } from '@/components/PersonalisedMatches';
 import { TrackerBoard } from '@/components/tracker/TrackerBoard';
 import { TrackerSpreadsheet } from '@/components/tracker/TrackerSpreadsheet';
 import { getTrackerDashboard } from '@/lib/tracker-queries';
@@ -80,8 +81,16 @@ export default async function TrackerPage({
                 </Link>
               </div>
               <Link href="/tracker/checklist/" className="btn-outline text-sm">
-                📋 Checklist
+                Checklist
               </Link>
+              <a
+                href="/api/v1/tracker/applications/export"
+                download
+                className="btn-outline text-sm"
+                aria-label="Export tracker to CSV"
+              >
+                Export CSV
+              </a>
               <Link href="/scholarships/" className="btn bg-teal text-foreground transition-colors hover:bg-teal-light text-sm">
                 ＋ Add applications
               </Link>
@@ -96,6 +105,7 @@ export default async function TrackerPage({
         ) : (
           <TrackerBoard columns={columns} />
         )}
+        <PersonalisedMatches />
       </section>
     </>
   );

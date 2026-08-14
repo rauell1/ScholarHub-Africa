@@ -101,11 +101,26 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="scroll-smooth h-full">
+      {/* Apply persisted theme before first paint to avoid flash */}
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{const t=localStorage.getItem('sh-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased selection:bg-accent/30 transition-colors duration-500">
+        {/* Skip-to-content — visible only on keyboard focus */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-foreground focus:shadow-lg focus:ring-2 focus:ring-accent"
+        >
+          Skip to main content
+        </a>
         <AuthSessionProvider>
         <ConsentProvider config={config}>
           <Navbar />
-          <main className="flex-grow">{children}</main>
+          <main id="main-content" className="flex-grow">{children}</main>
           <Footer />
           <ChatWidget />
           <Analytics ga4Id={site.ga4MeasurementId} />

@@ -1,12 +1,15 @@
 import Link from 'next/link';
 
 import { Logo } from '@/components/Logo';
+import { NewsletterForm } from '@/components/NewsletterForm';
 
 const EXPLORE_LINKS = [
   { href: '/scholarships/', label: 'All scholarships' },
   { href: '/scholarships/country/', label: 'Browse by country' },
   { href: '/scholarships/field/', label: 'Browse by field' },
-  { href: '/case-studies/', label: 'Case studies' },
+  { href: '/scholarships/calendar/', label: 'Deadline calendar' },
+  { href: '/destinations/', label: 'Destination guides' },
+  { href: '/blog/', label: 'Blog & guides' },
   { href: '/tracker/', label: 'Application tracker' },
 ];
 
@@ -152,6 +155,19 @@ export function Footer() {
               <span>Your application data is private</span>
             </li>
           </ul>
+
+          <div className="mt-6">
+            <h2
+              className="mb-2 text-[11px] font-bold uppercase tracking-[0.12em]"
+              style={{ color: '#14b8a6' }}
+            >
+              Weekly Digest
+            </h2>
+            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.50)' }}>
+              New scholarships &amp; closing deadlines, every Monday.
+            </p>
+            <NewsletterForm />
+          </div>
         </div>
       </div>
 

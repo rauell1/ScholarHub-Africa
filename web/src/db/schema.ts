@@ -383,6 +383,21 @@ export const consentPolicies = pgTable(
   (t) => [index('consent_policies_kind_idx').on(t.kind)],
 );
 
+/* ── Newsletter subscribers ──────────────────────────────────────────────── */
+
+export const newsletterSubscribers = pgTable(
+  'newsletter_subscribers',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    email: varchar('email', { length: 254 }).notNull().unique(),
+    name: varchar('name', { length: 200 }).notNull().default(''),
+    source: varchar('source', { length: 50 }).notNull().default('footer'),
+    confirmed: boolean('confirmed').notNull().default(false),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('newsletter_subscribers_email_idx').on(t.email)],
+);
+
 /* 📄 CSV Uploads */
 
 export const csvUploads = pgTable(
