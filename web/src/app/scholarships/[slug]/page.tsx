@@ -71,13 +71,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       type: 'article',
       url,
       locale: 'en_GB',
-      images: [{ url: `${site.url}/og-image.png`, width: 1200, height: 630 }],
+      images: [{ url: `${site.url}/api/og/${detail.slug}`, width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${detail.name} - Score ${detail.score}/100`,
       description: truncate(detail.notes, 155),
-      images: [`${site.url}/og-image.png`],
+      images: [`${site.url}/api/og/${detail.slug}`],
     },
   };
 }
