@@ -35,13 +35,21 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' " +
-              'https://www.googletagmanager.com https://www.google-analytics.com; ' +
-              "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; " +
-              "font-src 'self' data:; connect-src 'self' " +
-              'https://www.google-analytics.com https://analytics.google.com; ' +
-              "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+            value: [
+              "default-src 'self'",
+              // Next.js requires unsafe-inline for its inline scripts; unsafe-eval only needed in dev
+              "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob:",
+              "font-src 'self' data:",
+              // GA4 + Vercel Analytics + Speed Insights reporting endpoints
+              "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+              "worker-src blob:",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "frame-ancestors 'none'",
+              "form-action 'self'",
+            ].join('; '),
           },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },

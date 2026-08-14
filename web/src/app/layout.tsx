@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from 'next';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { AuthSessionProvider } from '@/components/AuthSessionProvider';
 import { ChatWidget } from '@/components/ChatWidget';
@@ -124,6 +126,8 @@ export default async function RootLayout({
           <Footer />
           <ChatWidget />
           <Analytics ga4Id={site.ga4MeasurementId} />
+          <VercelAnalytics />
+          <SpeedInsights />
           {/* Site-wide structured data (SEO track 1.3 - parity with base.html) */}
           <script
             type="application/ld+json"
