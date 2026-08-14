@@ -62,6 +62,8 @@ export default async function HomePage() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border bg-background pt-16 pb-24 md:pt-32 md:pb-40">
+        {/* Subtle mesh background effect */}
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/5 via-background to-background" aria-hidden="true" />
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mx-auto max-w-4xl text-center">
             <p className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground backdrop-blur-md">
@@ -70,7 +72,7 @@ export default async function HomePage() {
             </p>
 
             <h1
-              className="animate-rise font-display text-5xl font-semibold tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl"
+              className="animate-rise font-display text-5xl font-semibold tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl text-balance"
               style={{ animationDelay: '100ms' }}
             >
               Master&apos;s scholarships <br className="hidden sm:block" />
@@ -78,7 +80,7 @@ export default async function HomePage() {
             </h1>
 
             <p
-              className="animate-fade-in-up mx-auto mt-8 max-w-2xl text-base text-muted-foreground sm:text-lg"
+              className="animate-fade-in-up mx-auto mt-8 max-w-2xl text-base text-muted-foreground sm:text-lg text-balance"
               style={{ animationDelay: '200ms' }}
             >
               Every opportunity on ScholarHub is human-verified against official sources,
@@ -133,22 +135,22 @@ export default async function HomePage() {
       {/* Stats strip */}
       {hasStats && (
         <section className="border-b border-border bg-background">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px bg-border sm:grid-cols-4">
-            <div className="flex flex-col items-center justify-center bg-background p-8">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px bg-border-soft sm:grid-cols-4">
+            <div className="flex flex-col items-center justify-center bg-background p-8 transition-colors hover:bg-muted/50">
               <p className="font-display text-4xl font-semibold text-foreground">{stats.scholarships}</p>
-              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Verified scholarships</p>
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground text-center">Verified scholarships</p>
             </div>
-            <div className="flex flex-col items-center justify-center bg-background p-8">
+            <div className="flex flex-col items-center justify-center bg-background p-8 transition-colors hover:bg-muted/50">
               <p className="font-display text-4xl font-semibold text-foreground">{stats.countries}</p>
-              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Destination countries</p>
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground text-center">Destination countries</p>
             </div>
-            <div className="flex flex-col items-center justify-center bg-background p-8">
+            <div className="flex flex-col items-center justify-center bg-background p-8 transition-colors hover:bg-muted/50">
               <p className="font-display text-4xl font-semibold text-foreground">{stats.open_now}</p>
-              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Open now</p>
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground text-center">Open now</p>
             </div>
-            <div className="flex flex-col items-center justify-center bg-background p-8">
+            <div className="flex flex-col items-center justify-center bg-background p-8 transition-colors hover:bg-muted/50">
               <p className="font-display text-4xl font-semibold text-accent">{stats.verified}%</p>
-              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Human-verified data</p>
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground text-center">Human-verified data</p>
             </div>
           </div>
         </section>
@@ -192,24 +194,27 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-14 grid gap-6 md:grid-cols-3">
-            <div className="card text-center !p-8">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent/10 font-mono text-xl text-accent" aria-hidden="true">1</span>
-              <h3 className="mt-6 font-display text-lg font-semibold text-foreground">Search</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+            <div className="card text-center !p-8 group relative">
+              <div className="absolute inset-0 z-0 rounded-2xl bg-gradient-to-b from-accent/0 to-accent/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true" />
+              <span className="relative z-10 mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent/10 font-mono text-xl text-accent transition-transform duration-300 group-hover:scale-110" aria-hidden="true">1</span>
+              <h3 className="relative z-10 mt-6 font-display text-lg font-semibold text-foreground">Search</h3>
+              <p className="relative z-10 mt-2 text-sm text-muted-foreground text-balance">
                 Browse verified, fully-funded opportunities across 40+ countries — filtered by field, funding type, and eligibility.
               </p>
             </div>
-            <div className="card text-center !p-8">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber/10 font-mono text-xl text-amber" aria-hidden="true">2</span>
-              <h3 className="mt-6 font-display text-lg font-semibold text-foreground">Filter by fit</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+            <div className="card text-center !p-8 group relative">
+              <div className="absolute inset-0 z-0 rounded-2xl bg-gradient-to-b from-amber/0 to-amber/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true" />
+              <span className="relative z-10 mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber/10 font-mono text-xl text-amber transition-transform duration-300 group-hover:scale-110" aria-hidden="true">2</span>
+              <h3 className="relative z-10 mt-6 font-display text-lg font-semibold text-foreground">Filter by fit</h3>
+              <p className="relative z-10 mt-2 text-sm text-muted-foreground text-balance">
                 Every scholarship carries a 0–100 profile-fit score and an eligibility label, so you spend energy where it counts.
               </p>
             </div>
-            <div className="card text-center !p-8">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-crimson/10 font-mono text-xl text-crimson" aria-hidden="true">3</span>
-              <h3 className="mt-6 font-display text-lg font-semibold text-foreground">Track</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+            <div className="card text-center !p-8 group relative">
+              <div className="absolute inset-0 z-0 rounded-2xl bg-gradient-to-b from-crimson/0 to-crimson/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true" />
+              <span className="relative z-10 mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-crimson/10 font-mono text-xl text-crimson transition-transform duration-300 group-hover:scale-110" aria-hidden="true">3</span>
+              <h3 className="relative z-10 mt-6 font-display text-lg font-semibold text-foreground">Track</h3>
+              <p className="relative z-10 mt-2 text-sm text-muted-foreground text-balance">
                 Move each application through your tracker — planning, drafting, submitted, decision — with a 24-item document checklist.
               </p>
             </div>

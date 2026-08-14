@@ -106,11 +106,13 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
 
   return (
     <>
-      <section className="bg-background py-10 border-b border-border">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section className="relative overflow-hidden bg-background py-12 md:py-16 border-b border-border">
+        {/* Subtle mesh background effect */}
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent/5 via-background to-background" aria-hidden="true" />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
           <Breadcrumbs items={[{ name: 'Home', href: '/' }]} current={label} />
-          <h1 className="mt-4 text-2xl font-extrabold sm:text-3xl">Scholarship Directory</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Search, filter and compare verified opportunities.</p>
+          <h1 className="mt-5 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Scholarship Directory</h1>
+          <p className="mt-2 text-base text-muted-foreground">Search, filter and compare verified opportunities.</p>
 
           {/* Geo personalisation hint — only when unfiltered and geo is known */}
           {geo?.isAfrican && !isFiltered && (
@@ -192,11 +194,13 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
                 )}
               </>
             ) : (
-              <div className="card py-16 text-center">
-                <p className="text-4xl" aria-hidden="true">🔍</p>
-                <h2 className="mt-3 font-bold text-foreground">No scholarships match those filters</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Try removing a filter or searching a different term.</p>
-                <Link href="/scholarships/" className="btn-primary mt-4">
+              <div className="card py-24 text-center border-dashed border-2">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                  <p className="text-2xl" aria-hidden="true">🔍</p>
+                </div>
+                <h2 className="mt-5 font-display text-xl font-bold text-foreground">No scholarships match those filters</h2>
+                <p className="mt-2 text-sm text-muted-foreground text-balance">Try removing a filter or searching a different term to find what you&apos;re looking for.</p>
+                <Link href="/scholarships/" className="btn-primary mt-6">
                   Clear all filters
                 </Link>
               </div>

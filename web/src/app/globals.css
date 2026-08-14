@@ -31,8 +31,8 @@
   --radius-2xl: 1rem;
   --radius-3xl: 1.5rem;
 
-  --shadow-elevated: 0 4px 24px -4px rgb(0 0 0 / 0.1);
-  --shadow-soft: 0 2px 10px -2px rgb(0 0 0 / 0.05);
+  --shadow-elevated: 0 10px 40px -10px rgb(0 0 0 / 0.08), 0 4px 10px -4px rgb(0 0 0 / 0.04);
+  --shadow-soft: 0 4px 20px -2px rgb(0 0 0 / 0.04);
 
   --animate-fade-in-up: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-rise: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -54,14 +54,14 @@
 
 :root {
   /* Modern Editorial Light */
-  --background: 252 252 252;
-  --foreground: 10 10 10;
+  --background: 250 250 250;
+  --foreground: 15 23 42;
   --card: 255 255 255;
-  --card-foreground: 10 10 10;
-  --border: 229 229 229;
-  --border-soft: 240 240 240;
-  --muted: 245 245 245;
-  --muted-foreground: 115 115 115;
+  --card-foreground: 15 23 42;
+  --border: 226 232 240;
+  --border-soft: 241 245 249;
+  --muted: 241 245 249;
+  --muted-foreground: 100 116 139;
   --accent: 79 70 229; /* Indigo 600 */
 }
 
@@ -75,46 +75,46 @@
   .btn-primary,
   .btn-outline,
   .btn-ghost {
-    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
   }
   .btn-primary {
-    @apply bg-foreground text-background hover:opacity-90 shadow-sm;
+    @apply bg-foreground text-card hover:bg-foreground/90 hover:scale-[1.02] hover:shadow-elevated active:scale-[0.98] shadow-sm;
   }
   .btn-outline {
-    @apply border border-border bg-transparent text-foreground hover:bg-muted;
+    @apply border border-border bg-transparent text-foreground hover:bg-muted hover:border-border-soft active:scale-[0.98];
   }
   .btn-ghost {
-    @apply text-muted-foreground hover:text-foreground hover:bg-muted;
+    @apply text-muted-foreground hover:text-foreground hover:bg-muted active:scale-[0.98];
   }
   
   /* Editorial Cards */
   .card {
-    @apply rounded-xl border border-border bg-card p-6 shadow-soft transition-all duration-500 hover:border-accent/40 hover:shadow-elevated;
+    @apply rounded-2xl border border-border bg-card p-6 shadow-soft transition-all duration-500 hover:border-accent/30 hover:shadow-elevated hover:-translate-y-1;
   }
   
   /* Glass Nav */
   .glass-header {
-    @apply sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-md transition-colors duration-500;
+    @apply sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl transition-colors duration-500;
   }
   
   /* Editorial Tags */
   .badge {
-    @apply inline-flex items-center rounded-full border border-border bg-muted/50 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground;
+    @apply inline-flex items-center rounded-full border border-border bg-muted/60 px-3 py-0.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:bg-border/60;
   }
   
   /* Clean Inputs */
   .input {
-    @apply w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground transition-all duration-300 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent;
+    @apply w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/70 transition-all duration-300 focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent/10;
   }
   
   .section-title {
-    @apply font-display text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl;
+    @apply font-display text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl text-balance;
   }
   
   .filter-group {
-    @apply border-t border-border pt-4;
+    @apply border-t border-border pt-5;
   }
-  
+
 }
 
 /* Sticky mobile CTA (port of compiled .sticky-cta + body.has-sticky-cta) */

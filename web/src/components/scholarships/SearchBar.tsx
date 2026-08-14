@@ -98,7 +98,7 @@ export function SearchBar({
           />
           <button
             type="submit"
-            className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-xl bg-teal px-4 py-2 text-sm font-semibold text-white shadow-md transition-colors hover:opacity-90"
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg bg-teal px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-teal/90 hover:shadow-md active:scale-95"
           >
             Search
           </button>
@@ -107,7 +107,8 @@ export function SearchBar({
 
       {hasDropdown && (
         <div
-          className="absolute left-0 right-0 top-full z-30 mt-2 max-h-[28rem] overflow-y-auto rounded-2xl bg-card p-2 shadow-xl ring-1 ring-border"
+          className="absolute left-0 right-0 top-full z-30 mt-2 max-h-[28rem] overflow-y-auto rounded-2xl bg-card p-2 shadow-elevated ring-1 ring-border animate-fade-in-up"
+          style={{ animationDuration: '0.2s' }}
           role="listbox"
           aria-label="Search suggestions"
         >

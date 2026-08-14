@@ -128,7 +128,7 @@ export function FilterSidebar({
       type="checkbox"
       checked={checked}
       onChange={() => toggle(key, value)}
-      className="h-4 w-4 rounded border-border-soft bg-background text-accent transition-colors focus:ring-accent"
+      className="h-4 w-4 shrink-0 cursor-pointer rounded border border-border-soft bg-background text-accent transition-all duration-200 focus:ring-2 focus:ring-accent focus:ring-offset-1"
       aria-label={value}
     />
   );
@@ -150,8 +150,8 @@ export function FilterSidebar({
       <div
         className={`card space-y-6 ${open ? 'block' : 'hidden md:block'}`}
       >
-        <div className="flex items-center justify-between border-b border-border-soft pb-4">
-          <h3 className="font-display font-semibold tracking-tight text-foreground">Filters</h3>
+        <div className="flex items-center justify-between border-b border-border-soft pb-5">
+          <h3 className="font-display text-lg font-semibold tracking-tight text-foreground">Filters</h3>
           {activeCount > 0 && (
             <button type="button" onClick={clearAll} className="btn-ghost h-6 px-2 text-[10px] uppercase tracking-widest font-mono">
               Clear
@@ -262,7 +262,7 @@ export function FilterSidebar({
             step={5}
             value={selected.minScore}
             onChange={(e) => setMinScore(parseInt(e.target.value, 10))}
-            className="w-full accent-accent transition-all"
+            className="w-full cursor-pointer accent-accent transition-all hover:accent-accent/80"
             aria-label="Minimum score"
           />
         </div>
