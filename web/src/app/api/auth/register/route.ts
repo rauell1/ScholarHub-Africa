@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { users, verificationTokens } from '@/db/schema';
 import { getDb } from '@/lib/db';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 /**
  * POST /api/auth/register - create a Credentials account (Phase 5).
@@ -21,27 +22,9 @@ const registerSchema = z.object({
   website: z.string().max(100).optional(),
 });
 
-const LIMIT_MAX = 10;
-const LIMIT_WINDOW_MS = 60_000;
-const hits = new Map<string, { count: number; resetAt: number }>();
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = hits.get(ip);
-  if (!entry || entry.resetAt < now) {
-    hits.set(ip, { count: 1, resetAt: now + LIMIT_WINDOW_MS });
-    return false;
-  }
-  entry.count += 1;
-  return entry.count > LIMIT_MAX;
-}
-
 export async function POST(request: NextRequest) {
-  const ip =
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    request.headers.get('x-real-ip') ??
-    'unknown';
-  if (rateLimited(ip)) {
+  const { limited } = await checkRateLimit(getClientIp(request), 'register', 10, '1 m');
+  if (limited) {
     return NextResponse.json({ detail: 'Too many requests. Please try again shortly.' }, { status: 429 });
   }
 

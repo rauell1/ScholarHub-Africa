@@ -1,6 +1,7 @@
 import path from 'path';
 
 import type { NextConfig } from 'next';
+import { withSentryConfig } from '@sentry/nextjs';
 
 /**
  * ScholarHub Africa - Next.js configuration.
@@ -12,8 +13,7 @@ import type { NextConfig } from 'next';
  *   app + its own lockfile; Next's workspace-root inference picks the wrong one).
  * - Security headers are the same baseline the repo ships in
  *   consent-manager/next.config.mjs (Security track, AGENTS.md).
- *   GA4 hosts are whitelisted in the CSP because the consent-gated script
- *   manager injects them at runtime - loading is still gated on consent.
+ *   GA4 + Vercel Analytics + Sentry hosts are whitelisted in the CSP.
  */
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -30,20 +30,19 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Baseline security headers on ALL routes (Security track 3.10 parity).
+        // Baseline security headers on ALL routes.
         source: '/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              // Next.js requires unsafe-inline for its inline scripts; unsafe-eval only needed in dev
               "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob:",
               "font-src 'self' data:",
-              // GA4 + Vercel Analytics + Speed Insights reporting endpoints
-              "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+              // GA4 + Vercel Analytics/Speed Insights + Sentry tunnel
+              "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://o*.ingest.sentry.io",
               "worker-src blob:",
               "object-src 'none'",
               "base-uri 'self'",
@@ -70,4 +69,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  // Upload source maps only when SENTRY_AUTH_TOKEN is set (CI/Vercel).
+  // Silent locally so the build doesn't fail without credentials.
+  silent: !process.env.SENTRY_AUTH_TOKEN,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  widenClientFileUpload: true,
+  // Don't add the Sentry SDK to every page unnecessarily
+  disableLogger: true,
+  automaticVercelMonitors: true,
+});

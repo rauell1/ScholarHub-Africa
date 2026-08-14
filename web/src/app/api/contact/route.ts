@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { site } from '@/lib/site';
 
 const contactSchema = z.object({
@@ -22,20 +23,6 @@ const HEAR_ABOUT_LABELS: Record<string, string> = {
   other: 'Other',
 };
 
-const LIMIT_MAX = 5;
-const LIMIT_WINDOW_MS = 60_000;
-const hits = new Map<string, { count: number; resetAt: number }>();
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = hits.get(ip);
-  if (!entry || entry.resetAt < now) {
-    hits.set(ip, { count: 1, resetAt: now + LIMIT_WINDOW_MS });
-    return false;
-  }
-  entry.count += 1;
-  return entry.count > LIMIT_MAX;
-}
 
 function buildAdminEmail(data: {
   name: string;
@@ -138,11 +125,8 @@ function buildConfirmationEmail(name: string): string {
 }
 
 export async function POST(request: NextRequest) {
-  const ip =
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    request.headers.get('x-real-ip') ??
-    'unknown';
-  if (rateLimited(ip)) {
+  const { limited } = await checkRateLimit(getClientIp(request), 'contact', 5, '1 m');
+  if (limited) {
     return NextResponse.json({ detail: 'Too many requests. Please try again shortly.' }, { status: 429 });
   }
 
