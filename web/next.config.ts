@@ -42,7 +42,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: blob:",
               "font-src 'self' data:",
               // GA4 + Vercel Analytics/Speed Insights + Sentry tunnel
-              "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://o*.ingest.sentry.io",
+              "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://o*.ingest.sentry.io https://o*.ingest.de.sentry.io",
               "worker-src blob:",
               "object-src 'none'",
               "base-uri 'self'",
