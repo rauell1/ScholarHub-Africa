@@ -1,11 +1,18 @@
 import { buildSystemPrompt, fetchRelevantScholarships } from '@/lib/chat-rag';
 import { resolveCountry } from '@/lib/geo';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+import { type NextRequest } from 'next/server';
 
 const NVIDIA_BASE = 'https://integrate.api.nvidia.com/v1';
 const MODEL = 'meta/llama-3.1-8b-instruct';
 const TIMEOUT_MS = 30_000;
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const { limited } = await checkRateLimit(getClientIp(req), 'chat', 20, '1 m');
+  if (limited) {
+    return new Response('Too many requests. Please wait a moment before sending another message.', { status: 429 });
+  }
+
   try {
     const body = (await req.json()) as {
       messages: { role: 'user' | 'assistant'; content: string }[];

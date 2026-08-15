@@ -50,25 +50,34 @@ export async function GET(request: NextRequest) {
     const subject = `📚 Scholarship Digest - Week of ${context.generatedOn}`;
 
     if (resendKey && recipients.length > 0) {
-      const res = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from,
-          to: recipients,
-          subject,
-          html,
-        }),
-      });
-      if (!res.ok) {
-        const body = await res.text();
-        console.error('[cron/digest] Resend error', res.status, body);
-        return NextResponse.json({ detail: 'Email delivery failed.' }, { status: 502 });
+      // Resend caps `to` at 50 recipients per API call — send in batches.
+      const BATCH_SIZE = 50;
+      const batches: string[][] = [];
+      for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
+        batches.push(recipients.slice(i, i + BATCH_SIZE));
       }
-      return NextResponse.json({ ok: true, sent_to: recipients.length, subject });
+
+      let failedBatches = 0;
+      for (const batch of batches) {
+        const res = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${resendKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ from, to: batch, subject, html }),
+        });
+        if (!res.ok) {
+          const errBody = await res.text();
+          console.error('[cron/digest] Resend batch error', res.status, errBody);
+          failedBatches++;
+        }
+      }
+
+      if (failedBatches === batches.length) {
+        return NextResponse.json({ detail: 'Email delivery failed for all batches.' }, { status: 502 });
+      }
+      return NextResponse.json({ ok: true, sent_to: recipients.length, batches: batches.length, failed_batches: failedBatches, subject });
     }
 
     // Dev/dry-run: no RESEND_API_KEY configured - log and succeed.
