@@ -77,7 +77,8 @@ export default withSentryConfig(nextConfig, {
   silent: !process.env.SENTRY_AUTH_TOKEN,
   authToken: process.env.SENTRY_AUTH_TOKEN,
   widenClientFileUpload: true,
-  // Don't add the Sentry SDK to every page unnecessarily
-  disableLogger: true,
-  automaticVercelMonitors: true,
+  webpack: {
+    treeshake: { removeDebugLogging: true },
+    automaticVercelMonitors: true,
+  },
 });

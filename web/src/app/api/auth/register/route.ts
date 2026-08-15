@@ -22,6 +22,55 @@ const registerSchema = z.object({
   website: z.string().max(100).optional(),
 });
 
+function buildVerificationEmail(name: string, verifyUrl: string): string {
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f3f4f6;font-family:Inter,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:24px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
+          <tr>
+            <td style="background:#0D9488;padding:24px 32px;">
+              <h1 style="margin:0;color:#ffffff;font-size:18px;font-weight:700;">🎓 ScholarHub <span style="color:#99f6e4;">Africa</span></h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px;">
+              <h2 style="margin:0;color:#111827;font-size:20px;font-weight:700;">Verify your email address</h2>
+              <p style="margin:12px 0 0;color:#374151;font-size:14px;line-height:1.7;">
+                Hi ${name},
+              </p>
+              <p style="margin:12px 0 0;color:#374151;font-size:14px;line-height:1.7;">
+                Thanks for creating a ScholarHub Africa account. Click the button below to verify your email address and activate your account.
+              </p>
+              <p style="margin:28px 0;">
+                <a href="${verifyUrl}" style="display:inline-block;background:#0D9488;color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;padding:13px 28px;border-radius:8px;">Verify my email →</a>
+              </p>
+              <p style="margin:0;color:#6b7280;font-size:13px;line-height:1.6;">
+                This link expires in <strong>24 hours</strong>. If you didn't create an account, you can safely ignore this email.
+              </p>
+              <hr style="border:none;border-top:1px solid #f3f4f6;margin:24px 0;" />
+              <p style="margin:0;font-size:12px;color:#9ca3af;">
+                Button not working? Copy and paste this link into your browser:<br />
+                <a href="${verifyUrl}" style="color:#0D9488;word-break:break-all;">${verifyUrl}</a>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:16px 32px;background:#f9fafb;border-top:1px solid #f3f4f6;">
+              <p style="margin:0;font-size:12px;color:#9ca3af;">ScholarHub Africa · Scholarship discovery &amp; tracking for African students</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
 export async function POST(request: NextRequest) {
   const { limited } = await checkRateLimit(getClientIp(request), 'register', 10, '1 m');
   if (limited) {
@@ -47,7 +96,8 @@ export async function POST(request: NextRequest) {
 
   const email = parsed.data.email.trim().toLowerCase();
   try {
-    const existing = await getDb()
+    const db = getDb();
+    const existing = await db
       .select({ id: users.id })
       .from(users)
       .where(eq(users.email, email))
@@ -61,15 +111,15 @@ export async function POST(request: NextRequest) {
     const passwordHash = await bcrypt.hash(parsed.data.password, 10);
     const userId = `user_${crypto.randomUUID()}`;
     const token = crypto.randomUUID();
-    
-    await getDb().insert(users).values({
+
+    await db.insert(users).values({
       id: userId,
       name: parsed.data.name.trim(),
       email,
       passwordHash,
     });
 
-    await getDb().insert(verificationTokens).values({
+    await db.insert(verificationTokens).values({
       identifier: email,
       token,
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
@@ -85,11 +135,8 @@ export async function POST(request: NextRequest) {
       const { error } = await resend.emails.send({
         from: 'ScholarHub <info@rauell.systems>',
         to: email,
-        subject: 'Verify your ScholarHub account',
-        html: `<p>Hi ${parsed.data.name.trim()},</p>
-               <p>Thanks for creating an account! Please click the link below to verify your email address and activate your account:</p>
-               <p><a href="${verifyUrl}">${verifyUrl}</a></p>
-               <p>If you didn't request this, you can safely ignore this email.</p>`,
+        subject: 'Verify your ScholarHub Africa account',
+        html: buildVerificationEmail(parsed.data.name.trim(), verifyUrl),
       });
 
       if (error) {

@@ -19,7 +19,7 @@ export default async function AdminPage() {
   }
 
   const db = getDb();
-  const uploads = await db.select().from(csvUploads).orderBy(desc(csvUploads.uploadedAt));
+  const uploads = await db.select().from(csvUploads).orderBy(desc(csvUploads.uploadedAt)).limit(50);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 md:py-24">
