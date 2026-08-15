@@ -30,21 +30,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
+        let user;
         try {
           const rows = await getDb()
             .select()
             .from(users)
             .where(eq(users.email, parsed.data.email.trim().toLowerCase()))
             .limit(1);
-          const user = rows[0];
-          if (!user?.passwordHash) return null;
-          const valid = await bcrypt.compare(parsed.data.password, user.passwordHash);
-          if (!valid) return null;
-          if (!user.emailVerified) throw new Error('UnverifiedEmail');
-          return { id: user.id, email: user.email, name: user.name ?? undefined };
+          user = rows[0];
         } catch {
-          return null; // DB unavailable - fail closed (never grant)
+          return null; // DB unavailable — fail closed
         }
+        if (!user?.passwordHash) return null;
+        const valid = await bcrypt.compare(parsed.data.password, user.passwordHash);
+        if (!valid) return null;
+        if (!user.emailVerified) throw new Error('UnverifiedEmail');
+        return { id: user.id, email: user.email, name: user.name ?? undefined };
       },
     }),
     Google({

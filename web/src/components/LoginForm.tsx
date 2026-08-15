@@ -50,11 +50,12 @@ function LoginFormInner() {
         return;
       }
       const result = await signIn('credentials', { email, password, redirect: false });
-      if (result?.error) {
-        if (result.error === 'Configuration' || result.error === 'CredentialsSignin') {
-          setError('Invalid email or password.');
-        } else {
+      if (!result || !result.ok || result.error) {
+        const err = result?.error ?? '';
+        if (err === 'UnverifiedEmail') {
           setError('Please verify your email address before signing in.');
+        } else {
+          setError('Invalid email or password.');
         }
         setBusy(false);
         return;
