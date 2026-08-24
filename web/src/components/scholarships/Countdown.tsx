@@ -2,9 +2,20 @@
 
 import { useEffect, useState } from 'react';
 
+import { deadlineDisplay } from '@/lib/dates';
+
 /**
- * Live deadline countdown (port of static/js/countdown.js).
- * Server-renders `initialText` (SEO-visible), then ticks client-side.
+ * Live deadline countdown.
+ *
+ * Delegates to `deadlineDisplay` so the badge and the server-rendered
+ * "N days remaining" line can never disagree. This previously floored the
+ * elapsed milliseconds into whole 24-hour periods against the *viewer's*
+ * local midnight, while the server counted calendar days in EAT -- so for
+ * all but the instant of midnight the badge read one day fewer than the
+ * line directly beneath it (67 vs 68 on a 31 Oct deadline).
+ *
+ * Re-running the shared helper on a timer keeps the value rolling over at
+ * EAT midnight regardless of where the viewer is.
  */
 export function Countdown({
   deadline,
@@ -16,24 +27,15 @@ export function Countdown({
   initialText: string;
   className?: string;
 }) {
-  const [text, setText] = useState(initialText);
+  const [display, setDisplay] = useState<{ text: string; className: string }>({
+    text: initialText,
+    className: className ?? '',
+  });
 
   useEffect(() => {
     if (!deadline) return;
-    const target = new Date(`${deadline}T00:00:00`); // local midnight (countdown.js parity)
 
-    const tick = () => {
-      const diff = target.getTime() - Date.now();
-      if (diff <= 0) {
-        setText('CLOSED');
-        return;
-      }
-      const days = Math.floor(diff / 86_400_000);
-      const hours = Math.floor((diff % 86_400_000) / 3_600_000);
-      if (days <= 7) setText(`${days}d ${hours}h left`);
-      else if (days <= 30) setText(`${days} days`);
-      else setText(`${days} days`);
-    };
+    const tick = () => setDisplay(deadlineDisplay(deadline));
 
     tick();
     const interval = setInterval(tick, 60_000);
@@ -41,8 +43,8 @@ export function Countdown({
   }, [deadline]);
 
   return (
-    <span className={className} data-deadline={deadline ?? undefined}>
-      {text}
+    <span className={display.className} data-deadline={deadline ?? undefined}>
+      {display.text}
     </span>
   );
 }
