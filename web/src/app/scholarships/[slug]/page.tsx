@@ -431,9 +431,15 @@ export default async function ScholarshipDetailPage({ params }: { params: Params
                       </div>
                       <div>
                         <p className="font-bold text-forest">Human-verified</p>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                          {formatDateEat(detail.verified_at)} {detail.verified_source && `via ${detail.verified_source}`}
-                        </p>
+                        {/* Only render the evidence line when there is evidence.
+                            Previously this printed an empty paragraph whenever
+                            verified_at was null, which was every CSV row. */}
+                        {(detail.verified_at || detail.verified_source) && (
+                          <p className="mt-0.5 text-xs text-muted-foreground">
+                            {formatDateEat(detail.verified_at)}
+                            {detail.verified_source && ` via ${detail.verified_source}`}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ) : (
