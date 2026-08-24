@@ -1,5 +1,28 @@
 # ScholarHub Africa - Full System Design
 
+> ## ⚠️ Superseded — historical record only
+>
+> This document describes the **original Django · Celery/Redis · Railway**
+> architecture, which has been **fully retired**. The platform now runs as a
+> single Next.js App Router application on **Vercel**, with Neon PostgreSQL,
+> Drizzle ORM, Auth.js and Vercel Cron. Railway is no longer used for any part
+> of the system and the Django codebase is gone from this repository.
+>
+> **Do not follow this document to deploy or configure anything.** In
+> particular §16 "Deployment Configuration" describes Railway services, a
+> `railway.toml`, Railway dashboard environment variables and a Cloudflare
+> CNAME to `*.railway.app` — none of which exist any more.
+>
+> For the current architecture and deployment see:
+> - `docs/MIGRATION_PLAN.md` — the Django → Next.js migration and its cutover runbook
+> - `web/vercel.json` — the live deployment and cron configuration
+> - `web/src/db/schema.ts` — the current Drizzle schema
+> - `AGENTS.md` — the standards that apply to the current stack
+>
+> The sections below are kept because the product requirements, data model,
+> scoring rules, SEO/AEO design and content strategy remain the reference for
+> the platform. Only the hosting, task-queue and framework choices are obsolete.
+
 **Version 1.0 | Author: Roy Okola Otieno | Date: 10 August 2026** *A modern scholarship discovery and tracking platform built for African students seeking international master's opportunities.*
 
 ## 1. Project Overview
@@ -880,7 +903,13 @@ def send_weekly_digest():
 
 ## 16. Deployment Configuration
 
-### 16.1 Railway (`railway.toml`)
+> **Obsolete.** Railway has been retired — there is no `railway.toml`,
+> `Procfile` or Nixpacks build in this repository, and no Celery/Redis
+> services. Deployment is Vercel, configured in `web/vercel.json` (functions
+> plus cron), with Neon as the database. The rest of this section is retained
+> only to document what the Django deployment used to look like.
+
+### 16.1 Railway (`railway.toml`) — retired
 
 ```toml
 [build]
