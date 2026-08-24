@@ -130,9 +130,9 @@ export function scanDom(): DetectedTracker[] {
 }
 
 /**
- * Headless hook - when a Puppeteer/Playwright service is available
- * (e.g. a Railway worker), call it to enumerate cookies actually set
- * after JS execution. Returns an empty list when not configured.
+ * Headless hook - when a Puppeteer/Playwright service is reachable at
+ * HEADLESS_SCANNER_URL, call it to enumerate cookies actually set after JS
+ * execution. Returns an empty list when not configured.
  */
 export async function scanWithHeadless(url: string): Promise<ScanResult['cookies']> {
   const endpoint = process.env.HEADLESS_SCANNER_URL;

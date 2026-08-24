@@ -1,9 +1,25 @@
 # ScholarHub Africa — Django → Next.js (Vercel Serverless) Migration Plan
 
-> **Status:** v1.0 — **All code milestones complete** (M1–M7). Remaining: owner runs the M2 apply on Neon + M8 cutover (sandbox cannot reach neon.tech; see §4 runbook + §12 cutover runbook)
-> **Date:** 2026-08-11
-> **Source of truth:** this repository at commit `c473ba2` (Django 5.0.7 · DRF 3.15 · Tailwind 3.4 · Alpine.js · PostgreSQL/Neon · Celery · Railway)
-> **Target:** Next.js App Router · React · TypeScript · Tailwind CSS · Neon PostgreSQL · Vercel
+> **Status:** **Complete.** All milestones M1–M8 are done. The migration has
+> been carried out: the Django codebase is gone from this repository, Neon holds
+> the live data, and the Next.js app serves the site from Vercel. **Railway is
+> retired** — no Railway services, `railway.toml`, `Procfile` or Celery/Redis
+> remain, and nothing in the stack depends on it.
+> **Date:** 2026-08-11 (migration plan) · 2026-08-24 (retirement recorded)
+> **Was:** Django 5.0.7 · DRF 3.15 · Tailwind 3.4 · Alpine.js · PostgreSQL/Neon · Celery · Railway
+> **Now:** Next.js App Router · React · TypeScript · Tailwind CSS · Neon PostgreSQL · Drizzle · Auth.js · Vercel (functions + cron)
+>
+> Passages below that speak of Django "staying live on Railway until cutover",
+> keeping a `legacy.scholarhub.africa` rollback, or Django admin remaining
+> available during the transition describe the *plan as written* and no longer
+> describe reality. They are kept as the record of how the cutover was done.
+>
+> One thing this repository cannot do for you: Railway's **GitHub integration**
+> is external to the codebase. If a Railway project is still connected to this
+> repo it will keep attempting a build on every push to `main` and keep posting
+> a failed commit status, no matter what the code contains — because the Django
+> app it was built to deploy no longer exists here. Disconnect the repo or
+> delete the project in the Railway dashboard to stop it.
 
 ---
 
@@ -395,7 +411,7 @@ identically, tracker works end-to-end with the new auth.
 | **M5** | Tracker + checklist (kanban, 24-item checklist, DRF-parity tracker API, multi-user isolation) | ✅ done |
 | **M6** | Phase 5 — Auth.js (credentials + Google, JWT sessions, registration), Vercel Cron (digest via Resend REST, crawler slot) | ✅ done |
 | **M7** | Deployment config — vercel.json crons, env matrix, CI workflow (web/ + Django jobs) | ✅ done |
-| **M8** | Django retirement (archive → `django-legacy/`, remove Railway) | small |
+| **M8** | Django retirement (Django codebase removed, Railway retired) | ✅ done |
 
 > Suggested sequencing: ship **public directory first** (M1→M4a) because that's
 > where all the SEO/AEO value lives; tracker + auth second; cron + ops last.
