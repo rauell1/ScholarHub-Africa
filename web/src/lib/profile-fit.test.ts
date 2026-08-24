@@ -1,61 +1,18 @@
 /**
  * Unit tests for the profile-fit scoring algorithm.
- * Mirrors the logic in ProfileFitBadge.tsx without importing a client component.
+ *
+ * This file used to inline its own copy of `computeFit` "to avoid importing a
+ * client component". The copy drifted: it kept scoring unknown criteria as
+ * failures after the component stopped doing so, so it passed regardless of
+ * what the real code did. One test was even named "returns 100% when the only
+ * criteria is eligibility and it is unknown" while asserting 0 -- the bug
+ * ratified as the spec.
+ *
+ * It now imports the exported function, so these are a real regression guard.
  */
 import { describe, it, expect } from 'vitest';
 
-interface ScholarshipCriteria {
-  gpa_minimum: string | null;
-  experience_years_min: string | null;
-  english_requirement: string;
-  eligibility_label: string;
-}
-
-interface Criterion {
-  label: string;
-  met: boolean | null;
-}
-
-function computeFit(
-  profile: Record<string, unknown>,
-  scholarship: ScholarshipCriteria,
-): { score: number; criteria: Criterion[] } {
-  const criteria: Criterion[] = [];
-  let earned = 0;
-  let total = 0;
-
-  const isOpenToAll = scholarship.eligibility_label === 'PE' || scholarship.eligibility_label === 'AA';
-  criteria.push({ label: 'Eligible nationality', met: isOpenToAll ? true : null });
-  if (isOpenToAll) { earned += 35; total += 35; } else { total += 35; }
-
-  if (scholarship.gpa_minimum) {
-    const minGpa = parseFloat(scholarship.gpa_minimum);
-    const userGpa = profile.gpa ? parseFloat(String(profile.gpa)) : null;
-    const met = userGpa != null ? userGpa >= minGpa : null;
-    criteria.push({ label: `GPA ≥ ${minGpa}`, met });
-    total += 25;
-    if (met) earned += 25;
-  }
-
-  if (scholarship.experience_years_min) {
-    const minExp = parseFloat(scholarship.experience_years_min);
-    const userExp = profile.experience_years ? parseFloat(String(profile.experience_years)) : null;
-    const met = userExp != null ? userExp >= minExp : null;
-    criteria.push({ label: `${minExp}+ years experience`, met });
-    total += 20;
-    if (met) earned += 20;
-  }
-
-  if (scholarship.english_requirement) {
-    const hasProof = Boolean(profile.has_ielts || profile.has_toefl);
-    criteria.push({ label: 'English proficiency', met: hasProof || null });
-    total += 20;
-    if (hasProof) earned += 20;
-  }
-
-  const score = total > 0 ? Math.round((earned / total) * 100) : 100;
-  return { score, criteria };
-}
+import { computeFit } from '@/components/ProfileFitBadge';
 
 // ── Fixtures ────────────────────────────────────────────────────────────────
 
@@ -68,31 +25,31 @@ const strongProfile = {
 };
 
 const weakProfile = {
-  gpa: '2.5',
+  gpa: '2.0',
   experience_years: '0',
   has_ielts: false,
   has_toefl: false,
 };
 
-const emptyProfile: Record<string, unknown> = {};
+const emptyProfile = {};
 
-const openScholarship: ScholarshipCriteria = {
-  eligibility_label: 'AA',
+/** PE = open to all African students. */
+const openScholarship = {
   gpa_minimum: '3.0',
   experience_years_min: '2',
   english_requirement: 'IELTS 6.5',
+  eligibility_label: 'PE',
 };
 
-const restrictedScholarship: ScholarshipCriteria = {
-  eligibility_label: 'KE', // Kenya only — not open to all
+/** CE = country-restricted, so eligibility cannot be decided from the profile. */
+const restrictedScholarship = {
   gpa_minimum: null,
   experience_years_min: null,
   english_requirement: '',
+  eligibility_label: 'CE',
 };
 
-// ── Tests ────────────────────────────────────────────────────────────────────
-
-describe('computeFit — strong profile vs open scholarship', () => {
+describe('computeFit — all criteria met', () => {
   it('returns 100% for a profile that meets all criteria', () => {
     const { score } = computeFit(strongProfile, openScholarship);
     expect(score).toBe(100);
@@ -105,73 +62,104 @@ describe('computeFit — strong profile vs open scholarship', () => {
   });
 });
 
-describe('computeFit — weak profile vs open scholarship', () => {
-  it('returns less than 60% for a profile that meets no criteria', () => {
+describe('computeFit — criteria known and unmet', () => {
+  it('scores low for a profile that meets no criteria', () => {
+    // Eligibility is met (PE), GPA and experience known-unmet, English unknown.
+    // 35 of 80 known points = 44%.
     const { score } = computeFit(weakProfile, openScholarship);
-    expect(score).toBeLessThan(60);
+    expect(score).toBe(44);
   });
 
   it('marks GPA criterion as not met', () => {
     const { criteria } = computeFit(weakProfile, openScholarship);
-    const gpa = criteria.find((c) => c.label.startsWith('GPA'));
-    expect(gpa?.met).toBe(false);
+    expect(criteria.find((c) => c.label.startsWith('GPA'))?.met).toBe(false);
   });
 
   it('marks experience criterion as not met', () => {
     const { criteria } = computeFit(weakProfile, openScholarship);
-    const exp = criteria.find((c) => c.label.includes('experience'));
-    expect(exp?.met).toBe(false);
+    expect(criteria.find((c) => c.label.includes('years experience'))?.met).toBe(false);
   });
 });
 
-describe('computeFit — empty profile', () => {
-  it('marks criteria as null (unknown) when profile has no data', () => {
+describe('computeFit — unknown criteria', () => {
+  it('marks criteria as null (unknown) when the profile has no data', () => {
     const { criteria } = computeFit(emptyProfile, openScholarship);
-    const gpa = criteria.find((c) => c.label.startsWith('GPA'));
-    expect(gpa?.met).toBeNull();
+    expect(criteria.find((c) => c.label.startsWith('GPA'))?.met).toBeNull();
   });
 
-  it('eligibility is still true for open scholarships regardless of profile', () => {
+  it('keeps eligibility true for open scholarships regardless of profile', () => {
     const { criteria } = computeFit(emptyProfile, openScholarship);
-    const el = criteria.find((c) => c.label === 'Eligible nationality');
-    expect(el?.met).toBe(true);
+    expect(criteria.find((c) => c.label === 'Eligible nationality')?.met).toBe(true);
   });
-});
 
-describe('computeFit — restricted scholarship', () => {
-  it('marks eligibility as null (unknown) for non-open scholarships', () => {
+  it('marks eligibility unknown for country-restricted scholarships', () => {
     const { criteria } = computeFit(strongProfile, restrictedScholarship);
-    const el = criteria.find((c) => c.label === 'Eligible nationality');
-    expect(el?.met).toBeNull();
+    expect(criteria.find((c) => c.label === 'Eligible nationality')?.met).toBeNull();
   });
 
-  it('returns 100% when the only criteria is eligibility and it is unknown', () => {
-    // No GPA/experience/english requirement — only criterion is eligibility (null)
-    // total stays at 35 with 0 earned → but eligibility is null, so earned=0, total=35 → 0%
+  it('excludes unknown criteria from the score instead of scoring them 0', () => {
+    // Eligibility is the only criterion and it is unknown, so there is nothing
+    // to score. This previously returned 0 -- a red "you do not qualify".
     const { score } = computeFit(strongProfile, restrictedScholarship);
-    expect(score).toBe(0);
+    expect(score).toBeNull();
   });
-});
 
-describe('computeFit — scholarship with no criteria', () => {
-  it('returns 100% when scholarship has no requirements', () => {
-    const noReqScholarship: ScholarshipCriteria = {
-      eligibility_label: 'PE',
+  it('does not let an unknown criterion dilute a met one', () => {
+    // Only eligibility is decidable and it is met: 100%, not 35/55.
+    const { score } = computeFit(emptyProfile, {
       gpa_minimum: null,
       experience_years_min: null,
-      english_requirement: '',
-    };
-    // PE = open, no other criteria → earned = 35, total = 35
-    const { score } = computeFit(emptyProfile, noReqScholarship);
+      english_requirement: 'IELTS 6.5',
+      eligibility_label: 'PE',
+    });
     expect(score).toBe(100);
   });
 });
 
-describe('computeFit — partial criteria', () => {
-  it('correctly weights a partial match (GPA met, experience not)', () => {
+describe('computeFit — no requirements', () => {
+  it('returns null rather than 100% when the scholarship states no criteria', () => {
+    // Eligibility is still pushed as unknown for a CE scholarship, and nothing
+    // else applies, so no fit can be computed. Claiming 100% asserted a perfect
+    // match from no data.
+    const { score } = computeFit(emptyProfile, {
+      gpa_minimum: null,
+      experience_years_min: null,
+      english_requirement: '',
+      eligibility_label: 'CE',
+    });
+    expect(score).toBeNull();
+  });
+
+  it('returns 100% for an open scholarship with no other requirements', () => {
+    const { score } = computeFit(emptyProfile, {
+      gpa_minimum: null,
+      experience_years_min: null,
+      english_requirement: '',
+      eligibility_label: 'PE',
+    });
+    expect(score).toBe(100);
+  });
+});
+
+describe('computeFit — partial match weighting', () => {
+  it('weights a partial match on the known criteria only', () => {
+    // GPA met (25), experience unmet (20), eligibility met (35), English
+    // unknown and therefore excluded: 60 of 80 = 75%.
     const partialProfile = { gpa: '3.5', experience_years: '1', has_ielts: false, has_toefl: false };
     const { score } = computeFit(partialProfile, openScholarship);
-    // Eligibility: 35/35, GPA: 25/25, Experience: 0/20, English: 0/20 → 60/100 = 60%
-    expect(score).toBe(60);
+    expect(score).toBe(75);
+  });
+});
+
+describe('computeFit — Roy: English-medium education, no IELTS/TOEFL', () => {
+  it('cannot credit English proficiency, because only IELTS/TOEFL are recognised', () => {
+    // Documents a real gap rather than asserting desired behaviour: a candidate
+    // taught entirely in English has no field in which to record it, so
+    // `has_ielts`/`has_toefl` stay false and the criterion stays unknown
+    // forever. See the note in ProfileFitBadge about adding a medium-of-
+    // instruction option.
+    const royProfile = { gpa: '2.65', experience_years: '3.0', has_ielts: false, has_toefl: false };
+    const { criteria } = computeFit(royProfile, openScholarship);
+    expect(criteria.find((c) => c.label === 'English proficiency')?.met).toBeNull();
   });
 });
