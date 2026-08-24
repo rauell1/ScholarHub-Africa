@@ -15,46 +15,56 @@ interface Criterion {
   met: boolean | null; // null = not applicable / unknown
 }
 
-function computeFit(profile: Record<string, unknown>, scholarship: ScholarshipCriteria): { score: number; criteria: Criterion[] } {
+export function computeFit(
+  profile: Record<string, unknown>,
+  scholarship: ScholarshipCriteria,
+): { score: number | null; criteria: Criterion[] } {
   const criteria: Criterion[] = [];
   let earned = 0;
   let total = 0;
 
+  /**
+   * Unknown criteria are recorded for display but kept out of the score
+   * entirely. They used to count toward the denominator while earning
+   * nothing, so a scholarship whose eligibility is not PE/AA, viewed by
+   * someone who has not entered a test score, rendered a confident red 0%
+   * with every row showing "?" -- scoring the absence of information as
+   * failure.
+   */
+  const add = (label: string, met: boolean | null, weight: number) => {
+    criteria.push({ label, met });
+    if (met === null) return;
+    total += weight;
+    if (met) earned += weight;
+  };
+
   // Eligibility — PE/AA = open to all African students
   const isOpenToAll = scholarship.eligibility_label === 'PE' || scholarship.eligibility_label === 'AA';
-  criteria.push({ label: 'Eligible nationality', met: isOpenToAll ? true : null });
-  if (isOpenToAll) { earned += 35; total += 35; } else { total += 35; }
+  add('Eligible nationality', isOpenToAll ? true : null, 35);
 
   // GPA
   if (scholarship.gpa_minimum) {
     const minGpa = parseFloat(scholarship.gpa_minimum);
     const userGpa = profile.gpa ? parseFloat(String(profile.gpa)) : null;
-    const met = userGpa != null ? userGpa >= minGpa : null;
-    criteria.push({ label: `GPA ≥ ${minGpa}`, met });
-    total += 25;
-    if (met) earned += 25;
+    add(`GPA ≥ ${minGpa}`, userGpa != null ? userGpa >= minGpa : null, 25);
   }
 
   // Experience
   if (scholarship.experience_years_min) {
     const minExp = parseFloat(scholarship.experience_years_min);
     const userExp = profile.experience_years ? parseFloat(String(profile.experience_years)) : null;
-    const met = userExp != null ? userExp >= minExp : null;
-    criteria.push({ label: `${minExp}+ years experience`, met });
-    total += 20;
-    if (met) earned += 20;
+    add(`${minExp}+ years experience`, userExp != null ? userExp >= minExp : null, 20);
   }
 
-  // English proficiency
+  // English proficiency — absence of a recorded test is unknown, not a fail
   if (scholarship.english_requirement) {
     const hasProof = Boolean(profile.has_ielts || profile.has_toefl);
-    criteria.push({ label: 'English proficiency', met: hasProof || null });
-    total += 20;
-    if (hasProof) earned += 20;
+    add('English proficiency', hasProof ? true : null, 20);
   }
 
-  const score = total > 0 ? Math.round((earned / total) * 100) : 100;
-  return { score, criteria };
+  // Null rather than 0 or 100 when nothing is known: the badge shows a
+  // neutral prompt instead of asserting a fit it cannot compute.
+  return { score: total > 0 ? Math.round((earned / total) * 100) : null, criteria };
 }
 
 interface Props {
@@ -86,21 +96,34 @@ export function ProfileFitBadge({ scholarship }: Props) {
   );
   if (!fit) return null;
 
+  // A null score means no criterion could be evaluated. Render it neutrally
+  // rather than as a red 0%, which reads as "you do not qualify".
+  // Held in a local so the null check narrows the number below.
+  const { score } = fit;
   const color =
-    fit.score >= 80 ? 'text-teal' :
-    fit.score >= 50 ? 'text-amber-500' :
+    score === null ? 'text-muted-foreground' :
+    score >= 80 ? 'text-teal' :
+    score >= 50 ? 'text-amber-500' :
     'text-crimson';
   const bg =
-    fit.score >= 80 ? 'bg-teal/10 ring-teal/20' :
-    fit.score >= 50 ? 'bg-amber/10 ring-amber/20' :
+    score === null ? 'bg-muted/30 ring-border/50' :
+    score >= 80 ? 'bg-teal/10 ring-teal/20' :
+    score >= 50 ? 'bg-amber/10 ring-amber/20' :
     'bg-crimson/10 ring-crimson/20';
 
   return (
     <div className={`overflow-hidden rounded-3xl border border-border/50 p-5 backdrop-blur-xl ring-1 ${bg}`}>
       <div className="flex items-center justify-between">
         <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Your profile fit</p>
-        <span className={`text-2xl font-black ${color}`}>{fit.score}%</span>
+        <span className={`font-black ${score === null ? 'text-sm' : 'text-2xl'} ${color}`}>
+          {score === null ? 'Not enough info' : `${score}%`}
+        </span>
       </div>
+      {score === null && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          Nothing below could be checked against your profile yet.
+        </p>
+      )}
       {fit.criteria.length > 0 && (
         <ul className="mt-3 space-y-1.5">
           {fit.criteria.map((c) => (
