@@ -15,7 +15,7 @@ import path from 'path';
 import Papa from 'papaparse';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
-import { eq, count } from 'drizzle-orm';
+import { eq, and, count, notInArray } from 'drizzle-orm';
 import * as schema from '../src/db/schema';
 
 // ── Load .env.local ──────────────────────────────────────────────────────────
@@ -281,16 +281,34 @@ async function main() {
         })
         .returning({ id: schema.scholarships.id });
 
-      // Wire up fields of study
+      // Wire up fields of study. The CSV's Field column is the source of truth,
+      // so associations are replaced rather than only added -- inserting alone
+      // leaves links from a since-removed duplicate row attached forever, and
+      // queries.ts joins these for field filters and counts.
       const fieldNames = (row['Field'] || '').split(',').map(f => f.trim()).filter(Boolean);
+      const fieldIds: number[] = [];
       for (const fieldName of fieldNames) {
         const fieldId = await getOrCreateField(fieldName);
         if (fieldId < 0) continue;
+        fieldIds.push(fieldId);
         await db
           .insert(schema.scholarshipFields)
           .values({ scholarshipId: rec.id, fieldId })
           .onConflictDoNothing();
       }
+
+      // Drop associations this scholarship no longer claims. Scoped to the row
+      // being imported, so scholarships absent from the CSV are left untouched.
+      await db
+        .delete(schema.scholarshipFields)
+        .where(
+          fieldIds.length
+            ? and(
+                eq(schema.scholarshipFields.scholarshipId, rec.id),
+                notInArray(schema.scholarshipFields.fieldId, fieldIds),
+              )
+            : eq(schema.scholarshipFields.scholarshipId, rec.id),
+        );
 
       upserted++;
       process.stdout.write(`  ✓ ${upserted}/${rows.length} — ${name.substring(0, 60)}\r`);
@@ -300,7 +318,10 @@ async function main() {
     }
   }
 
-  console.log(`\n\n✅  Done — ${upserted} upserted, ${skipped} skipped (${rows.length} total)`);
+  console.log(
+    `\n\n${skipped > 0 ? '⚠️ ' : '✅'}  Done — ${upserted} upserted, ` +
+    `${skipped} skipped (${rows.length} total)`,
+  );
   console.log(`    "Roy Priority" scholarships marked as featured (isFeatured = true)`);
 
   // ── Reconcile against what the site actually counts ────────────────────────
@@ -344,6 +365,21 @@ async function main() {
       `\n⚠️   Site count (${activeCount}) != distinct CSV scholarships ` +
       `(${slugGroups.size}) — see the warnings above.`,
     );
+  }
+
+  // Row failures are caught per row so one bad record cannot abort the run, but
+  // resolving normally afterwards would report success to CI even if every row
+  // failed -- a wrong DATABASE_URL would sync nothing and still go green. Fail
+  // the process instead, so an automated import cannot silently do nothing.
+  //
+  // Deliberately not failing on the count mismatch above: orphaned rows are a
+  // data-curation question, not an import failure, and a known pre-CSV record
+  // would leave the workflow permanently red.
+  if (skipped > 0) {
+    console.error(
+      `\n❌  ${skipped} of ${rows.length} row(s) failed to import — see the errors above.`,
+    );
+    process.exit(1);
   }
 }
 
