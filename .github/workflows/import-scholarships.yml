@@ -1,0 +1,92 @@
+# Propagates scholarships_data.csv into Neon.
+#
+# The Google Sheet reads the CSV straight from raw.githubusercontent.com, so it
+# reflects a commit instantly. The website reads Neon, which only changed when
+# someone ran the importer by hand -- that gap is why the dashboard sat at 133
+# while the Sheet showed 168. This closes it.
+#
+# Requires repository secret DATABASE_URL (Neon *pooled* connection string).
+
+name: Import scholarships to Neon
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scholarships_data.csv'
+      - 'web/scripts/import-scholarships-csv.ts'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Report counts without writing to the database'
+        type: boolean
+        default: false
+
+# Two imports writing the same rows concurrently would interleave upserts.
+# Queue them instead, and never cancel one midway through a write.
+concurrency:
+  group: import-scholarships
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+
+      # Fail loudly on a missing secret rather than letting the importer exit 1
+      # with a message that reads like a local .env.local problem.
+      - name: Check DATABASE_URL is configured
+        if: ${{ !inputs.dry_run }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL secret is not set. Add the Neon pooled"
+            echo "::error::connection string under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
+      - name: Import CSV into Neon
+        if: ${{ !inputs.dry_run }}
+        working-directory: web
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npm run db:import:csv
+
+      # dry_run still surfaces the duplicate-name scan and the row/distinct
+      # counts, which need no database connection.
+      - name: Report CSV counts only (dry run)
+        if: ${{ inputs.dry_run }}
+        run: |
+          python3 - <<'PY'
+          import csv, re
+          from collections import Counter
+
+          def slug(n):
+              s = re.sub(r'[^a-z0-9]+', '-', n.lower())
+              return re.sub(r'(^-|-$)+', '', s)[:190]
+
+          rows = list(csv.DictReader(open('scholarships_data.csv', encoding='utf-8')))
+          counts = Counter(slug(r['Scholarship'].strip()) for r in rows if r['Scholarship'].strip())
+          dupes = {k: v for k, v in counts.items() if v > 1}
+
+          print(f'CSV rows ............. {len(rows)}')
+          print(f'Distinct scholarships  {len(counts)}')
+          if dupes:
+              print(f'\nDuplicate names ({len(dupes)}) -- these merge on import:')
+              for k, v in sorted(dupes.items()):
+                  print(f'  {k} (x{v})')
+          PY

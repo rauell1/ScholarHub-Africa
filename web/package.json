@@ -16,6 +16,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:migrate:data": "node scripts/migrate-data.mjs",
     "db:migrate:all": "npm run db:migrate && npm run db:migrate:data",
+    "db:import:csv": "tsx scripts/import-scholarships-csv.ts ../scholarships_data.csv",
     "db:verify": "node scripts/verify-migration.mjs",
     "db:test:local": "node scripts/test-migrate-local.mjs",
     "db:test:queries": "tsx scripts/test-queries-local.ts",

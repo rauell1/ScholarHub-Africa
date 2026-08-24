@@ -15,7 +15,7 @@ import path from 'path';
 import Papa from 'papaparse';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
-import { eq } from 'drizzle-orm';
+import { eq, and, count, notInArray } from 'drizzle-orm';
 import * as schema from '../src/db/schema';
 
 // ── Load .env.local ──────────────────────────────────────────────────────────
@@ -185,7 +185,41 @@ async function main() {
   });
 
   if (errors.length) console.warn('Parse warnings:', errors.slice(0, 3));
-  console.log(`\nImporting ${rows.length} scholarships into Neon...\n`);
+
+  // ── Pre-flight: slug collisions ────────────────────────────────────────────
+  // Rows are upserted on `slug`, which is derived from the Scholarship name
+  // alone. Two rows with the same name collapse into one DB row, so the CSV
+  // row count and the site's scholarship count legitimately differ. Surface
+  // that here instead of leaving it as an unexplained gap on the dashboard.
+  const slugGroups = new Map<string, string[]>();
+  for (const row of rows) {
+    const name = row['Scholarship']?.trim();
+    if (!name) continue;
+    const key = toSlug(name);
+    const ids = slugGroups.get(key) ?? [];
+    ids.push(row['ID']?.trim() || '?');
+    slugGroups.set(key, ids);
+  }
+  const collisions = [...slugGroups.entries()].filter(([, ids]) => ids.length > 1);
+
+  if (collisions.length) {
+    const lost = collisions.reduce((n, [, ids]) => n + ids.length - 1, 0);
+    console.warn(
+      `\n⚠️   ${collisions.length} duplicate scholarship name(s) in the CSV ` +
+      `— ${lost} row(s) will merge into an existing record:`,
+    );
+    for (const [slug, ids] of collisions) {
+      console.warn(`      ${slug}  (CSV IDs: ${ids.join(', ')})`);
+    }
+    console.warn(
+      `\n    Dedupe these rows in scholarships_data.csv if you want the CSV ` +
+      `row count\n    and the site's scholarship count to agree.`,
+    );
+  }
+
+  console.log(
+    `\nImporting ${rows.length} CSV rows → ${slugGroups.size} distinct scholarships into Neon...\n`,
+  );
 
   let upserted = 0;
   let skipped = 0;
@@ -247,16 +281,34 @@ async function main() {
         })
         .returning({ id: schema.scholarships.id });
 
-      // Wire up fields of study
+      // Wire up fields of study. The CSV's Field column is the source of truth,
+      // so associations are replaced rather than only added -- inserting alone
+      // leaves links from a since-removed duplicate row attached forever, and
+      // queries.ts joins these for field filters and counts.
       const fieldNames = (row['Field'] || '').split(',').map(f => f.trim()).filter(Boolean);
+      const fieldIds: number[] = [];
       for (const fieldName of fieldNames) {
         const fieldId = await getOrCreateField(fieldName);
         if (fieldId < 0) continue;
+        fieldIds.push(fieldId);
         await db
           .insert(schema.scholarshipFields)
           .values({ scholarshipId: rec.id, fieldId })
           .onConflictDoNothing();
       }
+
+      // Drop associations this scholarship no longer claims. Scoped to the row
+      // being imported, so scholarships absent from the CSV are left untouched.
+      await db
+        .delete(schema.scholarshipFields)
+        .where(
+          fieldIds.length
+            ? and(
+                eq(schema.scholarshipFields.scholarshipId, rec.id),
+                notInArray(schema.scholarshipFields.fieldId, fieldIds),
+              )
+            : eq(schema.scholarshipFields.scholarshipId, rec.id),
+        );
 
       upserted++;
       process.stdout.write(`  ✓ ${upserted}/${rows.length} — ${name.substring(0, 60)}\r`);
@@ -266,8 +318,69 @@ async function main() {
     }
   }
 
-  console.log(`\n\n✅  Done — ${upserted} upserted, ${skipped} skipped (${rows.length} total)`);
+  console.log(
+    `\n\n${skipped > 0 ? '⚠️ ' : '✅'}  Done — ${upserted} upserted, ` +
+    `${skipped} skipped (${rows.length} total)`,
+  );
   console.log(`    "Roy Priority" scholarships marked as featured (isFeatured = true)`);
+
+  // ── Reconcile against what the site actually counts ────────────────────────
+  // Every public query filters on is_active = true, so this is the number the
+  // homepage renders in "Browse N scholarships". Print it next to the CSV
+  // figures so a mismatch is caught here rather than on the live dashboard.
+  const [activeRow] = await db
+    .select({ n: count() })
+    .from(schema.scholarships)
+    .where(eq(schema.scholarships.isActive, true));
+  const activeCount = activeRow?.n ?? 0;
+
+  const csvSlugs = new Set(slugGroups.keys());
+  const dbActive = await db
+    .select({ slug: schema.scholarships.slug })
+    .from(schema.scholarships)
+    .where(eq(schema.scholarships.isActive, true));
+  const orphans = dbActive.filter((r) => !csvSlugs.has(r.slug));
+
+  console.log(`\n📊  Count reconciliation`);
+  console.log(`    CSV rows ................. ${rows.length}`);
+  console.log(`    Distinct scholarships .... ${slugGroups.size}`);
+  console.log(`    Active in DB (site shows)  ${activeCount}`);
+
+  if (orphans.length) {
+    // The importer only ever inserts or updates — it never deactivates. Rows
+    // dropped from the CSV linger as active records and inflate the count.
+    console.log(
+      `\n⚠️   ${orphans.length} active scholarship(s) in the DB are not in this CSV:`,
+    );
+    for (const o of orphans.slice(0, 20)) console.log(`      ${o.slug}`);
+    if (orphans.length > 20) console.log(`      ... and ${orphans.length - 20} more`);
+    console.log(
+      `\n    The importer never deactivates, so these persist from earlier ` +
+      `imports.\n    Set is_active = false on any that should drop off the site.`,
+    );
+  }
+
+  if (activeCount !== slugGroups.size) {
+    console.log(
+      `\n⚠️   Site count (${activeCount}) != distinct CSV scholarships ` +
+      `(${slugGroups.size}) — see the warnings above.`,
+    );
+  }
+
+  // Row failures are caught per row so one bad record cannot abort the run, but
+  // resolving normally afterwards would report success to CI even if every row
+  // failed -- a wrong DATABASE_URL would sync nothing and still go green. Fail
+  // the process instead, so an automated import cannot silently do nothing.
+  //
+  // Deliberately not failing on the count mismatch above: orphaned rows are a
+  // data-curation question, not an import failure, and a known pre-CSV record
+  // would leave the workflow permanently red.
+  if (skipped > 0) {
+    console.error(
+      `\n❌  ${skipped} of ${rows.length} row(s) failed to import — see the errors above.`,
+    );
+    process.exit(1);
+  }
 }
 
 main().catch(err => { console.error(err); process.exit(1); });
