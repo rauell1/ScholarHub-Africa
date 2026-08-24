@@ -186,6 +186,44 @@ async function main() {
 
   if (errors.length) console.warn('Parse warnings:', errors.slice(0, 3));
 
+  // ── Pre-flight: varchar length limits ──────────────────────────────────────
+  // Postgres rejects an over-long value with 22001 mid-run, which leaves the
+  // import partially applied and buries the cause in a stack trace. These
+  // columns are varchar in the schema, so check them up front and refuse to
+  // write anything until the CSV fits. Every other mapped column is `text`.
+  const VARCHAR_LIMITS: [csvColumn: string, dbColumn: string, limit: number][] = [
+    ['Scholarship', 'name', 300],
+    ['Programme', 'programme', 300],
+    ['University', 'university', 300],
+    ['Official Link', 'official_link', 500],
+  ];
+
+  const oversized = rows.flatMap((row) =>
+    VARCHAR_LIMITS.flatMap(([csvColumn, dbColumn, limit]) => {
+      const value = row[csvColumn]?.trim() ?? '';
+      return value.length > limit
+        ? [{ id: row['ID']?.trim() || '?', name: row['Scholarship']?.trim() ?? '', csvColumn, dbColumn, limit, length: value.length }]
+        : [];
+    }),
+  );
+
+  if (oversized.length) {
+    console.error(
+      `\n❌  ${oversized.length} value(s) exceed a database column limit — nothing was written:`,
+    );
+    for (const o of oversized) {
+      console.error(
+        `      ID ${o.id} "${o.name.substring(0, 40)}" — ${o.csvColumn} → ` +
+        `${o.dbColumn}(${o.limit}): ${o.length} chars`,
+      );
+    }
+    console.error(
+      `\n    Shorten the value in scholarships_data.csv, or move the detail into ` +
+      `\n    "Notes / Action", which maps to an unbounded text column.`,
+    );
+    process.exit(1);
+  }
+
   // ── Pre-flight: slug collisions ────────────────────────────────────────────
   // Rows are upserted on `slug`, which is derived from the Scholarship name
   // alone. Two rows with the same name collapse into one DB row, so the CSV
