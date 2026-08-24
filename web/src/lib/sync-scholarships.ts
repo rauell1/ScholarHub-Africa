@@ -10,6 +10,7 @@ import Papa from 'papaparse';
 import { eq } from 'drizzle-orm';
 import { getDb } from './db';
 import * as schema from '@/db/schema';
+import { VerificationParseError, parseVerification } from './verification';
 
 const GITHUB_CSV_URL =
   'https://raw.githubusercontent.com/rauell1/ScholarHub-Africa/main/scholarships_data.csv';
@@ -170,6 +171,33 @@ export async function syncScholarshipsFromCsv(csvText: string): Promise<SyncResu
   let upserted = 0;
   let skipped = 0;
 
+  // Validate verification columns before writing anything. The per-row catch
+  // below would otherwise skip just the offending row, leaving the sync half
+  // applied with no signal on the site that a record went stale.
+  const verificationErrors = rows.flatMap((row) => {
+    const name = row['Scholarship']?.trim();
+    if (!name) return [];
+    try {
+      parseVerification(row);
+      return [];
+    } catch (err) {
+      if (!(err instanceof VerificationParseError)) throw err;
+      return [`${name}: ${err.message}`];
+    }
+  });
+
+  if (verificationErrors.length) {
+    return {
+      upserted: 0,
+      skipped: rows.length,
+      total: rows.length,
+      errors: [
+        `Aborted before writing: ${verificationErrors.length} row(s) have unusable verification columns.`,
+        ...verificationErrors,
+      ],
+    };
+  }
+
   for (const row of rows) {
     const name = row['Scholarship']?.trim();
     if (!name) { skipped++; continue; }
@@ -201,7 +229,7 @@ export async function syncScholarshipsFromCsv(csvText: string): Promise<SyncResu
           notes: row['Notes / Action']?.trim() || '',
           actionRequired: '',
           officialLink: row['Official Link']?.trim() || '',
-          isVerified: true,
+          ...parseVerification(row),
           isFeatured: row['Category']?.trim() === 'Roy Priority',
         })
         .onConflictDoUpdate({
@@ -220,7 +248,7 @@ export async function syncScholarshipsFromCsv(csvText: string): Promise<SyncResu
             status: parseStatus(row['Status'] || ''),
             notes: row['Notes / Action']?.trim() || '',
             officialLink: row['Official Link']?.trim() || '',
-            isVerified: true,
+            ...parseVerification(row),
             isFeatured: row['Category']?.trim() === 'Roy Priority',
           },
         })

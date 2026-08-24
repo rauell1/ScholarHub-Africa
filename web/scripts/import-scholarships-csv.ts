@@ -17,6 +17,11 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import { eq, and, count, notInArray } from 'drizzle-orm';
 import * as schema from '../src/db/schema';
+import {
+  VERIFIED_COLUMN,
+  VerificationParseError,
+  parseVerification,
+} from '../src/lib/verification';
 
 // ── Load .env.local ──────────────────────────────────────────────────────────
 import { config } from 'dotenv';
@@ -224,6 +229,38 @@ async function main() {
     process.exit(1);
   }
 
+  // ── Pre-flight: verification columns ───────────────────────────────────────
+  // The badge and the homepage's "% human-verified" statistic both read this,
+  // so a malformed value must stop the run rather than resolve to a guess.
+  const badVerification = rows.flatMap((row) => {
+    try {
+      parseVerification(row);
+      return [];
+    } catch (err) {
+      if (!(err instanceof VerificationParseError)) throw err;
+      return [{ id: row['ID']?.trim() || '?', name: row['Scholarship']?.trim() ?? '', message: err.message }];
+    }
+  });
+
+  if (badVerification.length) {
+    console.error(
+      `\n❌  ${badVerification.length} row(s) have unusable verification columns — nothing was written:`,
+    );
+    for (const b of badVerification) {
+      console.error(`      ID ${b.id} "${b.name.substring(0, 40)}" — ${b.message}`);
+    }
+    process.exit(1);
+  }
+
+  if (!(VERIFIED_COLUMN in rows[0])) {
+    // Not fatal: an older CSV still imports, but every row lands unverified
+    // rather than silently inheriting the green badge it used to get for free.
+    console.warn(
+      `\n⚠️   No "${VERIFIED_COLUMN}" column — every row will be marked ` +
+      `unverified.\n    Add the column to restore the human-verified badge.`,
+    );
+  }
+
   // ── Pre-flight: slug collisions ────────────────────────────────────────────
   // Rows are upserted on `slug`, which is derived from the Scholarship name
   // alone. Two rows with the same name collapse into one DB row, so the CSV
@@ -294,7 +331,7 @@ async function main() {
           notes: row['Notes / Action']?.trim() || '',
           actionRequired: '',
           officialLink: row['Official Link']?.trim() || '',
-          isVerified: true,
+          ...parseVerification(row),
           isFeatured: row['Category']?.trim() === 'Roy Priority',
         })
         .onConflictDoUpdate({
@@ -313,7 +350,7 @@ async function main() {
             status: parseStatus(row['Status'] || ''),
             notes: row['Notes / Action']?.trim() || '',
             officialLink: row['Official Link']?.trim() || '',
-            isVerified: true,
+            ...parseVerification(row),
             isFeatured: row['Category']?.trim() === 'Roy Priority',
           },
         })
@@ -361,6 +398,14 @@ async function main() {
     `${skipped} skipped (${rows.length} total)`,
   );
   console.log(`    "Roy Priority" scholarships marked as featured (isFeatured = true)`);
+
+  // The homepage renders this split as "{n}% human-verified data", so print it
+  // here rather than letting the first sight of it be the live statistic.
+  const verifiedRows = rows.filter((row) => parseVerification(row).isVerified).length;
+  console.log(
+    `    ${verifiedRows} verified, ${rows.length - verifiedRows} unverified ` +
+    `(${Math.round((verifiedRows / rows.length) * 100)}% — shown on the homepage)`,
+  );
 
   // ── Reconcile against what the site actually counts ────────────────────────
   // Every public query filters on is_active = true, so this is the number the
