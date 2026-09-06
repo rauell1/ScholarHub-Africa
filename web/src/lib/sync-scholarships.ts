@@ -11,6 +11,7 @@ import { eq } from 'drizzle-orm';
 import { getDb } from './db';
 import * as schema from '@/db/schema';
 import { VerificationParseError, parseVerification } from './verification';
+import { parseDeadline } from './deadline';
 
 const GITHUB_CSV_URL =
   'https://raw.githubusercontent.com/rauell1/ScholarHub-Africa/main/scholarships_data.csv';
@@ -47,15 +48,6 @@ function parseFundingType(raw: string): 'full' | 'partial' | 'tuition' | 'unknow
 function parseEligibility(raw: string): string {
   const clean = raw.trim().toUpperCase().replace(/[^A-Z]/g, '').substring(0, 2);
   return ['PE', 'AA', 'GM', 'CE', 'LE', 'NE'].includes(clean) ? clean : 'PE';
-}
-
-function parseDeadline(raw: string): string | null {
-  const match = raw.match(/(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(\d{4})/i);
-  if (match) {
-    const d = new Date(`${match[2]} ${match[1]} ${match[3]}`);
-    if (!isNaN(d.getTime())) return d.toISOString().split('T')[0];
-  }
-  return null;
 }
 
 function inferRegion(country: string): string {
