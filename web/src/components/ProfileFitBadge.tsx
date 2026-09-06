@@ -56,9 +56,16 @@ export function computeFit(
     add(`${minExp}+ years experience`, userExp != null ? userExp >= minExp : null, 20);
   }
 
-  // English proficiency — absence of a recorded test is unknown, not a fail
+  // English proficiency — absence of any recorded proof is unknown, not a fail.
+  // A degree taught in English counts: many funders in this dataset accept a
+  // Medium of Instruction letter in place of a test (Commonwealth records
+  // "no IELTS required" for Kenyan English-medium education, DAAD EPOS accepts
+  // an MOI letter), and without it an English-medium applicant with no test
+  // score could never satisfy this criterion.
   if (scholarship.english_requirement) {
-    const hasProof = Boolean(profile.has_ielts || profile.has_toefl);
+    const hasProof = Boolean(
+      profile.has_ielts || profile.has_toefl || profile.has_english_medium_instruction,
+    );
     add('English proficiency', hasProof ? true : null, 20);
   }
 

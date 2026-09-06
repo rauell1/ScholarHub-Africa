@@ -50,6 +50,9 @@ export function ProfileEditForm({ profile }: Props) {
     const toeflScore = fd.get('toefl_score') as string;
     if (toeflScore) payload.toefl_score = parseInt(toeflScore, 10);
 
+    payload.has_english_medium_instruction =
+      (fd.get('has_english_medium_instruction') as string) === 'true';
+
     try {
       const res = await fetch('/api/v1/tracker/profile/', {
         method: 'PATCH',
@@ -154,11 +157,29 @@ export function ProfileEditForm({ profile }: Props) {
               <input name="toefl_score" type="number" min={0} max={120} defaultValue={profile.toefl_score ?? ''} placeholder="Score (e.g. 100)" className="input" />
             </div>
           </div>
+          <div className="space-y-2">
+            <label className="mb-1 block text-sm font-semibold text-foreground">
+              Degree taught in English
+            </label>
+            <select
+              name="has_english_medium_instruction"
+              defaultValue={profile.has_english_medium_instruction ? 'true' : 'false'}
+              className="input"
+            >
+              <option value="false">No</option>
+              <option value="true">Yes — Medium of Instruction letter available</option>
+            </select>
+            <p className="text-xs text-muted-foreground">
+              Many funders accept this in place of IELTS or TOEFL — Commonwealth
+              states no IELTS is required for English-medium education, and DAAD
+              EPOS accepts a Medium of Instruction letter.
+            </p>
+          </div>
         </div>
 
         <div className="card space-y-2">
           <label htmlFor="notes" className="mb-1 block text-sm font-semibold text-foreground">Notes (private)</label>
-          <textarea id="notes" name="notes" rows={3} maxLength={2000} defaultValue={profile.full_name ? '' : ''} className="input" placeholder="Anything else you'd like to track about yourself…" />
+          <textarea id="notes" name="notes" rows={3} maxLength={2000} defaultValue={profile.notes} className="input" placeholder="Anything else you'd like to track about yourself…" />
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3">

@@ -151,15 +151,43 @@ describe('computeFit — partial match weighting', () => {
   });
 });
 
-describe('computeFit — Roy: English-medium education, no IELTS/TOEFL', () => {
-  it('cannot credit English proficiency, because only IELTS/TOEFL are recognised', () => {
-    // Documents a real gap rather than asserting desired behaviour: a candidate
-    // taught entirely in English has no field in which to record it, so
-    // `has_ielts`/`has_toefl` stay false and the criterion stays unknown
-    // forever. See the note in ProfileFitBadge about adding a medium-of-
-    // instruction option.
-    const royProfile = { gpa: '2.65', experience_years: '3.0', has_ielts: false, has_toefl: false };
-    const { criteria } = computeFit(royProfile, openScholarship);
+describe('computeFit — English-medium education, no IELTS/TOEFL', () => {
+  // This block previously documented a gap: only has_ielts/has_toefl counted,
+  // so an applicant taught entirely in English had nowhere to record proof and
+  // the criterion stayed unknown permanently. has_english_medium_instruction
+  // closes it.
+  const englishMediumProfile = {
+    gpa: '2.65',
+    experience_years: '3.0',
+    has_ielts: false,
+    has_toefl: false,
+    has_english_medium_instruction: true,
+  };
+
+  it('credits English proficiency from a Medium of Instruction record', () => {
+    const { criteria } = computeFit(englishMediumProfile, openScholarship);
+    expect(criteria.find((c) => c.label === 'English proficiency')?.met).toBe(true);
+  });
+
+  it('still reports unknown when no proof of any kind is recorded', () => {
+    const { criteria } = computeFit(
+      { ...englishMediumProfile, has_english_medium_instruction: false },
+      openScholarship,
+    );
     expect(criteria.find((c) => c.label === 'English proficiency')?.met).toBeNull();
+  });
+
+  it('lifts the score for an otherwise unscoreable scholarship', () => {
+    // CE eligibility with an English requirement and no test score was the
+    // DAAD EPOS case that rendered "Not enough info": nothing was evaluable.
+    // An English-medium record now makes the one decidable criterion pass.
+    const daadEpos = {
+      gpa_minimum: null,
+      experience_years_min: null,
+      english_requirement: 'English taught; Medium of Instruction letter accepted',
+      eligibility_label: 'CE',
+    };
+    expect(computeFit({ has_english_medium_instruction: false }, daadEpos).score).toBeNull();
+    expect(computeFit({ has_english_medium_instruction: true }, daadEpos).score).toBe(100);
   });
 });
