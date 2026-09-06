@@ -1,0 +1,1 @@
+ALTER TABLE "applicant_profiles" ADD COLUMN "has_english_medium_instruction" boolean DEFAULT false NOT NULL;

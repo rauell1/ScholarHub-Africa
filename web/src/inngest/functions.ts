@@ -131,8 +131,17 @@ export const processCsvUpload = inngest.createFunction(
               notes: item.notes,
               actionRequired: item.action_required,
               officialLink: item.official_link,
-              isVerified: true,
-              status: 'open',
+              // These records are LLM output from an uploaded CSV, so neither
+              // claim can be made on their behalf. isVerified drives the
+              // "Human-verified" badge and the homepage's "% human-verified"
+              // statistic; status 'open' counted a record in the "N open now"
+              // badge even though this path never sets deadlineDate, so a
+              // scholarship with no known deadline was advertised as open.
+              // 'unknown' is the schema default and what parseStatus returns
+              // for unrecognised input, so the detail page shows the
+              // "Not verified - cross-check official site" state instead.
+              isVerified: false,
+              status: 'unknown',
             })
             .onConflictDoUpdate({
               target: scholarships.slug,

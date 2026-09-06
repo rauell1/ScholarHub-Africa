@@ -121,7 +121,9 @@ export interface ProfileRow {
   has_ielts: boolean;
   ielts_score: string | null;
   has_toefl: boolean;
+  has_english_medium_instruction: boolean;
   toefl_score: number | null;
+  notes: string;
   documents_ready: number;
   documents_total: number;
   documents_progress: number;
@@ -178,7 +180,9 @@ export async function getOrCreateProfile(
     has_ielts: row?.hasIelts ?? false,
     ielts_score: row?.ieltsScore ?? null,
     has_toefl: row?.hasToefl ?? false,
+    has_english_medium_instruction: row?.hasEnglishMediumInstruction ?? false,
     toefl_score: row?.toeflScore ?? null,
+    notes: row?.notes ?? '',
     documents_ready: ready,
     documents_total: total,
     documents_progress: total ? Math.round((100 * ready) / total) : 0,
@@ -195,6 +199,7 @@ export type ProfileUpdate = Partial<{
   has_ielts: boolean;
   ielts_score: string | null;
   has_toefl: boolean;
+  has_english_medium_instruction: boolean;
   toefl_score: number | null;
   notes: string;
 }>;
@@ -214,6 +219,8 @@ export async function updateProfile(
   if (data.has_ielts !== undefined) patch.hasIelts = data.has_ielts;
   if (data.ielts_score !== undefined) patch.ieltsScore = data.ielts_score;
   if (data.has_toefl !== undefined) patch.hasToefl = data.has_toefl;
+  if (data.has_english_medium_instruction !== undefined)
+    patch.hasEnglishMediumInstruction = data.has_english_medium_instruction;
   if (data.toefl_score !== undefined) patch.toeflScore = data.toefl_score;
   if (data.notes !== undefined) patch.notes = data.notes;
   if (Object.keys(patch).length === 0) return getProfile(userId, client);
@@ -256,7 +263,9 @@ export async function getProfile(
     has_ielts: row.hasIelts,
     ielts_score: row.ieltsScore,
     has_toefl: row.hasToefl,
+    has_english_medium_instruction: row.hasEnglishMediumInstruction,
     toefl_score: row.toeflScore,
+    notes: row.notes,
     documents_ready: ready,
     documents_total: total,
     documents_progress: total ? Math.round((100 * ready) / total) : 0,

@@ -290,6 +290,15 @@ export const applicantProfiles = pgTable(
     ieltsScore: numeric('ielts_score', { precision: 3, scale: 1 }),
     hasToefl: boolean('has_toefl').notNull().default(false),
     toeflScore: smallint('toefl_score'),
+    /** Degree taught in English (Medium of Instruction letter). Accepted in
+     *  place of a test by many funders in this dataset -- Commonwealth records
+     *  "Kenyan English-medium education accepted by CSC UK - no IELTS
+     *  required", DAAD EPOS "Medium of Instruction letter accepted". Without
+     *  this, an English-medium applicant with no test score had no way to
+     *  record proof and the fit criterion stayed unknown permanently. */
+    hasEnglishMediumInstruction: boolean('has_english_medium_instruction')
+      .notNull()
+      .default(false),
     notes: text('notes').notNull().default(''),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },

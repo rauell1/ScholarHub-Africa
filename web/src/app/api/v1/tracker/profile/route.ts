@@ -42,6 +42,7 @@ const profilePatchSchema = z.object({
   ielts_score: z.string().max(10).nullable().optional(),
   has_toefl: z.boolean().optional(),
   toefl_score: z.number().int().min(0).max(120).nullable().optional(),
+  has_english_medium_instruction: z.boolean().optional(),
   notes: z.string().max(2000).optional(),
 });
 
