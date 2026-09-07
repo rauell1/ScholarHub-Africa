@@ -56,7 +56,21 @@ function describeDsn(dsn: string | undefined) {
 
 export async function GET(request: NextRequest) {
   if (!authorized(request)) {
-    return NextResponse.json({ detail: 'Unauthorized.' }, { status: 401 });
+    // Report *whether* a secret exists, never its value. Without this a 401
+    // has two indistinguishable causes: the deployment has no CRON_SECRET (so
+    // no request can ever pass, and Vercel's own cron invocations are 401ing
+    // too), or the caller sent the wrong one. The boolean separates them in a
+    // single request and discloses nothing a guesser could use.
+    return NextResponse.json(
+      {
+        detail: 'Unauthorized.',
+        cronSecretConfigured: Boolean(process.env.CRON_SECRET),
+        hint: process.env.CRON_SECRET
+          ? 'A CRON_SECRET is set in this deployment but the Authorization header did not match it. Send exactly `Authorization: Bearer <the value in Vercel → Settings → Environment Variables>`; a local .env.local value is unrelated to what the deployment sees.'
+          : 'No CRON_SECRET in this deployment, so every caller is rejected and the three Vercel crons in vercel.json are 401ing on every run — including the Monday digest. Add CRON_SECRET in Vercel → Settings → Environment Variables (Production) and redeploy; server env vars are only picked up by a new deployment.',
+      },
+      { status: 401, headers: NO_CACHE },
+    );
   }
 
   const dsn = describeDsn(process.env.NEXT_PUBLIC_SENTRY_DSN);

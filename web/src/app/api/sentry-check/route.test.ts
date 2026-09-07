@@ -45,6 +45,27 @@ describe('GET /api/sentry-check', () => {
     expect((await GET(req())).status).toBe(401);
   });
 
+  it('says a secret IS configured when the header merely mismatches', async () => {
+    const body = await (await GET(req('Bearer nope'))).json();
+    expect(body.cronSecretConfigured).toBe(true);
+    expect(body.hint).toMatch(/did not match/);
+  });
+
+  it('says no secret is configured, and that the crons are failing too', async () => {
+    delete process.env.CRON_SECRET;
+    const body = await (await GET(req('Bearer anything'))).json();
+    expect(body.cronSecretConfigured).toBe(false);
+    // The reason this matters beyond the check route itself.
+    expect(body.hint).toMatch(/crons/);
+  });
+
+  it('never echoes the secret back, however the request fails', async () => {
+    for (const auth of [undefined, 'Bearer nope', 'test-secret']) {
+      const raw = JSON.stringify(await (await GET(req(auth))).json());
+      expect(raw).not.toContain('test-secret');
+    }
+  });
+
   it('reports the DSN project id and public key so a mismatch is visible', async () => {
     process.env.NEXT_PUBLIC_SENTRY_DSN =
       'https://3b3364c9019540b2f257441a58b08864@o4511913956343808.ingest.de.sentry.io/4599887766';
