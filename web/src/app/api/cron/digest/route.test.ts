@@ -113,9 +113,55 @@ describe('GET /api/cron/digest', () => {
     });
   });
 
-  it('reports a Resend outage rather than claiming success', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => new Response('nope', { status: 422 })));
-    const res = await GET(req());
-    expect(res.status).toBe(502);
+  describe('when Resend rejects the send', () => {
+    it('reports an outage rather than claiming success', async () => {
+      vi.stubGlobal('fetch', vi.fn(async () => new Response('nope', { status: 422 })));
+
+      const res = await GET(req());
+      const body = await res.json();
+
+      expect(res.status).toBe(502);
+      expect(body).toMatchObject({ ok: false, sent_to: 0, failed_batches: 1 });
+    });
+
+    it('raises the Resend status and body in Sentry', async () => {
+      // The realistic case: an unverified `from` domain rejects every batch
+      // identically, and this used to reach console.error and nowhere else.
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => new Response('{"message":"domain is not verified"}', { status: 403 })),
+      );
+
+      await GET(req());
+
+      expect(captureException).toHaveBeenCalledOnce();
+      const [err] = captureException.mock.calls[0] as unknown as [Error];
+      expect(err.message).toMatch(/HTTP 403/);
+      expect(err.message).toMatch(/domain is not verified/);
+    });
+
+    it('counts only accepted recipients when one batch of several fails', async () => {
+      // 60 recipients => two batches; fail the first, accept the second.
+      dbEmails.mockReturnValue(
+        Array.from({ length: 60 }, (_, i) => ({ email: `s${i}@example.com` })),
+      );
+      process.env.DIGEST_EMAILS = '';
+      let call = 0;
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => {
+          call += 1;
+          return call === 1 ? new Response('nope', { status: 500 }) : new Response('{}', { status: 200 });
+        }),
+      );
+
+      const body = await (await GET(req())).json();
+
+      expect(body.batches).toBe(2);
+      expect(body.failed_batches).toBe(1);
+      // Not 60: the first 50 were rejected.
+      expect(body.sent_to).toBe(10);
+      expect(body.ok).toBe(false);
+    });
   });
 });

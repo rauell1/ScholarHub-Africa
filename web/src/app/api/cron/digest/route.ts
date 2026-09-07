@@ -99,6 +99,7 @@ export async function GET(request: NextRequest) {
     }
 
     let failedBatches = 0;
+    let deliveredTo = 0;
     for (const batch of batches) {
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -111,14 +112,32 @@ export async function GET(request: NextRequest) {
       if (!res.ok) {
         const errBody = await res.text();
         console.error('[cron/digest] Resend batch error', res.status, errBody);
+        // Reported, not merely logged. With a key present and recipients
+        // resolved, a rejected send is the remaining way a digest still
+        // reaches nobody -- an unverified `from` domain, for instance, fails
+        // every batch identically -- and console.error left that invisible.
+        // The text is Resend's own error body; it carries no credential.
+        Sentry.captureException(
+          new Error(`Resend rejected a digest batch: HTTP ${res.status} ${errBody.slice(0, 200)}`),
+          { tags: { cron: 'digest', resend_status: String(res.status) }, level: 'error' },
+        );
         failedBatches++;
+      } else {
+        deliveredTo += batch.length;
       }
     }
 
+    if (failedBatches > 0) await Sentry.flush(2000);
+
     if (failedBatches === batches.length) {
-      return NextResponse.json({ detail: 'Email delivery failed for all batches.' }, { status: 502 });
+      return NextResponse.json(
+        { ok: false, sent_to: 0, batches: batches.length, failed_batches: failedBatches, detail: 'Email delivery failed for all batches.' },
+        { status: 502 },
+      );
     }
-    return NextResponse.json({ ok: true, sent_to: recipients.length, batches: batches.length, failed_batches: failedBatches, subject });
+    // sent_to counts who was actually accepted, not the size of the list: a
+    // partial failure used to report the full count behind ok:true.
+    return NextResponse.json({ ok: failedBatches === 0, sent_to: deliveredTo, batches: batches.length, failed_batches: failedBatches, subject });
   } catch (err) {
     console.error('[cron/digest]', err);
     // onRequestError only sees errors that escape the handler, so a caught
