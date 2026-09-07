@@ -6,12 +6,13 @@ import { redirect } from 'next/navigation';
 import Papa from 'papaparse';
 import { inngest } from '@/inngest/client';
 import { getDb } from '@/lib/db';
+import { isAdmin } from '@/lib/admin';
 import { csvUploads } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import type { Session } from 'next-auth';
 
 function requireAdmin(session: Session | null) {
-  if (!session?.user?.email || session.user.email !== 'royokola3@gmail.com') {
+  if (!isAdmin(session)) {
     throw new Error('Unauthorized');
   }
 }
