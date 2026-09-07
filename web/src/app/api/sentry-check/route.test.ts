@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const captureException = vi.fn(() => 'evt_abc123');
 const flush = vi.fn(async () => true);
 const getClient = vi.fn(() => ({}) as unknown);
+const auth = vi.fn(async () => null as unknown);
 
 vi.mock('@sentry/nextjs', () => ({
   captureException: (...args: unknown[]) => captureException(...(args as [])),
@@ -10,7 +11,14 @@ vi.mock('@sentry/nextjs', () => ({
   getClient: () => getClient(),
 }));
 
+vi.mock('@/auth', () => ({ auth: () => auth() }));
+
 const { GET } = await import('./route');
+const { ADMIN_EMAIL } = await import('@/lib/admin');
+
+function adminSession() {
+  return { user: { email: ADMIN_EMAIL } };
+}
 
 function req(auth?: string) {
   return new Request('https://example.com/api/sentry-check', {
@@ -23,6 +31,33 @@ describe('GET /api/sentry-check', () => {
     vi.clearAllMocks();
     process.env.CRON_SECRET = 'test-secret';
     delete process.env.NEXT_PUBLIC_SENTRY_DSN;
+    auth.mockResolvedValue(null);
+  });
+
+  it('lets the signed-in admin through without the secret', async () => {
+    auth.mockResolvedValue(adminSession());
+    const res = await GET(req());
+    expect(res.status).toBe(200);
+    expect(captureException).toHaveBeenCalledOnce();
+  });
+
+  it('rejects a signed-in non-admin', async () => {
+    auth.mockResolvedValue({ user: { email: 'someone.else@example.com' } });
+    expect((await GET(req())).status).toBe(401);
+    expect(captureException).not.toHaveBeenCalled();
+  });
+
+  it('still accepts the cron secret when nobody is signed in', async () => {
+    expect((await GET(req('Bearer test-secret'))).status).toBe(200);
+  });
+
+  it('reports dsnConfigured on the 401 path too', async () => {
+    const unset = await (await GET(req())).json();
+    expect(unset.dsnConfigured).toBe(false);
+
+    process.env.NEXT_PUBLIC_SENTRY_DSN = 'https://key@o1.ingest.sentry.io/2';
+    const set = await (await GET(req())).json();
+    expect(set.dsnConfigured).toBe(true);
   });
 
   it('rejects an unauthenticated request without raising an event', async () => {
