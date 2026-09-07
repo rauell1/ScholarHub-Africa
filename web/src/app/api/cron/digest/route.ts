@@ -53,13 +53,24 @@ export async function GET(request: NextRequest) {
     }
     const recipients = [...new Set([...envRecipients, ...dbEmails])];
 
-    const from = process.env.DEFAULT_FROM_EMAIL ?? 'ScholarHub Africa <digest@scholarhub.africa>';
+    // The fallback sends from scholarhub.africa, a domain this project does
+    // not own. Resend only accepts a `from` on a domain verified in Resend
+    // itself, so in production that fallback is guaranteed to be rejected --
+    // it is a default that cannot work, which is worse than none.
+    const fromEnv = process.env.DEFAULT_FROM_EMAIL;
+    const from = fromEnv ?? 'ScholarHub Africa <digest@scholarhub.africa>';
     const subject = `📚 Scholarship Digest - Week of ${context.generatedOn}`;
 
-    if (!resendKey || recipients.length === 0) {
-      const reason = !resendKey
-        ? 'RESEND_API_KEY is not set'
-        : 'there are no recipients (DIGEST_EMAILS is empty and no newsletter subscribers are stored)';
+    const blocker = !resendKey
+      ? 'RESEND_API_KEY is not set'
+      : recipients.length === 0
+        ? 'there are no recipients (DIGEST_EMAILS is empty and no newsletter subscribers are stored)'
+        : !fromEnv
+          ? 'DEFAULT_FROM_EMAIL is not set, and the built-in fallback sends from a domain this project does not own, which Resend rejects'
+          : null;
+
+    if (blocker) {
+      const reason = blocker;
 
       // Local and preview runs legitimately have no mail credentials.
       if (process.env.NODE_ENV !== 'production') {

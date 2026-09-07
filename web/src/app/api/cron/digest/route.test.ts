@@ -46,6 +46,7 @@ describe('GET /api/cron/digest', () => {
     process.env.CRON_SECRET = 'test-secret';
     process.env.RESEND_API_KEY = 'rk_test';
     process.env.DIGEST_EMAILS = 'someone@example.com';
+    process.env.DEFAULT_FROM_EMAIL = 'ScholarHub Africa <info@rauell.systems>';
     dbEmails.mockReturnValue([]);
   });
 
@@ -97,6 +98,23 @@ describe('GET /api/cron/digest', () => {
       expect(res.status).toBe(500);
       expect(body.detail).toMatch(/no recipients/);
       expect(captureException).toHaveBeenCalledOnce();
+    });
+
+    it('refuses to send from the unowned fallback domain in production', async () => {
+      // The fallback is `digest@scholarhub.africa`, which Resend rejects
+      // because the domain is not verified there. Sending anyway just burns
+      // the run; failing names the missing variable instead.
+      setNodeEnv('production');
+      delete process.env.DEFAULT_FROM_EMAIL;
+
+      const res = await GET(req());
+      const body = await res.json();
+
+      expect(res.status).toBe(500);
+      expect(body.detail).toMatch(/DEFAULT_FROM_EMAIL is not set/);
+      expect(captureException).toHaveBeenCalledOnce();
+      // Nothing was attempted, so no quota was spent on a doomed send.
+      expect(fetch).not.toHaveBeenCalled();
     });
 
     it('still dry-runs quietly outside production', async () => {
