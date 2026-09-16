@@ -15,7 +15,15 @@ const DIRECTORIES = [
 const DIRECT_LINKS = [
   'https://apply.unicaf.org/refer-a-friend/en?refcode=SNDIW465zF',
   'https://mastercardfdn.org/all/scholars/becoming-a-scholar/apply-to-the-scholars-program/',
+  'https://www.chevening.org/scholarship/',
 ];
+
+// Extraction model, kept separate from the CSV-upload pipeline's model
+// (src/inngest/functions.ts) so each pipeline's model can be tuned
+// independently. meta/llama-3.2-90b-vision-instruct also accepts
+// text-only prompts, so it's a drop-in for the larger/vision-capable
+// model without adding image handling.
+const CRAWL_MODEL = process.env.NVIDIA_CRAWL_MODEL || 'meta/llama-3.3-70b-instruct';
 
 /* ─────────────────────────────────────────────────────────────────────────
  * Step 1: Discovery — triggered by Vercel Cron. Scrapes directories,
@@ -106,7 +114,7 @@ export const processScholarshipLink = inngest.createFunction(
       });
 
       const completion = await client.chat.completions.create({
-        model: 'meta/llama-3.3-70b-instruct',
+        model: CRAWL_MODEL,
         messages: [
           {
             role: 'system',
