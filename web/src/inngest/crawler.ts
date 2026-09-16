@@ -12,10 +12,22 @@ const DIRECTORIES = [
   'https://www.opportunitiesforafricans.com/category/scholarships/',
 ];
 
+// NOTE: these were added from general knowledge of each programme's
+// canonical page, not verified live from this environment (outbound
+// fetches to daad.de/fulbrightonline.org/gatescambridge.org/rhodeshouse.ox.ac.uk
+// are blocked by this sandbox's network egress proxy). Confirm each URL
+// still resolves and still describes the programme before relying on it -
+// a dead or redirected link just yields zero scholarships from that
+// entry, but a page that now covers something else could feed the LLM
+// extractor wrong data.
 const DIRECT_LINKS = [
   'https://apply.unicaf.org/refer-a-friend/en?refcode=SNDIW465zF',
   'https://mastercardfdn.org/all/scholars/becoming-a-scholar/apply-to-the-scholars-program/',
   'https://www.chevening.org/scholarship/',
+  'https://www.daad.de/en/study-and-research-in-germany/scholarships/daad-scholarships/',
+  'https://foreign.fulbrightonline.org/about/foreign-fulbright',
+  'https://www.gatescambridge.org/apply/',
+  'https://www.rhodeshouse.ox.ac.uk/scholarships/the-rhodes-scholarship/',
 ];
 
 // Extraction model, kept separate from the CSV-upload pipeline's model
