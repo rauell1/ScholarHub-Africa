@@ -53,7 +53,9 @@ const SEARCH_QUERIES = [
   'fulbright foreign student program 2026 apply',
 ];
 
-// Brave's free tier is rate-limited to ~1 request/second.
+// Small, deliberately conservative gap between queries - the paid Search
+// tier's capacity (50 req/s) makes this unnecessary for throughput, but
+// keeps a nightly batch of ~9 queries from bursting all at once.
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
