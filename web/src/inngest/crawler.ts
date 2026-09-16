@@ -37,6 +37,46 @@ const DIRECT_LINKS = [
 // model without adding image handling.
 const CRAWL_MODEL = process.env.NVIDIA_CRAWL_MODEL || 'meta/llama-3.3-70b-instruct';
 
+// Search queries for discovery beyond the hardcoded directories/links above.
+// Unlike DIRECTORIES (which needs a hand-written cheerio selector per site)
+// this scales to any provider a query happens to surface, at the cost of
+// noisier results — hence the is_scholarship guard in the extract step below.
+const SEARCH_QUERIES = [
+  'fully funded masters scholarship 2026 apply',
+  'fully funded scholarship for international students 2026',
+  'scholarship for african students masters 2026',
+  'chevening scholarship 2026 apply',
+  'daad scholarship application deadline 2026',
+  'gates cambridge scholarship 2026',
+  'rhodes scholarship 2026 apply',
+  'mastercard foundation scholars program 2026',
+  'fulbright foreign student program 2026 apply',
+];
+
+// Brave's free tier is rate-limited to ~1 request/second.
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function searchBrave(query: string): Promise<string[]> {
+  const apiKey = process.env.BRAVE_SEARCH_API_KEY;
+  if (!apiKey) return [];
+
+  const res = await fetch(
+    `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=10`,
+    { headers: { Accept: 'application/json', 'X-Subscription-Token': apiKey } },
+  );
+  if (!res.ok) {
+    console.error('Brave search failed:', query, res.status, await res.text().catch(() => ''));
+    return [];
+  }
+
+  const data = (await res.json()) as { web?: { results?: Array<{ url?: string }> } };
+  return (data.web?.results ?? [])
+    .map((r) => r.url)
+    .filter((u): u is string => Boolean(u));
+}
+
 /* ─────────────────────────────────────────────────────────────────────────
  * Step 1: Discovery — triggered by Vercel Cron. Scrapes directories,
  * deduplicates against the DB, then fans out one `crawl.process` event
@@ -77,16 +117,32 @@ export const discoverScholarships = inngest.createFunction(
       return [...new Set(links)];
     });
 
-    if (discovered.length === 0) return { dispatched: 0 };
+    const searchDiscovered = await step.run('search-discover', async () => {
+      if (!process.env.BRAVE_SEARCH_API_KEY) return [];
+
+      const links: string[] = [];
+      for (const query of SEARCH_QUERIES) {
+        try {
+          links.push(...(await searchBrave(query)));
+        } catch (e) {
+          console.error('Brave search failed:', query, e);
+        }
+        await sleep(1100);
+      }
+      return [...new Set(links)];
+    });
+
+    const allDiscovered = [...new Set([...discovered, ...searchDiscovered])];
+    if (allDiscovered.length === 0) return { dispatched: 0 };
 
     const newLinks = await step.run('filter-existing', async () => {
       const db = getDb();
       const existing = await db.query.scholarships.findMany({
-        where: inArray(scholarships.officialLink, discovered),
+        where: inArray(scholarships.officialLink, allDiscovered),
         columns: { officialLink: true },
       });
       const existingSet = new Set(existing.map((e) => e.officialLink));
-      return discovered.filter((l) => !existingSet.has(l));
+      return allDiscovered.filter((l) => !existingSet.has(l));
     });
 
     if (newLinks.length === 0) return { dispatched: 0 };
@@ -135,8 +191,14 @@ export const processScholarshipLink = inngest.createFunction(
           },
           {
             role: 'user',
-            content: `Extract scholarship details into JSON:
+            content: `This page was found by a search crawler and may not actually be about a
+specific scholarship (it could be a news article, forum post, expired
+listing, or unrelated page). First decide whether it genuinely describes
+one specific scholarship programme a student could apply to.
+
+Extract scholarship details into JSON:
 {
+  "is_scholarship": true or false,
   "name": "Full name",
   "short_name": "Short name",
   "programme": "Degree level",
@@ -152,6 +214,8 @@ export const processScholarshipLink = inngest.createFunction(
   "notes": "Compelling Markdown overview"
 }
 
+If is_scholarship is false, the other fields can be empty/null.
+
 Text: ${text}`,
           },
         ],
@@ -160,6 +224,8 @@ Text: ${text}`,
 
       return JSON.parse(completion.choices[0].message.content ?? '{}') as Record<string, unknown>;
     });
+
+    if (extracted.is_scholarship === false) return;
 
     await step.run('save', async () => {
       const db = getDb();
