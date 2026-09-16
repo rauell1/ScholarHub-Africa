@@ -2,8 +2,10 @@ import { inngest } from './client';
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
+import { revalidateTag } from 'next/cache';
 import { getDb } from '@/lib/db';
 import { scholarships, countries, csvUploads } from '@/db/schema';
+import { SCHOLARSHIP_DATA_TAG } from '@/lib/queries';
 import { eq, sql } from 'drizzle-orm';
 
 const ScholarshipDataSchema = z.object({
@@ -161,6 +163,8 @@ export const processCsvUpload = inngest.createFunction(
         await db.update(csvUploads)
           .set({ totalProcessed: sql`total_processed + ${batchResult.scholarships.length}` })
           .where(eq(csvUploads.id, uploadId));
+
+        revalidateTag(SCHOLARSHIP_DATA_TAG);
       });
     }
 

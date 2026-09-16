@@ -15,6 +15,7 @@
  * against an in-memory Postgres (see scripts/test-queries-local.ts) and are
  * lazy over DATABASE_URL (getDb() throws only when used without it).
  */
+import { unstable_cache } from 'next/cache';
 import {
   and,
   asc,
@@ -752,3 +753,39 @@ export async function getRelatedScholarships(
   const fieldMap = await fetchFieldSlugs(client, rows.map((r) => r.id));
   return rows.map((row) => toListRow(row, fieldMap.get(row.id) ?? []));
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Cached homepage reads.
+ *
+ * The homepage is anonymous/un-personalised (aside from geo, which reads
+ * headers/cookies directly and is never cached), so it doesn't need a fresh
+ * DB round trip on every visit — the underlying data only changes when the
+ * crawler, CSV upload, or an admin edit writes to it. Callers that mutate
+ * scholarships/countries/fields should call `revalidateTag(SCHOLARSHIP_DATA_TAG)`
+ * so the homepage picks up the change immediately instead of waiting out
+ * the TTL below.
+ * ───────────────────────────────────────────────────────────────────────── */
+export const SCHOLARSHIP_DATA_TAG = 'scholarship-data';
+const HOME_CACHE_REVALIDATE_SECONDS = 600;
+
+export const getHomeStatsCached = unstable_cache(() => getHomeStats(), ['home-stats'], {
+  revalidate: HOME_CACHE_REVALIDATE_SECONDS,
+  tags: [SCHOLARSHIP_DATA_TAG],
+});
+
+export const getCountriesCached = unstable_cache(
+  (opts: { activeOnly?: boolean } = {}) => getCountries(opts),
+  ['home-countries'],
+  { revalidate: HOME_CACHE_REVALIDATE_SECONDS, tags: [SCHOLARSHIP_DATA_TAG] },
+);
+
+export const getFieldsCached = unstable_cache(() => getFields(), ['home-fields'], {
+  revalidate: HOME_CACHE_REVALIDATE_SECONDS,
+  tags: [SCHOLARSHIP_DATA_TAG],
+});
+
+export const getTopPicksCached = unstable_cache(
+  (limit: number) => queryScholarshipCards({ status: ['open'], ordering: '-score', limit }),
+  ['home-top-picks'],
+  { revalidate: HOME_CACHE_REVALIDATE_SECONDS, tags: [SCHOLARSHIP_DATA_TAG] },
+);

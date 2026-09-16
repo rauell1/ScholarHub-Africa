@@ -1,7 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { lt, and, eq, ne } from 'drizzle-orm';
+import { revalidateTag } from 'next/cache';
 import { getDb } from '@/lib/db';
 import { scholarships } from '@/db/schema';
+import { SCHOLARSHIP_DATA_TAG } from '@/lib/queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,6 +39,8 @@ export async function GET(request: NextRequest) {
         ),
       )
       .returning({ id: scholarships.id, slug: scholarships.slug });
+
+    if (updated.length > 0) revalidateTag(SCHOLARSHIP_DATA_TAG);
 
     console.log(`[cron/close-expired] closed ${updated.length} scholarships`);
     return NextResponse.json({ ok: true, closed: updated.length, ids: updated.map((r) => r.id) });
