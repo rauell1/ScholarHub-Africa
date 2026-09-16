@@ -1,9 +1,11 @@
 import * as cheerio from 'cheerio';
 import OpenAI from 'openai';
 import { eq, inArray } from 'drizzle-orm';
+import { revalidateTag } from 'next/cache';
 import { inngest } from './client';
 import { getDb } from '@/lib/db';
 import { scholarships, countries } from '@/db/schema';
+import { SCHOLARSHIP_DATA_TAG } from '@/lib/queries';
 
 const DIRECTORIES = [
   'https://www.scholars4dev.com/category/scholarships-for-africans/',
@@ -184,6 +186,8 @@ Text: ${text}`,
           verifiedSource: 'NVIDIA AI Crawl',
         })
         .onConflictDoNothing();
+
+      revalidateTag(SCHOLARSHIP_DATA_TAG);
     });
   },
 );

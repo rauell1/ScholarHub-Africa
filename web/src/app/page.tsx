@@ -7,10 +7,8 @@ import { ScholarshipCard } from '@/components/scholarships/ScholarshipCard';
 import { StickyCta } from '@/components/scholarships/StickyCta';
 import { Testimonials } from '@/components/Testimonials';
 import { getUserGeo } from '@/lib/geo';
-import { getCountries, getFields, getHomeStats, queryScholarshipCards } from '@/lib/queries';
+import { getCountriesCached, getFieldsCached, getHomeStatsCached, getTopPicksCached } from '@/lib/queries';
 import { site } from '@/lib/site';
-
-export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'ScholarHub Africa - Scholarships for African Students',
@@ -20,19 +18,18 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [stats, countries, fields, geo] = await Promise.all([
-    getHomeStats(),
-    getCountries({ activeOnly: true }).catch(() => [] as Awaited<ReturnType<typeof getCountries>>),
-    getFields().catch(() => [] as Awaited<ReturnType<typeof getFields>>),
+  const [stats, countries, fields, geo, topPicks] = await Promise.all([
+    getHomeStatsCached(),
+    getCountriesCached({ activeOnly: true }).catch(
+      () => [] as Awaited<ReturnType<typeof getCountriesCached>>,
+    ),
+    getFieldsCached().catch(() => [] as Awaited<ReturnType<typeof getFieldsCached>>),
     getUserGeo(),
+    // Top picks: top-scored open scholarships for the geo personalisation strip
+    getTopPicksCached(3).catch(() => []),
   ]);
 
   const hasStats = stats.scholarships > 0;
-
-  // Top picks: top-scored open scholarships for the geo personalisation strip
-  const topPicks = await queryScholarshipCards(
-    { status: ['open'], ordering: '-score', limit: 3 },
-  ).catch(() => []);
 
   const searchHints: SearchHint[] = [
     ...countries.map((c) => ({

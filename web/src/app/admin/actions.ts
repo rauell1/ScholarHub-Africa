@@ -1,13 +1,14 @@
 'use server'
 
 import { auth } from '@/auth';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import Papa from 'papaparse';
 import { inngest } from '@/inngest/client';
 import { getDb } from '@/lib/db';
 import { isAdmin } from '@/lib/admin';
 import { csvUploads } from '@/db/schema';
+import { SCHOLARSHIP_DATA_TAG } from '@/lib/queries';
 import { eq } from 'drizzle-orm';
 import type { Session } from 'next-auth';
 
@@ -91,6 +92,7 @@ export async function syncFromGitHubAction() {
   const { fetchAndSyncFromGitHub } = await import('@/lib/sync-scholarships');
   const result = await fetchAndSyncFromGitHub();
 
+  revalidateTag(SCHOLARSHIP_DATA_TAG);
   revalidatePath('/admin');
   return result;
 }
