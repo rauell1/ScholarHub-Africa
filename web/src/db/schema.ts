@@ -459,3 +459,18 @@ export const trackedApplicationsRelations = relations(trackedApplications, ({ on
     references: [scholarships.id],
   }),
 }));
+
+/* ── API Keys ───────────────────────────────────────────────────────────── */
+
+export const apiKeys = pgTable(
+  'api_keys',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    clientName: varchar('client_name', { length: 200 }).notNull(),
+    token: varchar('token', { length: 255 }).notNull().unique(),
+    isActive: boolean('is_active').notNull().default(true),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('api_keys_token_idx').on(t.token)],
+);
+
