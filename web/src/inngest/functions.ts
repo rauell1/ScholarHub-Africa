@@ -4,7 +4,8 @@ import { zodResponseFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 import { revalidateTag } from 'next/cache';
 import { getDb } from '@/lib/db';
-import { scholarships, countries, csvUploads } from '@/db/schema';
+import { scholarships, csvUploads } from '@/db/schema';
+import { resolveCountryId } from '@/lib/countries';
 import { SCHOLARSHIP_DATA_TAG } from '@/lib/queries';
 import { eq, sql } from 'drizzle-orm';
 
@@ -99,16 +100,9 @@ export const processCsvUpload = inngest.createFunction(
         const db = getDb();
         
         for (const item of batchResult.scholarships) {
-          // Race-safe upsert — avoids silent fallback to a wrong country
-          const [countryRec] = await db
-            .insert(countries)
-            .values({ name: item.country || 'Various', isoCode: 'UN', region: 'Unknown' })
-            .onConflictDoUpdate({
-              target: countries.name,
-              set: { name: item.country || 'Various' },
-            })
-            .returning();
-          const countryId = countryRec.id;
+          // iso_code is UNIQUE - a fixed 'UN' code made every second new
+          // country fail the insert, so resolve/allocate it properly.
+          const countryId = await resolveCountryId(db, item.country || 'Various');
           
           const slug = item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 

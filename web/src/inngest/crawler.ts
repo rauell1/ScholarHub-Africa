@@ -1,10 +1,20 @@
 import * as cheerio from 'cheerio';
 import OpenAI from 'openai';
-import { eq, inArray } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import { revalidateTag } from 'next/cache';
 import { inngest } from './client';
 import { getDb } from '@/lib/db';
-import { scholarships, countries } from '@/db/schema';
+import { scholarships } from '@/db/schema';
+import { resolveCountryId } from '@/lib/countries';
+import {
+  intOrNull,
+  isMastersProgramme,
+  isoDateOrNull,
+  parseModelJson,
+  slugify,
+  statusFromDates,
+  str,
+} from '@/lib/crawl-normalize';
 import { SCHOLARSHIP_DATA_TAG } from '@/lib/queries';
 
 const DIRECTORIES = [
@@ -60,6 +70,61 @@ async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+const FETCH_TIMEOUT_MS = 15_000;
+const USER_AGENT =
+  'Mozilla/5.0 (compatible; ScholarHubBot/1.0; +https://scholarhub.africa/about/)';
+
+/**
+ * Fetch a page as text. Throws on non-2xx so a 403/404/Cloudflare page is
+ * reported instead of being parsed (and sent to the LLM) as if it were the
+ * listing - previously a blocked request silently produced zero links.
+ */
+async function fetchHtml(url: string): Promise<string> {
+  const res = await fetch(url, {
+    headers: { 'User-Agent': USER_AGENT, Accept: 'text/html,application/xhtml+xml' },
+    redirect: 'follow',
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+  return res.text();
+}
+
+/**
+ * Pull post links out of a WordPress-style listing page. The sites change
+ * their themes, so try several common selectors instead of one brittle one,
+ * and keep only same-host article links.
+ */
+function extractListingLinks(html: string, pageUrl: string): string[] {
+  const $ = cheerio.load(html);
+  const host = new URL(pageUrl).host;
+  const selectors = [
+    'div.post.clearfix h2 a',
+    'article h2 a',
+    'article h3 a',
+    'h2.entry-title a',
+    'h3.entry-title a',
+    '.post-title a',
+    '.td-module-title a',
+    'article a[rel="bookmark"]',
+  ];
+  const links = new Set<string>();
+  for (const selector of selectors) {
+    $(selector).each((_, el) => {
+      const href = $(el).attr('href');
+      if (!href) return;
+      try {
+        const abs = new URL(href, pageUrl);
+        if (abs.host === host && !/\/(category|tag|page|author)\//.test(abs.pathname)) {
+          links.add(abs.toString());
+        }
+      } catch {
+        // ignore malformed hrefs
+      }
+    });
+  }
+  return [...links];
+}
+
 async function searchBrave(query: string): Promise<string[]> {
   const apiKey = process.env.BRAVE_SEARCH_API_KEY;
   if (!apiKey) return [];
@@ -97,20 +162,9 @@ export const discoverScholarships = inngest.createFunction(
 
       for (const url of DIRECTORIES) {
         try {
-          const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-          const $ = cheerio.load(await res.text());
-
-          if (url.includes('scholars4dev')) {
-            $('div.post.clearfix').each((_, el) => {
-              const href = $(el).find('h2 a').attr('href');
-              if (href) links.push(href);
-            });
-          } else if (url.includes('opportunitiesforafricans')) {
-            $('article h2 a').each((_, el) => {
-              const href = $(el).attr('href');
-              if (href) links.push(href);
-            });
-          }
+          const found = extractListingLinks(await fetchHtml(url), url);
+          if (found.length === 0) console.warn('Directory yielded no links (selectors stale?):', url);
+          links.push(...found);
         } catch (e) {
           console.error('Directory fetch failed:', url, e);
         }
@@ -174,9 +228,14 @@ export const processScholarshipLink = inngest.createFunction(
     const { url } = event.data as { url: string };
 
     const extracted = await step.run('extract', async () => {
-      const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-      const $ = cheerio.load(await res.text());
-      const text = ($('div.entry').text() || $('body').text()).substring(0, 15000);
+      if (!process.env.NVIDIA_API_KEY) throw new Error('NVIDIA_API_KEY is not set');
+      const $ = cheerio.load(await fetchHtml(url));
+      $('script, style, noscript, nav, footer, header, aside, form').remove();
+      const text = ($('div.entry').text() || $('article').text() || $('main').text() || $('body').text())
+        .replace(/\s+/g, ' ')
+        .trim()
+        .substring(0, 15000);
+      if (text.length < 200) return { is_scholarship: false } as Record<string, unknown>;
 
       const client = new OpenAI({
         baseURL: 'https://integrate.api.nvidia.com/v1',
@@ -203,7 +262,8 @@ Extract scholarship details into JSON:
   "is_scholarship": true or false,
   "name": "Full name",
   "short_name": "Short name",
-  "programme": "Degree level",
+  "is_masters": true or false (true only if a master's degree is fundable),
+  "programme": "Degree level and programme, e.g. MSc Renewable Energy",
   "university": "University name",
   "country_name": "Country Name",
   "funding_type": "full or partial",
@@ -213,10 +273,14 @@ Extract scholarship details into JSON:
   "age_max": null,
   "gpa_minimum": null,
   "score": 70,
+  "deadline_date": "YYYY-MM-DD or null if not stated",
+  "opening_date": "YYYY-MM-DD or null if not stated",
   "notes": "Compelling Markdown overview"
 }
 
 If is_scholarship is false, the other fields can be empty/null.
+Only use dates that appear in the text; never guess a deadline.
+Today is ${new Date().toISOString().slice(0, 10)}.
 
 Text: ${text}`,
           },
@@ -224,58 +288,66 @@ Text: ${text}`,
         response_format: { type: 'json_object' },
       });
 
-      return JSON.parse(completion.choices[0].message.content ?? '{}') as Record<string, unknown>;
+      // Llama models on NVIDIA's endpoint sometimes wrap the object in
+      // ```json fences despite response_format - a bare JSON.parse threw and
+      // the step failed on every retry.
+      return parseModelJson(completion.choices[0].message.content);
     });
 
-    if (extracted.is_scholarship === false) return;
+    if (extracted.is_scholarship !== true) return { skipped: 'not a scholarship' };
 
-    await step.run('save', async () => {
+    const name = str(extracted.name, 300);
+    const programme = str(extracted.programme, 300);
+    if (!name) return { skipped: 'no name extracted' };
+    // ScholarHub lists master's scholarships; skip PhD/undergrad-only finds.
+    if (extracted.is_masters !== true && !isMastersProgramme(`${programme} ${name}`)) {
+      return { skipped: 'not a masters scholarship' };
+    }
+
+    return step.run('save', async () => {
       const db = getDb();
+      const today = new Date().toISOString().slice(0, 10);
+      const deadline = isoDateOrNull(extracted.deadline_date);
+      const opensOn = isoDateOrNull(extracted.opening_date);
+      const gpa = intOrNull(Number(extracted.gpa_minimum) * 100, 0, 9999);
+      const fundingType = String(extracted.funding_type ?? '').toLowerCase();
 
-      const countryName = (extracted.country_name as string) || 'Various';
+      const countryId = await resolveCountryId(db, str(extracted.country_name, 100));
 
-      // Race-safe upsert for country
-      const [countryRec] = await db
-        .insert(countries)
-        .values({ name: countryName, isoCode: 'UN', region: 'Unknown' })
-        .onConflictDoUpdate({ target: countries.name, set: { name: countryName } })
-        .returning();
-
-      const slug = ((extracted.name as string) || 'unknown')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '');
-
-      await db
+      const inserted = await db
         .insert(scholarships)
         .values({
-          slug,
-          name: (extracted.name as string) || 'Unknown Scholarship',
-          shortName: (extracted.short_name as string) || '',
-          programme: (extracted.programme as string) || '',
-          university: (extracted.university as string) || '',
-          officialLink: url,
-          countryId: countryRec.id,
-          fundingType: ['full', 'partial', 'tuition', 'unknown'].includes(
-            extracted.funding_type as string,
-          )
-            ? (extracted.funding_type as 'full' | 'partial' | 'tuition' | 'unknown')
+          slug: slugify(name) || `scholarship-${Date.now()}`,
+          name,
+          shortName: str(extracted.short_name, 100),
+          programme,
+          university: str(extracted.university, 300),
+          officialLink: url.slice(0, 500),
+          countryId,
+          fundingType: ['full', 'partial', 'tuition', 'unknown'].includes(fundingType)
+            ? fundingType
             : 'unknown',
-          fundingDetail: (extracted.funding_detail as string) || '',
+          fundingDetail: str(extracted.funding_detail, 5000),
           eligibilityLabel: 'PE',
-          englishRequirement: (extracted.english_requirement as string) || '',
-          ageMax: (extracted.age_max as number) ?? null,
-          gpaMinimum: extracted.gpa_minimum ? String(extracted.gpa_minimum) : null,
+          englishRequirement: str(extracted.english_requirement, 2000),
+          ageMax: intOrNull(extracted.age_max, 15, 99),
+          gpaMinimum: gpa === null ? null : (gpa / 100).toFixed(2),
           mbaImpact: 'none',
-          score: (extracted.score as number) || 70,
-          notes: (extracted.notes as string) || '',
-          status: 'open',
+          score: intOrNull(extracted.score, 0, 100) ?? 70,
+          notes: str(extracted.notes, 20000),
+          deadlineDate: deadline,
+          cycleYear: deadline ? Number(deadline.slice(0, 4)) : null,
+          status: statusFromDates(deadline, opensOn, today),
           isVerified: false,
           verifiedSource: 'NVIDIA AI Crawl',
         })
-        .onConflictDoNothing();
+        .onConflictDoNothing()
+        .returning({ id: scholarships.id });
 
-      revalidateTag(SCHOLARSHIP_DATA_TAG);
+      // Only bust the cache when something actually changed - every
+      // invalidation costs a fresh round of DB reads on the next visits.
+      if (inserted.length > 0) revalidateTag(SCHOLARSHIP_DATA_TAG);
+      return { inserted: inserted.length };
     });
   },
 );

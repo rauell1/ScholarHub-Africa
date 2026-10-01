@@ -36,6 +36,7 @@ interface Selected {
   funding: string[];
   eligibility: string[];
   statuses: string[];
+  masters: boolean;
   minScore: number;
 }
 
@@ -58,6 +59,7 @@ export function FilterSidebar({
       funding: list('funding'),
       eligibility: list('eligibility'),
       statuses: list('status'),
+      masters: searchParams.get('level') === 'masters',
       minScore: parseInt(searchParams.get('min_score') ?? '0', 10) || 0,
     };
   }, [searchParams]);
@@ -71,6 +73,7 @@ export function FilterSidebar({
     selected.funding.length +
     selected.eligibility.length +
     selected.statuses.length +
+    (selected.masters ? 1 : 0) +
     (selected.minScore > 0 ? 1 : 0);
 
   const navigate = (next: Selected) => {
@@ -80,6 +83,7 @@ export function FilterSidebar({
     if (next.funding.length) params.set('funding', next.funding.join(','));
     if (next.eligibility.length) params.set('eligibility', next.eligibility.join(','));
     if (next.statuses.length) params.set('status', next.statuses.join(','));
+    if (next.masters) params.set('level', 'masters');
     if (next.minScore > 0) params.set('min_score', String(next.minScore));
     const q = searchParams.get('q');
     if (q) params.set('q', q);
@@ -102,6 +106,12 @@ export function FilterSidebar({
     navigate(next);
   };
 
+  const toggleMasters = () => {
+    const next = { ...selected, masters: !selected.masters };
+    setSelected(next);
+    navigate(next);
+  };
+
   const setMinScore = (value: number) => {
     const next = { ...selected, minScore: value };
     setSelected(next);
@@ -110,7 +120,7 @@ export function FilterSidebar({
 
   const clearAll = () => {
     const next: Selected = {
-      countries: [], fields: [], funding: [], eligibility: [], statuses: [], minScore: 0,
+      countries: [], fields: [], funding: [], eligibility: [], statuses: [], masters: false, minScore: 0,
     };
     setSelected(next);
     const params = new URLSearchParams();
@@ -157,6 +167,20 @@ export function FilterSidebar({
               Clear
             </button>
           )}
+        </div>
+
+        {/* Degree level */}
+        <div className="filter-group">
+          <h4 className="mb-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Degree level</h4>
+          <label className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-muted">
+            <input
+              type="checkbox"
+              checked={selected.masters}
+              onChange={toggleMasters}
+              className="h-4 w-4 shrink-0 cursor-pointer rounded border border-border-soft bg-background text-accent transition-all duration-200 focus:ring-2 focus:ring-accent focus:ring-offset-1"
+            />
+            Master&apos;s only
+          </label>
         </div>
 
         {/* Destination Country */}

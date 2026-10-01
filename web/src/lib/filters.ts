@@ -5,7 +5,7 @@
  *   ?country=DE,FR&field=water,energy&funding=full&eligibility=CE
  *    &status=open_now&min_score=80&max_score=95
  *    &deadline_before=2027-01-01&deadline_after=2026-09-01
- *    &deadline_in_next=30&is_open=true&q=daad&ordering=deadline
+ *    &deadline_in_next=30&is_open=true&level=masters&q=daad&ordering=recent
  */
 import { z } from 'zod';
 
@@ -25,6 +25,7 @@ const querySchema = z.object({
   deadline_after: z.string().regex(dateRegex).optional(),
   deadline_in_next: z.coerce.number().int().nonnegative().optional(),
   is_open: z.enum(['true', 'false', '1', '0']).optional(),
+  level: z.enum(['masters']).optional(),
   q: z.string().optional(),
   search: z.string().optional(),
   ordering: z.string().optional(),
@@ -55,6 +56,7 @@ export function parseScholarshipFilters(params: URLSearchParams): ScholarshipFil
     deadlineAfter: raw.deadline_after,
     deadlineInNext: raw.deadline_in_next,
     isOpen: raw.is_open ? raw.is_open === 'true' || raw.is_open === '1' : undefined,
+    level: raw.level,
     q: raw.q ?? raw.search ?? undefined,
     ordering: raw.ordering || undefined,
   };

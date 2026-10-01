@@ -11,8 +11,8 @@ import { getUserGeo } from '@/lib/geo';
 import { parseScholarshipFilters } from '@/lib/filters';
 import {
   countScholarships,
-  getCountries,
-  getFields,
+  getCountriesCached,
+  getFieldsCached,
   queryScholarshipCards,
   type CountryRow,
   type FieldRow,
@@ -30,6 +30,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 const PAGE_SIZE = 12; // DIRECTORY_PAGE_SIZE
+const DEFAULT_ORDERING = 'recent';
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -68,6 +69,9 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
   } catch {
     filters = {};
   }
+  // Default view: open master's scholarships, most recently opened first,
+  // down to the ones whose window is furthest away (search keeps rank order).
+  filters.ordering ??= DEFAULT_ORDERING;
 
   const rawPage = parseInt(sp.page as string, 10);
   const page = Number.isInteger(rawPage) && rawPage > 0 ? rawPage : 1;
@@ -75,7 +79,7 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
 
   const isFiltered =
     params.has('country') || params.has('field') || params.has('funding') ||
-    params.has('eligibility') || params.has('status') || params.has('q');
+    params.has('eligibility') || params.has('status') || params.has('level') || params.has('q');
 
   let cards: ScholarshipCardRow[] = [];
   let total = 0;
@@ -87,8 +91,10 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
     [cards, total, countries, fields, geo] = await Promise.all([
       queryScholarshipCards({ ...filters, limit: PAGE_SIZE, offset: (page - 1) * PAGE_SIZE }, undefined),
       countScholarships(filters, undefined),
-      getCountries({ activeOnly: false }, undefined),
-      getFields(undefined),
+      // Sidebar facets only change when scholarship data changes - serve them
+      // from the tag-invalidated cache instead of two GROUP BYs per page view.
+      getCountriesCached({ activeOnly: false }),
+      getFieldsCached(),
       getUserGeo(),
     ]);
   } catch {
@@ -154,7 +160,7 @@ export default async function DirectoryPage({ searchParams }: { searchParams: Se
                 )}
               </p>
               <SortSelect
-                defaultValue={(sp.ordering as string) ?? 'score'}
+                defaultValue={(sp.ordering as string) ?? DEFAULT_ORDERING}
                 hiddenInputs={Array.from(params.entries()).filter(
                   ([key]) => key !== 'ordering' && key !== 'page',
                 )}
