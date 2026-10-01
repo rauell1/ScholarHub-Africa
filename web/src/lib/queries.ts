@@ -356,24 +356,31 @@ function buildOrdering(ordering: string | undefined, rank: SQL<number> | null): 
 /**
  * "Recently opened" ordering - the directory default.
  *
- *   1. Open now           - newest listing first (created_at is when ScholarHub
- *                           first saw it open), then most time remaining.
- *   2. Opening soon / upcoming / not yet open - soonest deadline first, so
- *                           the ones furthest away come last.
- *   3. Unknown status     - latest deadline first.
- *   4. Closed / ineligible - always last.
+ *   1. Open now           - newest listing first (created_at, then id, since a
+ *                           bulk import gives many rows the same created_at).
+ *   2. Not open yet       - opening soon / upcoming, plus 'unknown' rows with a
+ *                           future deadline: soonest deadline first, furthest last.
+ *   3. Unknown, no date   - newest listing first.
+ *   4. Closed             - closed/ineligible OR deadline already passed, latest
+ *                           deadline first.
+ *
+ * Expiry is computed from deadline_date here rather than trusted from the
+ * stored status: if the daily close-expired cron misses a run, a scholarship
+ * whose deadline passed must not keep sitting at the top as "open".
  */
-function recentlyOpenedOrdering(): SQL[] {
+function recentlyOpenedOrdering(today: string = eatToday()): SQL[] {
   const openNow = sql.join(OPEN_NOW_STATUSES.map((v) => sql`${v}`), sql`, `);
   const notYet = sql.join(NOT_YET_OPEN_STATUSES.map((v) => sql`${v}`), sql`, `);
-  const isOpen = sql`${scholarships.status} IN (${openNow})`;
-  const isNotYet = sql`${scholarships.status} IN (${notYet})`;
+  const expired = sql`(${scholarships.status} IN ('closed', 'ineligible') OR COALESCE(${scholarships.deadlineDate} < ${today}, false))`;
+  const isOpen = sql`(NOT ${expired} AND ${scholarships.status} IN (${openNow}))`;
+  const isNotYet = sql`(NOT ${expired} AND (${scholarships.status} IN (${notYet}) OR ${scholarships.deadlineDate} IS NOT NULL))`;
+  const group = sql`CASE WHEN ${isOpen} THEN 0 WHEN ${isNotYet} THEN 1 WHEN NOT ${expired} THEN 2 ELSE 3 END`;
   return [
-    sql`CASE WHEN ${isOpen} THEN 0 WHEN ${isNotYet} THEN 1 WHEN ${scholarships.status} IN ('closed', 'ineligible') THEN 3 ELSE 2 END`,
+    group,
     sql`CASE WHEN ${isOpen} THEN ${scholarships.createdAt} END DESC NULLS LAST`,
-    sql`CASE WHEN ${isNotYet} THEN ${scholarships.deadlineDate} END ASC NULLS LAST`,
-    sql`${scholarships.deadlineDate} DESC NULLS LAST`,
-    desc(scholarships.score),
+    sql`CASE WHEN ${isNotYet} AND NOT ${isOpen} THEN ${scholarships.deadlineDate} END ASC NULLS LAST`,
+    sql`CASE WHEN ${expired} THEN ${scholarships.deadlineDate} END DESC NULLS LAST`,
+    desc(scholarships.id),
   ];
 }
 
@@ -418,6 +425,13 @@ export function buildScholarshipConditions(
       ? [...new Set([...filters.status, ...OPEN_NOW_STATUSES])]
       : filters.status;
     conditions.push(inArray(scholarships.status, statuses));
+    if (statuses !== filters.status) {
+      // "Open now" must not include rows whose deadline already passed but
+      // which the close-expired cron has not flipped to 'closed' yet.
+      conditions.push(
+        sql`NOT (${scholarships.status} IN ('open', 'open_now') AND COALESCE(${scholarships.deadlineDate} < ${today}, false))`,
+      );
+    }
   }
   if (filters.level === 'masters') {
     conditions.push(sql`${scholarships.programme} ~* ${MASTERS_PROGRAMME_PATTERN}`);
