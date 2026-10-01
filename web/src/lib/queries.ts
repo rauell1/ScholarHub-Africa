@@ -179,7 +179,9 @@ export interface ScholarshipFilters {
   updatedAfter?: string;
   /** Full-text search term (Django search_scholarships). */
   q?: string;
-  /** score | -score | deadline_date | -deadline_date | name | -name | updated */
+  /** Degree level - currently only 'masters' (programme text match). */
+  level?: string;
+  /** recent | score | -score | deadline_date | -deadline_date | name | -name | updated */
   ordering?: string;
   /** Internal pagination for the directory page (API stays unpaginated). */
   limit?: number;
@@ -187,6 +189,21 @@ export interface ScholarshipFilters {
 }
 
 const OPEN_STATUSES = ['open_now', 'opening_soon', 'upcoming', 'not_yet_open'] as const;
+
+/**
+ * 'open' is the legacy spelling written by the CSV importer and the crawler;
+ * it means the same thing as 'open_now', so filters treat them as one.
+ */
+const OPEN_NOW_STATUSES = ['open', 'open_now'] as const;
+const NOT_YET_OPEN_STATUSES = ['opening_soon', 'upcoming', 'not_yet_open'] as const;
+
+/**
+ * Master's-level programmes, matched on the free-text `programme` column
+ * (MSc, MA, MBA, LLM, MPhil, MRes, MEng, MPH, MPA, "Masters", "postgraduate"...).
+ * Postgres ARE syntax: \y is a word boundary.
+ */
+export const MASTERS_PROGRAMME_PATTERN =
+  "master|postgraduate|\\y(msc|m\\.sc|ma|mba|llm|mphil|mres|meng|mph|mpa|mpp|mfa|med|mst|mcomm|m\\.a)\\y";
 
 /* ── Column projections (shared by list & detail queries) ───────────────── */
 
@@ -314,6 +331,8 @@ async function fetchFieldSlugs(client: Db, ids: number[]): Promise<Map<number, s
 function buildOrdering(ordering: string | undefined, rank: SQL<number> | null): SQL[] {
   if (rank) return [desc(rank), desc(scholarships.score)];
   switch (ordering ?? '-score') {
+    case 'recent':
+      return recentlyOpenedOrdering();
     case 'score':
     case '-score':
       return [desc(scholarships.score)];
@@ -332,6 +351,30 @@ function buildOrdering(ordering: string | undefined, rank: SQL<number> | null): 
     default:
       return [desc(scholarships.score)];
   }
+}
+
+/**
+ * "Recently opened" ordering - the directory default.
+ *
+ *   1. Open now           - newest listing first (created_at is when ScholarHub
+ *                           first saw it open), then most time remaining.
+ *   2. Opening soon / upcoming / not yet open - soonest deadline first, so
+ *                           the ones furthest away come last.
+ *   3. Unknown status     - latest deadline first.
+ *   4. Closed / ineligible - always last.
+ */
+function recentlyOpenedOrdering(): SQL[] {
+  const openNow = sql.join(OPEN_NOW_STATUSES.map((v) => sql`${v}`), sql`, `);
+  const notYet = sql.join(NOT_YET_OPEN_STATUSES.map((v) => sql`${v}`), sql`, `);
+  const isOpen = sql`${scholarships.status} IN (${openNow})`;
+  const isNotYet = sql`${scholarships.status} IN (${notYet})`;
+  return [
+    sql`CASE WHEN ${isOpen} THEN 0 WHEN ${isNotYet} THEN 1 WHEN ${scholarships.status} IN ('closed', 'ineligible') THEN 3 ELSE 2 END`,
+    sql`CASE WHEN ${isOpen} THEN ${scholarships.createdAt} END DESC NULLS LAST`,
+    sql`CASE WHEN ${isNotYet} THEN ${scholarships.deadlineDate} END ASC NULLS LAST`,
+    sql`${scholarships.deadlineDate} DESC NULLS LAST`,
+    desc(scholarships.score),
+  ];
 }
 
 /* ── Main list query (filters + search + ordering + pagination) ─────────── */
@@ -371,7 +414,13 @@ export function buildScholarshipConditions(
     conditions.push(eq(scholarships.eligibilityLabel, filters.eligibility));
   }
   if (filters.status && filters.status.length > 0) {
-    conditions.push(inArray(scholarships.status, filters.status));
+    const statuses = filters.status.some((v) => v === 'open' || v === 'open_now')
+      ? [...new Set([...filters.status, ...OPEN_NOW_STATUSES])]
+      : filters.status;
+    conditions.push(inArray(scholarships.status, statuses));
+  }
+  if (filters.level === 'masters') {
+    conditions.push(sql`${scholarships.programme} ~* ${MASTERS_PROGRAMME_PATTERN}`);
   }
   if (filters.minScore !== undefined) conditions.push(gte(scholarships.score, filters.minScore));
   if (filters.maxScore !== undefined) conditions.push(lte(scholarships.score, filters.maxScore));

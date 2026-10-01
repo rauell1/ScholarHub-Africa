@@ -27,6 +27,7 @@ export function SortSelect({
         onChange={(e) => e.target.form?.submit()}
         className="input !w-auto py-1.5"
       >
+        <option value="recent">Recently opened</option>
         <option value="score">Score (best fit)</option>
         <option value="deadline">Deadline (soonest)</option>
         <option value="name">Name A–Z</option>

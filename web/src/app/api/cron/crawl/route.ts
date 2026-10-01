@@ -14,7 +14,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ detail: 'Unauthorized.' }, { status: 401 });
   }
 
-  await inngest.send({ name: 'crawl.discover', data: {} });
+  try {
+    await inngest.send({ name: 'crawl.discover', data: {} });
+  } catch (err) {
+    // Usually a missing/invalid INNGEST_EVENT_KEY - log it so the nightly
+    // crawl failing is visible instead of an opaque 500.
+    console.error('[cron/crawl] could not dispatch crawl.discover', err);
+    return NextResponse.json({ detail: 'Could not dispatch crawl job.' }, { status: 502 });
+  }
 
   return NextResponse.json({ ok: true, message: 'Discovery job dispatched.' });
 }
