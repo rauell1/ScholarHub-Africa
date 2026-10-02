@@ -21,3 +21,12 @@ npm-debug.log*
 
 # CI workflow - commit manually
 .github/workflows/
+
+# Secret files without the leading dot (env.local slipped past `.env.local`
+# above and was pushed to this public repo). Templates stay tracked.
+env.local
+env.*.local
+*.env
+*.env.local
+!*.env.example
+!.env.example
