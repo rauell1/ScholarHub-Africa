@@ -28,8 +28,9 @@ function cookieValueIsAdmin(value: string | undefined): boolean {
 }
 
 /** Server-component guard - usage: `const { isAdmin } = await requireAdmin()` */
-export function isAdminSession(): boolean {
-  return cookieValueIsAdmin(cookies().get(ADMIN_SESSION_COOKIE)?.value);
+export async function isAdminSession(): Promise<boolean> {
+  // cookies() is async from Next.js 15.
+  return cookieValueIsAdmin((await cookies()).get(ADMIN_SESSION_COOKIE)?.value);
 }
 
 /** Route-handler guard - pass the incoming request. */

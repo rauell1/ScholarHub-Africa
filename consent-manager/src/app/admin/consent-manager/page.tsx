@@ -9,8 +9,8 @@ import { isAdminSession } from '@/lib/server/rbac';
  * anything; unauthenticated users are redirected to the admin login. All
  * /api/admin/* routes enforce the same gate independently.
  */
-export default function ConsentManagerAdminPage() {
-  if (!isAdminSession()) {
+export default async function ConsentManagerAdminPage() {
+  if (!(await isAdminSession())) {
     redirect('/admin/login');
   }
 

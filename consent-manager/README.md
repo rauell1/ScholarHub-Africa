@@ -162,3 +162,12 @@ npm run dev                       # → http://localhost:3000
 ---
 
 *Part of the ScholarHub Africa platform (repo root: Django app + this consent layer).*
+
+## Cloudflare deployment
+
+The app runs on Cloudflare Workers through the OpenNext Cloudflare adapter (`open-next.config.ts`, `wrangler.jsonc`). Deploys run from `.github/workflows/deploy-consent-manager.yml` at the repository root. That folder is gitignored in this repository, so the workflow is added manually; its full text is in the pull request that introduced Cloudflare hosting.
+
+- GitHub repository secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+- Worker secrets (`npx wrangler secret put NAME`): `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_SESSION_TOKEN`, `CONSENT_IP_HASH_SALT`, and optionally `SITE_URL`, `HEADLESS_SCANNER_URL`.
+- The country comes from Cloudflare's `cf-ipcountry` header.
+- `src/lib/server/store.ts` keeps logs, config and policies in local files. Workers (like Vercel before) have no persistent disk, so these do not survive between requests. Move the store to a database (for example Neon, or Cloudflare D1 or KV) before relying on the consent audit log.
