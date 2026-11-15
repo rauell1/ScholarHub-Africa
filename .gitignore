@@ -30,3 +30,8 @@ env.*.local
 *.env.local
 !*.env.example
 !.env.example
+
+# Cloudflare build output
+.open-next/
+.wrangler/
+.dev.vars

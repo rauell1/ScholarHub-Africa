@@ -5,6 +5,7 @@ import type { NeonDatabase } from 'drizzle-orm/neon-serverless';
 
 import * as schema from '../db/schema';
 import { env } from './env';
+import { scoped } from './runtime/request-scope';
 
 export type Db = NeonDatabase<typeof schema>;
 
@@ -17,8 +18,8 @@ export type Db = NeonDatabase<typeof schema>;
  * - LAZY: getDb() throws only when first USED without DATABASE_URL, so pages
  *   that don't touch the DB (homepage, consent banner) still build and run
  *   in previews; callers that must survive DB absence wrap in try/catch.
- * - Module-level singleton survives RSC/route-handler reuse; the global
- *   cache prevents pool duplication during dev hot reloads.
+ * - One client per request on Cloudflare Workers (see getDb), one per
+ *   process elsewhere.
  */
 function createClient(): Db {
   if (!env.DATABASE_URL) {
@@ -30,15 +31,13 @@ function createClient(): Db {
   return drizzle(pool, { schema });
 }
 
-const globalForDb = globalThis as unknown as {
-  __scholarhubDb?: Db;
-};
-
+/**
+ * On Cloudflare Workers a socket opened in one request cannot be used by
+ * another, so the client is scoped to the current request there; on Node
+ * (local dev, scripts, tests) one client is shared by the process.
+ */
 export function getDb(): Db {
-  if (!globalForDb.__scholarhubDb) {
-    globalForDb.__scholarhubDb = createClient();
-  }
-  return globalForDb.__scholarhubDb;
+  return scoped('scholarhub-db', createClient);
 }
 
 /**
