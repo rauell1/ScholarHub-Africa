@@ -17,3 +17,8 @@ data/
 .DS_Store
 npm-debug.log*
 *.tsbuildinfo
+
+# Cloudflare (OpenNext build output, Wrangler state, local secrets)
+/.open-next/
+/.wrangler/
+.dev.vars

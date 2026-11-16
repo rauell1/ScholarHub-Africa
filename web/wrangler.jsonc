@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "scholarhub-africa",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // Run the Worker near its database and APIs rather than near each visitor.
+  "placement": { "mode": "smart" },
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  // Runtime secrets are set on the Worker (npx wrangler secret put NAME or the
+  // dashboard), using the variables in .env.example.
+  "keep_vars": true,
+  "workers_dev": true,
+  // Add the production domain once it is on this Cloudflare account, e.g.
+  // "routes": [{ "pattern": "scholarhub.africa", "custom_domain": true }],
+  "observability": { "enabled": true }
+}

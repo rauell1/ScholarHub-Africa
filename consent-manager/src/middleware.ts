@@ -21,11 +21,11 @@ const REGION_COOKIE_HTTP = 'sh_region_http';
 const REGION_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 
 export function middleware(request: NextRequest): NextResponse {
-  // 1) Resolve the country from edge geolocation. Next.js `request.geo` is
-  //    populated on Vercel; Cloudflare users get `cf-ipcountry`; the header
-  //    fallback also lets you simulate a region in local dev.
+  // 1) Resolve the country from edge geolocation headers: Cloudflare sends
+  //    `cf-ipcountry`, Vercel sends `x-vercel-ip-country`; the env fallback
+  //    lets you simulate a region in local dev. (Next.js 15 removed
+  //    `request.geo`.)
   const country =
-    request.geo?.country ??
     request.headers.get('x-vercel-ip-country') ??
     request.headers.get('cf-ipcountry') ??
     process.env.CONSENT_TEST_COUNTRY ??

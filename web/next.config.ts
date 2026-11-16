@@ -1,7 +1,7 @@
 import path from 'path';
 
 import type { NextConfig } from 'next';
-import { withSentryConfig } from '@sentry/nextjs';
+import { withSentryConfig } from '@sentry/nextjs/config';
 
 /**
  * ScholarHub Africa - Next.js configuration.
@@ -79,6 +79,5 @@ export default withSentryConfig(nextConfig, {
   widenClientFileUpload: true,
   webpack: {
     treeshake: { removeDebugLogging: true },
-    automaticVercelMonitors: true,
   },
 });
