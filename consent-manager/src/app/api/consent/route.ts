@@ -30,7 +30,7 @@ function rateLimited(ip: string): boolean {
 export async function POST(request: NextRequest) {
   try {
     const ip =
-      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+      request.headers.get('cf-connecting-ip')?.trim() ?? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
       request.headers.get('x-real-ip') ??
       'unknown';
     try {
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       '';
 
     const rawIp =
-      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+      request.headers.get('cf-connecting-ip')?.trim() ?? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
       request.headers.get('x-real-ip') ??
       '';
 
