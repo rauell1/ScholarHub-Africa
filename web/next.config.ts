@@ -79,5 +79,13 @@ export default withSentryConfig(nextConfig, {
   widenClientFileUpload: true,
   webpack: {
     treeshake: { removeDebugLogging: true },
+    // The middleware runs on every request; keep it free of Sentry tracing.
+    autoInstrumentMiddleware: false,
   },
+  // Build-time instrumentation wraps server dependencies for diagnostics
+  // channel tracing, which Cloudflare Workers cannot register, so it recorded
+  // nothing but made the Worker larger and every cold start slower (each new
+  // copy of the Worker spent about 0.7 s of CPU starting up). Errors are
+  // still reported.
+  buildTimeInstrumentation: false,
 });
