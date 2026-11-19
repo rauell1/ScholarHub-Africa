@@ -13,6 +13,7 @@
  * schema (Phase 2).
  */
 import { desc, eq } from 'drizzle-orm';
+import { revalidateTag, unstable_cache } from 'next/cache';
 import { createHmac } from 'crypto';
 
 import { consentConfig, consentLogs, consentPolicies } from '@/db/schema';
@@ -68,7 +69,9 @@ export async function readConsentLogs(): Promise<ConsentLogEntry[]> {
 
 /* ── Banner config (admin overrides merged over defaults) ───────────────── */
 
-export async function getConfig(): Promise<ConsentConfig> {
+const CONSENT_CONFIG_TAG = 'consent-config';
+
+async function loadConfig(): Promise<ConsentConfig> {
   try {
     const rows = await getDb()
       .select()
@@ -82,6 +85,15 @@ export async function getConfig(): Promise<ConsentConfig> {
   }
 }
 
+/**
+ * The root layout reads this on every page, so it is cached (an hour, and
+ * cleared by saveConfig) instead of opening a database connection per visit.
+ */
+export const getConfig = unstable_cache(loadConfig, ['consent-config'], {
+  tags: [CONSENT_CONFIG_TAG],
+  revalidate: 3600,
+});
+
 export async function saveConfig(next: ConsentConfig): Promise<ConsentConfig> {
   await getDb()
     .insert(consentConfig)
@@ -90,6 +102,7 @@ export async function saveConfig(next: ConsentConfig): Promise<ConsentConfig> {
       target: consentConfig.key,
       set: { config: next, updatedAt: new Date() },
     });
+  revalidateTag(CONSENT_CONFIG_TAG);
   return next;
 }
 
