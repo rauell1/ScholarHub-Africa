@@ -2,9 +2,9 @@
 
 **A scholarship discovery and tracking platform for African students seeking fully-funded international master's opportunities.**
 
-Every scholarship record is human-verified against official sources, scored 0–100 for profile fit, and tracked from research to award.
+Every scholarship record is human-verified against official sources, scored 0-100 for profile fit, and tracked from research to award.
 
-- **Stack:** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind v4 · Drizzle ORM · Neon (PostgreSQL) · Auth.js · Inngest · Resend · Vercel
+- **Stack:** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind v4 · Drizzle ORM · Neon (PostgreSQL) · Auth.js · Inngest · Resend · Cloudflare Workers
 
 ---
 
@@ -12,20 +12,20 @@ Every scholarship record is human-verified against official sources, scored 0–
 
 | Feature | Status |
 |---|---|
-| Scholarship directory — verified opportunities, 23+ countries, 18 fields | ✅ |
+| Scholarship directory - verified opportunities, 23+ countries, 18 fields | ✅ |
 | Full-text search (PostgreSQL `tsvector` GIN index) with live suggestions | ✅ |
-| Filters — country, field, funding, eligibility, status, min score, deadline window | ✅ |
+| Filters - country, field, funding, eligibility, status, min score, deadline window | ✅ |
 | Country & field grouping pages | ✅ |
 | Detail pages with live deadline countdown, score badge, change history, JSON-LD, OG tags | ✅ |
-| Application tracker — kanban (Researching → Drafting → Submitted → Decision) | ✅ |
+| Application tracker - kanban (Researching → Drafting → Submitted → Decision) | ✅ |
 | 24-item document checklist with readiness progress | ✅ |
-| Weekly Monday email digest (Vercel Cron + Resend) | ✅ |
-| REST API — `/api/v1/scholarships/`, `open_now/`, `top/`, `countries/`, `fields/`, `search/`, tracker CRUD | ✅ |
-| Auth — registration, Google OAuth, JWT sessions (Auth.js) | ✅ |
-| AI-powered CSV importer — NVIDIA Llama 3.3-70B via Inngest background jobs | ✅ |
-| GDPR consent manager — GCM v2 + TCF 2.3, Postgres-backed log, consent-gated GA4 | ✅ |
+| Weekly Monday email digest (cron-job.org + Resend) | ✅ |
+| REST API - `/api/v1/scholarships/`, `open_now/`, `top/`, `countries/`, `fields/`, `search/`, tracker CRUD | ✅ |
+| Auth - registration, Google OAuth, JWT sessions (Auth.js) | ✅ |
+| AI-powered CSV importer - NVIDIA Llama 3.3-70B via Inngest background jobs | ✅ |
+| GDPR consent manager - GCM v2 + TCF 2.3, Postgres-backed log, consent-gated GA4 | ✅ |
 | Sitemap, robots.txt, JSON-LD, OG/Twitter tags, full SEO scaffolding | ✅ |
-| Admin dashboard — CSV upload management, resync, delete | ✅ |
+| Admin dashboard - CSV upload management, resync, delete | ✅ |
 
 ---
 
@@ -57,11 +57,11 @@ npm run db:test:queries
 
 ---
 
-## 🚢 Deploy (Vercel)
+## 🚢 Deploy (Cloudflare Workers)
 
-The app lives in `web/`. Set the **Root Directory** to `web/` in the Vercel dashboard.
+The app lives in `web/` and runs on Cloudflare Workers through the OpenNext adapter (`web/open-next.config.ts`, `web/wrangler.jsonc`). `.github/workflows/deploy-web.yml` builds and deploys it on every push to `main`; `.github/workflows/deploy-consent-manager.yml` deploys the consent manager when `consent-manager/` changes.
 
-Required environment variables (from `web/.env.example`):
+Runtime variables are Worker secrets (from `web/.env.example`):
 
 | Variable | Purpose |
 |---|---|
@@ -76,16 +76,17 @@ Required environment variables (from `web/.env.example`):
 | `INNGEST_EVENT_KEY` / `INNGEST_SIGNING_KEY` | Background job queue |
 | `GA4_MEASUREMENT_ID` | Analytics (optional) |
 
-Crons are defined in `web/vercel.json`:
-- `0 5 * * 1` — Monday 05:00 UTC weekly digest
-- `0 3 * * *` — Daily 03:00 UTC crawl slot
+Scheduled jobs are called by cron-job.org with the header `Authorization: Bearer <CRON_SECRET>`:
+- `GET /api/cron/digest`: Monday 05:00 UTC weekly digest
+- `GET /api/cron/crawl`: daily 03:00 UTC crawl
+- `GET /api/cron/close-expired`: daily, closes scholarships whose deadline has passed
 
 ---
 
 ## 🗂️ Project structure
 
 ```
-web/                    Next.js app (Vercel deployment target)
+web/                    Next.js app (Cloudflare Workers deployment target)
 ├── src/
 │   ├── app/            App Router pages & API routes
 │   ├── db/             Drizzle schema + database client
@@ -95,7 +96,7 @@ web/                    Next.js app (Vercel deployment target)
 │   └── types/          Shared TypeScript types
 ├── drizzle/            Generated SQL migrations
 ├── scripts/            Data migration + verification scripts
-└── vercel.json         Vercel Cron config
+└── wrangler.jsonc      Cloudflare Worker config
 
 consent-manager/        Standalone GDPR consent manager (Next.js)
 docs/                   System design, migration plan, SEO guide
@@ -113,4 +114,36 @@ export NEON_API_KEY=neon_...   # from console.neon.tech → Account settings →
 
 ---
 
-*Built for Roy Okola Otieno — and every African student after him. 🇰🇪 → 🌍*
+*Built for Roy Okola Otieno - and every African student after him. 🇰🇪 → 🌍*
+
+## Project information
+
+| | |
+|---|---|
+| Live site | https://scholarhub-africa.rauell.workers.dev |
+| Hosting | Cloudflare Workers |
+| Default branch | `main` |
+| Repository | Public |
+
+### Stack
+
+- Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 4 (in `web/`)
+- Drizzle ORM with Neon PostgreSQL
+- Auth.js (credentials and Google sign-in)
+- Inngest background jobs, Resend email, Upstash rate limiting, Sentry
+- A separate consent manager app in `consent-manager/`
+- Vitest for tests
+
+### Deployment
+
+Production runs on Cloudflare Workers at https://scholarhub-africa.rauell.workers.dev. `.github/workflows/deploy-web.yml` and `.github/workflows/deploy-consent-manager.yml` build and deploy on every push to `main`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. Public build-time values are repository variables; runtime secrets are Worker secrets.
+
+### Contributing and security
+
+- How to set up, test and submit changes: [CONTRIBUTING.md](CONTRIBUTING.md)
+- How to report a vulnerability: [SECURITY.md](SECURITY.md)
+- Expected behaviour in project spaces: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+
+### Licence
+
+No open-source licence has been granted. The code, content and brand assets belong to the project owner and all rights are reserved. Ask the owner before reusing any part of this repository.
