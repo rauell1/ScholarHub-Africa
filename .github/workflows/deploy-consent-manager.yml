@@ -1,0 +1,41 @@
+name: Deploy consent manager to Cloudflare
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "consent-manager/**"
+      - ".github/workflows/deploy-consent-manager.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-consent-manager
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: consent-manager
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: consent-manager/package-lock.json
+      - run: npm ci
+      - name: Build for Cloudflare
+        run: npx opennextjs-cloudflare build
+      - name: Deploy
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
