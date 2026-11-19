@@ -1,11 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "scholarhub-africa",
+  // OpenNext refreshes stale cached pages by calling this Worker through this
+  // binding; without it every visit renders the page again.
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "scholarhub-africa" }],
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  // Run the Worker near its database and APIs rather than near each visitor.
-  "placement": { "mode": "smart" },
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   // Runtime secrets are set on the Worker (npx wrangler secret put NAME or the
   // dashboard), using the variables in .env.example.
@@ -13,5 +14,13 @@
   "workers_dev": true,
   // Add the production domain once it is on this Cloudflare account, e.g.
   // "routes": [{ "pattern": "scholarhub.africa", "custom_domain": true }],
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Page cache for open-next.config.ts.
+  "r2_buckets": [
+    { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "scholarhub-africa-next-cache" }
+  ],
+  // Tag cache for revalidatePath/revalidateTag (open-next.config.ts).
+  "kv_namespaces": [
+    { "binding": "NEXT_TAG_CACHE_KV", "id": "73284f664cd945c586d5cc28f854d529" }
+  ]
 }
