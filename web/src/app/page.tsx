@@ -1,14 +1,19 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { GeoBadgeText, GeoTopPicksSubtitle } from '@/components/scholarships/GeoPersonalisation';
 import type { SearchHint } from '@/components/scholarships/SearchBar';
 import { SearchBar } from '@/components/scholarships/SearchBar';
 import { ScholarshipCard } from '@/components/scholarships/ScholarshipCard';
 import { StickyCta } from '@/components/scholarships/StickyCta';
 import { Testimonials } from '@/components/Testimonials';
-import { getUserGeo } from '@/lib/geo';
 import { getCountriesCached, getFieldsCached, getHomeStatsCached, getTopPicksCached } from '@/lib/queries';
 import { site } from '@/lib/site';
+
+// ISR: prerender and cache the homepage in OpenNext's R2 + Regional Cache for
+// 10 minutes (invalidated early via revalidateTag(SCHOLARSHIP_DATA_TAG)) so
+// visits don't re-run RSC rendering on the Worker CPU.
+export const revalidate = 600;
 
 export const metadata: Metadata = {
   title: 'ScholarHub Africa - Scholarships for African Students',
@@ -18,13 +23,12 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [stats, countries, fields, geo, topPicks] = await Promise.all([
+  const [stats, countries, fields, topPicks] = await Promise.all([
     getHomeStatsCached(),
     getCountriesCached({ activeOnly: true }).catch(
       () => [] as Awaited<ReturnType<typeof getCountriesCached>>,
     ),
     getFieldsCached().catch(() => [] as Awaited<ReturnType<typeof getFieldsCached>>),
-    getUserGeo(),
     // Top picks: top-scored open scholarships for the geo personalisation strip
     getTopPicksCached(3).catch(() => []),
   ]);
@@ -45,16 +49,6 @@ export default async function HomePage() {
     })),
   ];
 
-  const geoLabel = geo?.isAfrican
-    ? `${geo.flag} ${geo.name}`
-    : null;
-
-  const badgeText = hasStats
-    ? geoLabel
-      ? `${stats.open_now} open now · personalised for ${geoLabel} students`
-      : `${stats.open_now} opportunities open right now`
-    : 'Verified opportunities open now';
-
   return (
     <>
       {/* Hero */}
@@ -65,7 +59,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-4xl text-center">
             <p className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground backdrop-blur-md">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" aria-hidden="true" />
-              {badgeText}
+              <GeoBadgeText hasStats={hasStats} openNow={stats.open_now} />
             </p>
 
             <h1
@@ -160,7 +154,7 @@ export default async function HomePage() {
             <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p className="font-mono text-[10px] uppercase tracking-widest text-accent">
-                  {geoLabel ? `Picked for ${geoLabel} students` : 'Open now · best fit'}
+                  <GeoTopPicksSubtitle />
                 </p>
                 <h2 className="mt-1 font-display text-2xl font-bold text-foreground sm:text-3xl">
                   Top picks for you

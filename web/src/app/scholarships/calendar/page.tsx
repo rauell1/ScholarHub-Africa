@@ -10,7 +10,9 @@ export const metadata: Metadata = {
   alternates: { canonical: '/scholarships/calendar/' },
 };
 
-export const dynamic = 'force-dynamic';
+// ISR: revalidate the 3-month deadline calendar hourly (and on scholarship
+// mutations) instead of querying 200 rows per request.
+export const revalidate = 3600;
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'];
