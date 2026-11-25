@@ -2,9 +2,9 @@ import { buildSystemPrompt, fetchRelevantScholarships } from '@/lib/chat-rag';
 import { resolveCountry } from '@/lib/geo';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { type NextRequest } from 'next/server';
+import { modelOrder } from '@/lib/ai-models';
 
 const NVIDIA_BASE = 'https://integrate.api.nvidia.com/v1';
-const MODEL = 'meta/llama-3.1-8b-instruct';
 const TIMEOUT_MS = 30_000;
 
 export async function POST(req: NextRequest) {
@@ -35,29 +35,40 @@ export async function POST(req: NextRequest) {
     const scholarshipList = await fetchRelevantScholarships(lastUserMessage);
     const systemPrompt = buildSystemPrompt(scholarshipList, userGeo ?? undefined);
 
-    // Raw fetch → NVIDIA NIM SSE (more reliable than openai SDK async iteration)
-    const nvRes = await fetch(`${NVIDIA_BASE}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.NVIDIA_API_KEY ?? ''}`,
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          ...messages.slice(-8),
-        ],
-        stream: true,
-        max_tokens: 600,
-        temperature: 0.6,
-      }),
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-    });
+    // Raw fetch → NVIDIA NIM SSE (more reliable than openai SDK async iteration).
+    // Two-model rule: the light model, then the heavy model if the stream fails to start.
+    let nvRes: Response | undefined;
+    for (const model of modelOrder('light')) {
+      nvRes = await fetch(`${NVIDIA_BASE}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.NVIDIA_API_KEY ?? ''}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...messages.slice(-8),
+          ],
+          stream: true,
+          max_tokens: 600,
+          temperature: 0.6,
+        }),
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      }).catch((error: unknown) => {
+        console.warn('[chat] NVIDIA request failed', model, error instanceof Error ? error.message : error);
+        return undefined;
+      });
+      if (nvRes?.ok && nvRes.body) break;
+      if (nvRes) {
+        const errText = await nvRes.text().catch(() => '');
+        console.warn('[chat] NVIDIA error', model, nvRes.status, errText.slice(0, 200));
+      }
+    }
 
-    if (!nvRes.ok || !nvRes.body) {
-      const errText = await nvRes.text().catch(() => '');
-      console.error('[chat] NVIDIA error', nvRes.status, errText.slice(0, 200));
+    if (!nvRes || !nvRes.ok || !nvRes.body) {
+      console.error('[chat] both NVIDIA models failed', nvRes?.status);
       return new Response(
         'The AI advisor is temporarily unavailable. Please try again in a moment.',
         { status: 502 },
