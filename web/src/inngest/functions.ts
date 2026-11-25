@@ -8,7 +8,7 @@ import { scholarships, csvUploads } from '@/db/schema';
 import { resolveCountryId } from '@/lib/countries';
 import { SCHOLARSHIP_DATA_TAG } from '@/lib/queries';
 import { eq, sql } from 'drizzle-orm';
-import { heavyModel } from '@/lib/ai-models';
+import { withModelFallback } from '@/lib/ai-models';
 
 const ScholarshipDataSchema = z.object({
   name: z.string(),
@@ -72,8 +72,8 @@ export const processCsvUpload = inngest.createFunction(
 
         try {
           // Use standard parse on chat.completions since beta is likely retired in v7
-          const completion = await client.chat.completions.parse({
-            model: heavyModel(),
+          const completion = await withModelFallback('heavy', (model) => client.chat.completions.parse({
+            model,
             messages: [
               {
                 role: 'system',
@@ -85,7 +85,7 @@ export const processCsvUpload = inngest.createFunction(
               }
             ],
             response_format: zodResponseFormat(DataListSchema, "scholarship_list"),
-          });
+          }), (result) => result.choices[0]?.finish_reason === 'length');
 
           return completion.choices[0].message.parsed;
         } catch (error) {

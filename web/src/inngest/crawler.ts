@@ -16,7 +16,7 @@ import {
   str,
 } from '@/lib/crawl-normalize';
 import { SCHOLARSHIP_DATA_TAG } from '@/lib/queries';
-import { crawlModel } from '@/lib/ai-models';
+import { withModelFallback } from '@/lib/ai-models';
 
 const DIRECTORIES = [
   'https://www.scholars4dev.com/category/scholarships-for-africans/',
@@ -41,8 +41,8 @@ const DIRECT_LINKS = [
   'https://www.rhodeshouse.ox.ac.uk/scholarships/the-rhodes-scholarship/',
 ];
 
-// Extraction model: crawlModel() in src/lib/ai-models.ts (AI_MODEL_HEAVY, then
-// NVIDIA_CRAWL_MODEL), kept separate from the CSV pipeline's setting.
+// Extraction model: the heavy model, then the light one (two-model rule,
+// src/lib/ai-models.ts).
 
 // Search queries for discovery beyond the hardcoded directories/links above.
 // Unlike DIRECTORIES (which needs a hand-written cheerio selector per site)
@@ -239,8 +239,8 @@ export const processScholarshipLink = inngest.createFunction(
         apiKey: process.env.NVIDIA_API_KEY,
       });
 
-      const completion = await client.chat.completions.create({
-        model: crawlModel(),
+      const completion = await withModelFallback('heavy', (model) => client.chat.completions.create({
+        model,
         messages: [
           {
             role: 'system',
@@ -283,9 +283,9 @@ Text: ${text}`,
           },
         ],
         response_format: { type: 'json_object' },
-      });
+      }), (result) => result.choices[0]?.finish_reason === 'length');
 
-      // Llama models on NVIDIA's endpoint sometimes wrap the object in
+      // Models on NVIDIA's endpoint sometimes wrap the object in
       // ```json fences despite response_format - a bare JSON.parse threw and
       // the step failed on every retry.
       return parseModelJson(completion.choices[0].message.content);
