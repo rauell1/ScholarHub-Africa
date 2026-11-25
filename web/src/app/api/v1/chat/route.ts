@@ -2,9 +2,9 @@ import { buildSystemPrompt, fetchRelevantScholarships } from '@/lib/chat-rag';
 import { resolveCountry } from '@/lib/geo';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { type NextRequest } from 'next/server';
+import { lightModel } from '@/lib/ai-models';
 
 const NVIDIA_BASE = 'https://integrate.api.nvidia.com/v1';
-const MODEL = 'meta/llama-3.1-8b-instruct';
 const TIMEOUT_MS = 30_000;
 
 export async function POST(req: NextRequest) {
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         Authorization: `Bearer ${process.env.NVIDIA_API_KEY ?? ''}`,
       },
       body: JSON.stringify({
-        model: MODEL,
+        model: lightModel(),
         messages: [
           { role: 'system', content: systemPrompt },
           ...messages.slice(-8),

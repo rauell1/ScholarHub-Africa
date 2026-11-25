@@ -8,6 +8,7 @@ import { scholarships, csvUploads } from '@/db/schema';
 import { resolveCountryId } from '@/lib/countries';
 import { SCHOLARSHIP_DATA_TAG } from '@/lib/queries';
 import { eq, sql } from 'drizzle-orm';
+import { heavyModel } from '@/lib/ai-models';
 
 const ScholarshipDataSchema = z.object({
   name: z.string(),
@@ -72,7 +73,7 @@ export const processCsvUpload = inngest.createFunction(
         try {
           // Use standard parse on chat.completions since beta is likely retired in v7
           const completion = await client.chat.completions.parse({
-            model: 'meta/llama-3.3-70b-instruct',
+            model: heavyModel(),
             messages: [
               {
                 role: 'system',
